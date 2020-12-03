@@ -2,7 +2,7 @@
   "name": "tyronzil-sdk",
   "version": "0.1.0",
   "description": "tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com",
-  "main": "dist/src/core.js",
+  "main": "dist/core.js",
   "scripts": {
     "build": "tsc && copyfiles \"package.json\" dist",
     "lint": "eslint . --ext .ts",
