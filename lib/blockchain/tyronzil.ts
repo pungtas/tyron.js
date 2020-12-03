@@ -22,7 +22,6 @@ import SmartUtil from './smart-contracts/smart-util';
 import { NetworkNamespace } from '../decentralized-identity/tyronZIL-schemes/did-scheme';
 import ErrorCode from '../decentralized-identity/util/ErrorCode';
 import { Action, DocumentElement, ServiceModel } from '../decentralized-identity/protocols/models/document-model';
-import CodeError from '../decentralized-identity/util/ErrorCode';
 import { PublicKeyModel } from '../decentralized-identity/protocols/models/verification-method-models';
 
 /** The `init.tyron smart contracts */
@@ -527,7 +526,7 @@ export default class TyronZIL extends ZilliqaInit {
                 }
                 break;
             default:
-                throw new CodeError("UnsupportedElement", "That is not a DID-Document supported element");
+                throw new ErrorCode("UnsupportedElement", "That is not a DID-Document supported element");
         }
         return VALUE;
     }
