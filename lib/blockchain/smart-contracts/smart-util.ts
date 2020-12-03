@@ -1,5 +1,5 @@
 /*
-    TyronZIL-js: Decentralized identity client for the Zilliqa blockchain platform
+    tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com
     Copyright (C) 2020 Julio Cesar Cabrapan Duarte
 
     This program is free software: you can redistribute it and/or modify
@@ -15,8 +15,6 @@
 
 import * as API from '@zilliqa-js/zilliqa';
 import { InitTyron } from '../tyronzil';
-import LogColors from '../../../bin/log-colors';
-import * as readline from 'readline-sync';
 import * as fs from 'fs';
 import * as util from 'util';
 import * as zlib from 'zlib';
@@ -24,19 +22,18 @@ import * as zlib from 'zlib';
 /** Tools to manage smart contracts */
 export default class SmartUtil {
     /** Encodes the given contract into a Base64URL string to save it into the init.tyron smart contract */
-    public static async encode(): Promise<void> {
-        const contractName = readline.question(LogColors.green(`What is the name of the contract that you'd like to encode? - `) + LogColors.lightBlue(`Your answer: `));
+    public static async encode(contractName: string): Promise<void|string> {
         try {
             const CONTRACT_STRING = (fs.readFileSync(`src/lib/blockchain/smart-contracts/${contractName}.scilla`)).toString();
-            const COMPRESSED_CONTRACT = await (util.promisify(zlib.gzip))(CONTRACT_STRING) as Buffer;
-            console.log(COMPRESSED_CONTRACT.toString('base64'));
-            console.log(`The size of the compressed smart-contract is: ${COMPRESSED_CONTRACT.byteLength}`)
+            const COMPRESSED_CONTRACT_BUFFER = await (util.promisify(zlib.gzip))(CONTRACT_STRING) as Buffer;
+            const COMPRESSED_CONTRACT = COMPRESSED_CONTRACT_BUFFER.toString('base64');
+            return COMPRESSED_CONTRACT;
         } catch (error) {
             console.error(error)
         }
     }
 
-    /** Fetches the `Tyron DID-Smart-Contract` by version & decodes it */
+    /** Fetches the `didc.tyron smart contract` by version & decodes it */
     public static async decode(api: API.Zilliqa, initTyron: InitTyron, contractVersion: string): Promise<string> {
         const INIT_TYRON = initTyron as string;
         const THIS_CONTRACT = await api.blockchain.getSmartContractState(INIT_TYRON)
@@ -87,7 +84,7 @@ export default class SmartUtil {
     /** Gets the value out of a map key */
     public static async getValuefromMap(object: any, key: string): Promise<any> {
         const ENTRIES = Object.entries(object);
-        let VALUE;
+        let VALUE: unknown;
         ENTRIES.forEach((value: [string, unknown]) => {
             if (value[0] === key) {
                 VALUE = value[1]

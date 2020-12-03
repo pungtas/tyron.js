@@ -53,7 +53,7 @@
     "esModuleInterop": true,
   },
   "include": [
-    "./src/**/*.ts",
+    "./lib/**/*.ts",
     "./tests/**/*.ts"
   ]
 }

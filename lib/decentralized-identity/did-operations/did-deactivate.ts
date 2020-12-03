@@ -1,5 +1,5 @@
 /*
-    TyronZIL-js: Decentralized identity client for the Zilliqa blockchain platform
+    tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com
     Copyright (C) 2020 Julio Cesar Cabrapan Duarte
 
     This program is free software: you can redistribute it and/or modify

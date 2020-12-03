@@ -1,5 +1,5 @@
 /*
-    TyronZIL-js: Decentralized identity client for the Zilliqa blockchain platform
+    tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com
     Copyright (C) 2020 Julio Cesar Cabrapan Duarte
 
     This program is free software: you can redistribute it and/or modify
@@ -13,9 +13,8 @@
     GNU General Public License for more details.
 */
 
-import { PublicKeyInput } from '../../../bin/util';
 import { PatchModel, PatchAction, Action, DataTransferProtocol, DocumentElement, ServiceModel } from './models/document-model';
-import { PrivateKeyModel, PublicKeyModel } from './models/verification-method-models';
+import { PrivateKeyModel, PublicKeyInput, PublicKeyModel } from './models/verification-method-models';
 import { Cryptography, OperationKeyPairInput } from '../util/did-keys';
 import ErrorCode from '../util/ErrorCode';
 import TyronZIL from '../../blockchain/tyronzil';

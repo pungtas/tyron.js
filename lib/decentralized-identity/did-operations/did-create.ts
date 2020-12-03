@@ -1,5 +1,5 @@
 /*
-    TyronZIL-js: Decentralized identity client for the Zilliqa blockchain platform
+    tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com
     Copyright (C) 2020 Julio Cesar Cabrapan Duarte
 
     This program is free software: you can redistribute it and/or modify
@@ -15,9 +15,9 @@
 
 import { OperationType } from '../protocols/sidetree';
 import { Cryptography, OperationKeyPairInput, TyronPrivateKeys } from '../util/did-keys';
-import { CliInputModel } from '../../../bin/util';
 import { TransitionValue } from '../../blockchain/tyronzil';
-import { PrivateKeyModel } from '../protocols/models/verification-method-models';
+import { PrivateKeyModel, PublicKeyInput } from '../protocols/models/verification-method-models';
+import { NetworkNamespace } from '../tyronZIL-schemes/did-scheme';
 
 /** Generates a `Tyron DID-Create` operation
  *  which produces the `DID-Document` & metadata */
@@ -42,7 +42,7 @@ export default class DidCreate {
     /***            ****            ***/
    
     /** Generates a Tyron `DID-Create` operation with input from the CLI */
-    public static async execute(input: CliInputModel): Promise<DidCreate> {
+    public static async execute(input: InputModel): Promise<DidCreate> {
         const VERIFICATION_METHODS: TransitionValue[] = [];
         const PRIVATE_KEY_MODEL: PrivateKeyModel[] = [];
 
@@ -87,4 +87,11 @@ interface CreateOperationModel {
     updateKey: string;
     recoveryKey: string;
     privateKeys: TyronPrivateKeys;
+}
+
+export interface InputModel {
+    network: NetworkNamespace;
+    publicKeyInput: PublicKeyInput[];
+    services: TransitionValue[];
+    userPrivateKey?: string;
 }

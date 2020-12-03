@@ -1,5 +1,5 @@
 /*
-    TyronZIL-js: Decentralized identity client for the Zilliqa blockchain platform
+    tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com
     Copyright (C) 2020 Julio Cesar Cabrapan Duarte
 
     This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,6 @@
 */
 
 import * as zcrypto from '@zilliqa-js/crypto';
-import LogColors from "../../../../bin/log-colors";
 import SmartUtil from "../../../blockchain/smart-contracts/smart-util";
 import { InitTyron } from "../../../blockchain/tyronzil";
 import ZilliqaInit from '../../../blockchain/zilliqa-init';
@@ -49,7 +48,6 @@ export default class Resolver {
         })
         .catch((err: any) => { throw err });
 
-        console.log(LogColors.brightGreen(`${domainName}'s contract address is: ${DIDC_ADDRESS}`));
         return zcrypto.toBech32Address(DIDC_ADDRESS)
     }
 }

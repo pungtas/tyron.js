@@ -1,5 +1,5 @@
 /*
-    TyronZIL-js: Decentralized identity client for the Zilliqa blockchain platform
+    tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com
     Copyright (C) 2020 Julio Cesar Cabrapan Duarte
 
     This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ import ZilliqaInit from './zilliqa-init';
 import SmartUtil from './smart-contracts/smart-util';
 import { NetworkNamespace } from '../decentralized-identity/tyronZIL-schemes/did-scheme';
 import ErrorCode from '../decentralized-identity/util/ErrorCode';
-import LogColors from '../../bin/log-colors';
 import { Action, DocumentElement, ServiceModel } from '../decentralized-identity/protocols/models/document-model';
 import CodeError from '../decentralized-identity/util/ErrorCode';
 import { PublicKeyModel } from '../decentralized-identity/protocols/models/verification-method-models';
@@ -66,22 +65,15 @@ export default class TyronZIL extends ZilliqaInit {
         network: NetworkNamespace,
         initTyron: InitTyron,
         userPrivateKey: string,
-        gasLimit: string
+        gasLimit: number
     ): Promise<TyronZIL> {
         let CONTRACT_OWNER = zcrypto.getAddressFromPrivateKey(userPrivateKey);
-
-        let GAS_LIMIT: Util.Long.Long;
-        if(!Number(gasLimit) || Number(gasLimit) < 0) {
-            throw new ErrorCode("WrongAmount", "The gas limit MUST be a number greater than 0")
-        } else {
-            GAS_LIMIT = new Util.Long(Number(gasLimit));
-        }
-        
+        let GAS_LIMIT: Util.Long.Long = new Util.Long(Number(gasLimit));
         const ZIL_INIT = new ZilliqaInit(network);
+        
         const transaction_init = await ZIL_INIT.API.blockchain.getMinimumGasPrice()
-        .then(min_gas_price => {
+        .then((min_gas_price: { result: any; }) => {
             const GAS_PRICE = new Util.BN(min_gas_price.result!);
-            console.log(LogColors.yellow(`The minimum gas price retrieved from the network is: `) + LogColors.brightYellow(`${Number(GAS_PRICE)/1000000000000} ZIL`))
             
             return new TyronZIL(
                 network,
@@ -92,7 +84,7 @@ export default class TyronZIL extends ZilliqaInit {
                 GAS_LIMIT               
             );
         })
-        .catch(err => {throw err});
+        .catch((err: any) => {throw err});
         return transaction_init;
     }
 
@@ -100,11 +92,12 @@ export default class TyronZIL extends ZilliqaInit {
     
     /** Deploys the DIDC by version
      * & calls the Init transition with the avatar.agent */
-    public static async deploy(input: TyronZIL, version: string): Promise<DeployedContract> {
+    public static async deploy(
+        agent: string,
+        input: TyronZIL,
+        version: string): Promise<DeployedContract> {
         const deployed_contract = await SmartUtil.decode(input.API, input.initTyron, version)
         .then(contract_code => {
-            console.log(LogColors.brightGreen(`DIDC-code successfully downloaded & decoded from the init.tyron smart contract!`));
-            
             const CONTRACT_INIT = [
                 {
                     vname: '_scilla_version',
@@ -126,12 +119,9 @@ export default class TyronZIL extends ZilliqaInit {
             return CONTRACT;
         })
         .then(async contract => {
-            console.log(LogColors.yellow(`The user's DIDC got properly instantiated: `) + LogColors.brightYellow(`${JSON.stringify(contract, null, 2)}`));
             input.API.wallet.addByPrivateKey(input.userPrivateKey);
-
             const USER_BALANCE = await input.API.blockchain.getBalance(input.contractOwner);
 
-            console.log(LogColors.brightGreen(`Deploying...`));
             const [deployTx, didc] = await contract.deploy(
                 {
                     version: input.zilVersion,
@@ -147,23 +137,11 @@ export default class TyronZIL extends ZilliqaInit {
             if(!IS_DEPLOYED) {
                 throw new ErrorCode("Wrong-Deployment","The user's DIDC did not get deployed")
             }
-            console.log(LogColors.yellow(`The user's Tyron DID smart contract (DIDC) is deployed: `) + LogColors.brightYellow(`${IS_DEPLOYED}`));
-            console.log(LogColors.yellow(`Its Zilliqa address is: `) + LogColors.brightYellow(`${didc.address}`));
-            console.log(LogColors.yellow(`Deployment Transaction ID: `) + LogColors.brightYellow(`${deployTx.id}`));
-
-            const DEPLOYMENT_GAS = (deployTx.getReceipt())!.cumulative_gas;
-            console.log(LogColors.yellow(`Gas consumed by deploying the DIDC was: `) + LogColors.brightYellow(`${DEPLOYMENT_GAS}`));
             
-            const DEPLOYED_CONTRACT = {
-                transaction: deployTx,
-                contract: didc
-            };
-            return DEPLOYED_CONTRACT;
-        })
-        .then(async deployed_contract => {
-            console.log(LogColors.brightGreen(`Calling the Init transition...`))
-            const agent = "pungtas";
-            const CALL = await deployed_contract.contract.call(
+            const DEPLOYMENT_GAS = (deployTx.getReceipt())!.cumulative_gas;
+        
+            // Calling the Init transition
+            const INIT_CALL = await deployed_contract.contract.call(
                 'Init',
                 [
                     {
@@ -182,14 +160,16 @@ export default class TyronZIL extends ZilliqaInit {
                 1000,
                 false
             );
-            console.log(LogColors.yellow(`The user's DIDC is initialized: `) + LogColors.brightYellow(`${CALL.isConfirmed()}`));
-            const CUMULATIVE_GAS = (CALL.getReceipt())!.cumulative_gas;
-            console.log(LogColors.yellow(`Gas consumed by the Init transition was: `) + LogColors.brightYellow(`${CUMULATIVE_GAS}`));
-            console.log(LogColors.yellow(`The transaction ID is: `) + LogColors.brightYellow(`${CALL.id}`));
-            if(!CALL.isConfirmed()) {
+            if(!INIT_CALL.isConfirmed()) {
                 throw new ErrorCode("CodeNotInitialized", "The DIDC did not get initialized")
             }
-            return deployed_contract;
+            const DEPLOYED_CONTRACT: DeployedContract = {
+                transaction: deployTx,
+                contract: didc,
+                gas: DEPLOYMENT_GAS,
+                initCall: INIT_CALL
+            };
+            return DEPLOYED_CONTRACT;
         })
         .catch(err => { throw err });
         return deployed_contract;
@@ -204,14 +184,12 @@ export default class TyronZIL extends ZilliqaInit {
         operation: string       // e.g. ".did"
         ): Promise<void> {
         
-        console.log(LogColors.brightGreen(`Processing the ${tag} tyronZIL transaction...`));
-        
         await input.API.blockchain.getSmartContractState(didcAddr)
-        .then(async SMART_CONTRACT_STATE => {
-            const OPERATION_COST = SMART_CONTRACT_STATE.result.operation_cost;
+        .then(async smart_contract_state => {
+            const OPERATION_COST = smart_contract_state.result.operation_cost;
             return await SmartUtil.getValuefromMap(OPERATION_COST, operation);
         })
-        .then(async operation_cost => {
+        .then(async (operation_cost: any) => {
             const AMOUNT = new Util.BN(operation_cost);
             const USER_PUBKEY = zcrypto.getPubKeyFromPrivateKey(input.userPrivateKey);
             
@@ -238,35 +216,31 @@ export default class TyronZIL extends ZilliqaInit {
             const RAW_TX = input.API.transactions.new(TX_OBJECT);
             return RAW_TX;
         })
-        .then(async raw_tx  => {
+        .then(async (raw_tx: any)  => {
             input.API.wallet.addByPrivateKey(input.userPrivateKey);
             
             const SIGNED_TX = await input.API.wallet.signWith(raw_tx, input.contractOwner);
             return SIGNED_TX;
         })
-        .then(async signed_tx => {
-            /** Sends the transaction to the Zilliqa blockchain platform */
+        .then(async (signed_tx: any) => {
+            /** Sends the tyronZIL transaction to the Zilliqa blockchain platform */
             const TX = await input.API.blockchain.createTransaction(signed_tx, 33, 1000);
             return TX;
         })
         .then( async transaction => {
             const TRAN_ID = transaction.id!;
-            
             const TRANSACTION = await transaction.confirm(TRAN_ID, 33, 1000)
-            console.log(LogColors.yellow(`For testing purposes, disclosing the ${tag} tyronZIL transaction: `) + LogColors.brightYellow(`${JSON.stringify(TRANSACTION, null, 2)}`));
             const STATUS = transaction.isConfirmed();
-            console.log(LogColors.yellow(`The transaction is confirmed: `) + LogColors.brightYellow(`${STATUS}`));
-            if(STATUS){
-                console.log(LogColors.brightGreen(`The ${tag} tyronZIL transaction was successful!`));
-            } else {
-                console.log(LogColors.red(`The ${tag} tyronZIL transaction was unsuccessful!`));
+            if(!STATUS){
+                throw new ErrorCode("TyronZIL","The ${tag} tyronZIL transaction was unsuccessful!");
             }
-            
             const TX_RECEIPT = transaction.getReceipt();
-            const CUMULATIVE_GAS = TX_RECEIPT!.cumulative_gas;
-            console.log(LogColors.yellow(`Gas consumed: `) + LogColors.brightYellow(`${CUMULATIVE_GAS}`));
+            return {
+                transaction: TRANSACTION,
+                receipt: TX_RECEIPT
+            };
         })
-        .catch(err => { throw err })
+        .catch((err: any) => { throw err })
     }
 
     public static async create(
@@ -650,7 +624,9 @@ export default class TyronZIL extends ZilliqaInit {
 /** The result of a DIDC deployment */
 export interface DeployedContract {
     transaction: Transaction,
-    contract: Contract
+    contract: Contract,
+    gas: any,
+    initCall: any
 }
 
 interface Transition {

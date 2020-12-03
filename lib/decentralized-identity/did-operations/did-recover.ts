@@ -1,5 +1,5 @@
 /*
-    TyronZIL-js: Decentralized identity client for the Zilliqa blockchain platform
+    tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com
     Copyright (C) 2020 Julio Cesar Cabrapan Duarte
 
     This program is free software: you can redistribute it and/or modify
@@ -16,9 +16,9 @@
 import * as zcrypto from '@zilliqa-js/crypto';
 import { OperationType } from '../protocols/sidetree';
 import { Cryptography, OperationKeyPairInput, TyronPrivateKeys } from '../util/did-keys';
-import { CliInputModel } from '../../../bin/util';
 import { TransitionValue } from '../../blockchain/tyronzil';
 import { PrivateKeyModel } from '../protocols/models/verification-method-models';
+import { InputModel } from './did-create';
 
 /** Generates a `Tyron DID-Recover` operation */
 export default class DidRecover {
@@ -46,11 +46,11 @@ export default class DidRecover {
     }
 
     /** Generates a `Tyron DID-Recover` operation */
-    public static async execute(input: RecoverOperationInput): Promise<DidRecover> {
+    public static async execute(recover: RecoverOperationInput): Promise<DidRecover> {
         const VERIFICATION_METHODS: TransitionValue[] = [];
         const PRIVATE_KEY_MODEL: PrivateKeyModel[] = [];
 
-        const PUBLIC_KEY_INPUT = input.cliInput.publicKeyInput;
+        const PUBLIC_KEY_INPUT = recover.input.publicKeyInput;
         for(const key_input of PUBLIC_KEY_INPUT) {
             // Creates the cryptographic key pair
             const KEY_PAIR_INPUT: OperationKeyPairInput = {
@@ -61,13 +61,13 @@ export default class DidRecover {
             PRIVATE_KEY_MODEL.push(PRIVATE_KEY);
         }
         
-        const DOCUMENT = VERIFICATION_METHODS.concat(input.cliInput.services);
+        const DOCUMENT = VERIFICATION_METHODS.concat(recover.input.services);
         const DOC_OBJECT = Object.assign({}, DOCUMENT);
         const DOC_BUFFER = Buffer.from(JSON.stringify(DOC_OBJECT));
         const DOC_HASH = require("crypto").createHash("sha256").update(DOC_BUFFER).digest('hex');
         
-        const PREVIOUS_RECOVERY_KEY = zcrypto.getPubKeyFromPrivateKey(input.recoveryPrivateKey);
-        const SIGNATURE = zcrypto.sign(Buffer.from(DOC_HASH, 'hex'), input.recoveryPrivateKey!, PREVIOUS_RECOVERY_KEY);
+        const PREVIOUS_RECOVERY_KEY = zcrypto.getPubKeyFromPrivateKey(recover.recoveryPrivateKey);
+        const SIGNATURE = zcrypto.sign(Buffer.from(DOC_HASH, 'hex'), recover.recoveryPrivateKey!, PREVIOUS_RECOVERY_KEY);
         
         /** Key-pair for the next DID-Upate operation */
         const [UPDATE_KEY, UPDATE_PRIVATE_KEY] = await Cryptography.keyPair("update");
@@ -81,7 +81,7 @@ export default class DidRecover {
         
         /** Output data from a Tyron `DID-Recover` operation */
         const OPERATION_OUTPUT: RecoverOperationModel = {
-            did: input.did,
+            did: recover.did,
             newDocument: DOCUMENT,
             docHash: DOC_HASH,
             signature: SIGNATURE,
@@ -99,7 +99,7 @@ export default class DidRecover {
 export interface RecoverOperationInput {
     did: string;
     recoveryPrivateKey: string;
-    cliInput: CliInputModel;
+    input: InputModel;
 }
 
 /** Defines output data from a `Tyron DID-Recover` operation */

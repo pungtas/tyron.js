@@ -1,5 +1,5 @@
 /*
-    TyronZIL-js: Decentralized identity client for the Zilliqa blockchain platform
+    tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com
     Copyright (C) 2020 Julio Cesar Cabrapan Duarte
 
     This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,6 @@ import { NetworkNamespace } from '../../tyronZIL-schemes/did-scheme';
 import DidUrlScheme from '../../tyronZIL-schemes/did-url-scheme';
 import DidState from './did-state';
 import ErrorCode from '../../util/ErrorCode';
-import * as fs from 'fs';
-import LogColors from '../../../../bin/log-colors';
 
 export enum Accept {
     contentType = "application/did+json",        //requests a DID-Document as output
@@ -194,25 +192,6 @@ export default class DidDoc {
         })
         .catch(err => { throw err })
         return DID_DOC;
-    }
-
-    /***            ****            ***/
-
-    /** Saves the `Tyron DID-Document` */
-    public static async write(did: string, input: DidDoc|ResolutionResult): Promise<void> {
-        try {
-            const PRINT_STATE = JSON.stringify(input, null, 2);
-            let FILE_NAME;
-            if(input instanceof DidDoc) {
-                FILE_NAME = `DID_DOCUMENT_${did}.json`;        
-            } else {
-                FILE_NAME = `DID_RESOLVED_${did}.json`;
-            }
-            fs.writeFileSync(FILE_NAME, PRINT_STATE);
-            console.info(LogColors.yellow(`DID resolved as: ${LogColors.brightYellow(FILE_NAME)}`));
-        } catch (error) {
-            throw new ErrorCode("CodeCouldNotSave", "The DID file did not get saved");            
-        }
     }
 }
 
