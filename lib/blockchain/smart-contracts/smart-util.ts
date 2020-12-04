@@ -15,23 +15,11 @@
 
 import * as API from '@zilliqa-js/zilliqa';
 import { InitTyron } from '../tyronzil';
-import * as fs from 'fs';
 import * as util from 'util';
 import * as zlib from 'zlib';
 
 /** Tools to manage smart contracts */
 export default class SmartUtil {
-    /** Encodes the given contract into a Base64URL string to save it into the init.tyron smart contract */
-    public static async encode(contractName: string): Promise<void|string> {
-        try {
-            const CONTRACT_STRING = (fs.readFileSync(`src/lib/blockchain/smart-contracts/${contractName}.scilla`)).toString();
-            const COMPRESSED_CONTRACT_BUFFER = await (util.promisify(zlib.gzip))(CONTRACT_STRING) as Buffer;
-            const COMPRESSED_CONTRACT = COMPRESSED_CONTRACT_BUFFER.toString('base64');
-            return COMPRESSED_CONTRACT;
-        } catch (error) {
-            console.error(error)
-        }
-    }
 
     /** Fetches the `didc.tyron smart contract` by version & decodes it */
     public static async decode(api: API.Zilliqa, initTyron: InitTyron, contractVersion: string): Promise<string> {
