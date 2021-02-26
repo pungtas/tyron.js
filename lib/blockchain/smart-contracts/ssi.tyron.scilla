@@ -1,0 +1,432 @@
+(*
+SSI.tyron: Self-Sovereign Identity Smart Contract
+Tyron Self-Sovereign Identity Protocol
+Copyright (C) 2021 Tyron Pungtas Open Association 
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+*)
+
+scilla_version 0
+
+import BoolUtils
+
+library SSI
+
+let one_msg = fun (msg: Message) =>
+  let nil_msg = Nil{Message} in Cons{Message} msg nil_msg
+
+let two_msgs = fun(msg1: Message) => fun(msg2: Message) =>
+  let msgs_tmp = one_msg msg2 in Cons{Message} msg1 msgs_tmp
+
+type Error =
+| CodeWrongCaller
+| CodeNotValid
+| CodeNotToken
+| CodeNotProxy
+| CodeWrongAmount
+| CodeWrongDomain
+| CodeWrongTag
+| CodeWrongSignature
+| CodeUndefinedKey
+
+let make_error = fun(error: Error) =>
+  let result = match error with
+  | CodeWrongCaller    => Int32 -1
+  | CodeNotValid       => Int32 -3
+  | CodeNotToken       => Int32 -4
+  | CodeNotProxy       => Int32 -5
+  | CodeWrongAmount    => Int32 -6
+  | CodeWrongDomain    => Int32 -7
+  | CodeWrongTag       => Int32 -8
+  | CodeWrongSignature => Int32 -9
+  | CodeUndefinedKey   => Int32 -10
+  end in {_exception: "Error"; code: result}
+      
+let zero = Uint128 0
+let zero_bystr33 = 0x000000000000000000000000000000000000000000000000000000000000000000
+
+let option_value = tfun 'A => fun (default: 'A) => fun (opt_val: Option 'A) =>
+  match opt_val with
+  | Some v => v
+  | None => default
+  end
+
+let option_uint128_value =
+  let f = @option_value Uint128 in f zero
+
+let option_bystr33_value =
+  let f = @option_value ByStr33 in f 
+let create = "DIDcreate"
+let recover = "DIDrecover"
+let update = "DIDupdate"
+let deactivate = "DIDdeactivate"
+let solana = "solana"
+
+type Action =
+| Add
+| Remove
+
+type DataTransferProtocol =
+| Https
+| Git
+| Ssh
+
+type ServiceEndpoint =
+| ServiceEndpoint of DataTransferProtocol String
+  
+type DIDservice =
+| DIDservice of String ServiceEndpoint   (* the type & endpoint *)
+  
+type Document =
+| VerificationMethod of Action String ByStr33   (* string: key purpose OR service ID *)
+| Service of Action String DIDservice
+
+type XDirection =
+| In
+| Out
+
+let incoming = In
+let outcoming = Out
+
+contract SSI(
+	(* Initial owner of the Self-Sovereign Identity *)
+	initOwner: ByStr20,
+
+  (* For meta-transactions *)
+  initController: ByStr20,
+  
+  (* INIT.tyron smart contract *)
+  initTyron: ByStr20
+)
+with
+  let init = 0x3ac8caa3881a1de466fab451f1dcc4dcea64132a in builtin eq init initTyron
+=>
+
+(* Owner of the SSI *)
+  field owner: ByStr20 = initOwner
+
+  field ssi: Option ByStr33 = None{ByStr33}
+
+  field solana_addr: String = solana
+
+(* The controller can make meta-transactions and pay the gas *)
+  field controller: ByStr20 = initController
+
+(* INIT.tyron current implementation *)
+  field init: ByStr20 = initTyron
+
+(* Dapp records
+  @key: DID domain name
+	@value: Address of dapp *)
+  field dapp_records: Map String ByStr20 = Emp String ByStr20
+
+(* Token implementations
+  @key: address
+  @value: token name *)
+  field xWallet: Map ByStr20 String = 
+    let empty_map = Emp ByStr20 String in
+    let implementation_addr = 0xaB3b8a5d9f836DF46f89bE8a537B7cC0d71fc3B5 in
+    let xsgd = "xsgd" in builtin put empty_map implementation_addr xsgd
+    
+(* Token balances
+  @key: token name
+  @value: balance *)
+  field xBalances: Map String Uint128 = Emp String Uint128
+
+procedure ThrowError(
+  err: Error
+)
+  e = make_error err; throw e
+end
+
+procedure VerifyCaller()
+  owner_addr <- owner;
+  controller_addr <- controller;
+  is_caller =
+    let is_owner = builtin eq owner_addr _sender in
+    let is_controller = builtin eq controller_addr _sender in orb is_owner is_controller;
+  match is_caller with
+  | True =>
+  | False => err= CodeWrongCaller; ThrowError err
+  end
+end
+
+procedure VerifyInit()
+  init_addr <- init;
+  is_init = builtin eq init_addr _sender;
+  match is_init with
+  | True =>
+  | False => err= CodeWrongCaller; ThrowError err
+  end
+end
+
+(* Update the owner address *)
+transition UpdateOwner(
+  newOwner: ByStr20
+)
+  VerifyCaller;
+  owner := newOwner
+end
+
+(* Update the controller address *)
+transition UpdateController(
+  newController: ByStr20
+)
+  VerifyCaller;
+  controller := newController
+end
+
+(* Update the INIT.tyron address *)
+transition UpdateINIT(
+  newInit: ByStr20
+)
+  VerifyCaller;
+  init := newInit
+end
+
+(* Update the owner address in a DID dapp *)
+transition UpdateDIDowner(
+  domain: String,
+  newOwner: ByStr20
+)
+  VerifyCaller;
+  did_addr <- dapp_records[domain];
+  match did_addr with
+  | Some addr =>
+      msg = let m = {
+      _tag: "UpdateOwner";
+      _recipient: addr;
+      _amount: zero;
+      newOwner: newOwner
+      } in one_msg m; send msg
+  | None => err= CodeWrongDomain; ThrowError err
+  end
+end
+
+(* Username for the Self-Sovereign Identity *)
+transition SetUsername(
+	username: String
+)
+	VerifyCaller;
+  init_addr <- init;
+	accept;
+	msg = let m = {
+		_tag: "SetUsername";
+		_recipient: init_addr;
+		_amount: _amount;
+		username: username
+	} in one_msg m; send msg
+end
+
+(* Decentralized Identifier CRUD operations *)
+transition CRUD(
+  domain: String,
+  tag: String,
+  recoveryKey: Option ByStr33,
+  updateKey: Option ByStr33,
+  document: Option (List Document),
+  signedData: Option ByStr,
+  signature: Option ByStr64
+)
+  VerifyCaller;
+  this_addr <- dapp_records[domain];
+  match this_addr with
+  | Some addr =>
+      msg = let m = {
+        _tag: tag;
+        _recipient: addr;
+        _amount: zero;
+        document: document;
+        signature: signature;
+        recoveryKey: recoveryKey;
+        updateKey: updateKey
+      } in one_msg m; send msg
+  | None =>
+      err = CodeWrongDomain;
+      ThrowError err
+  end
+end
+
+transition DIDdapp(
+  domain: String,
+  tag: String
+)
+  VerifyCaller;
+  this_addr <- dapp_records[domain];
+  match this_addr with
+  | Some addr =>
+      msg = let m = {
+        _tag: tag;
+        _recipient: addr;
+        _amount: zero
+      } in one_msg m;
+      send msg
+  | None => err = CodeWrongDomain; ThrowError err
+  end
+end
+
+(*---------*)
+(* xWallet *)
+(*---------*)
+
+(* Verifify the validity, check & update the balance of tokens *)
+procedure XWallet(
+  direction: XDirection,
+  amount: Uint128
+)
+  this_token <- xWallet[_sender];
+  match this_token with
+  | Some token =>
+      this_balance <- xBalances[token];
+      balance = option_uint128_value this_balance;
+      match direction with
+      | In =>
+          new_balance = builtin add balance amount;
+          xBalances[token] := new_balance
+      | Out =>
+          new_balance = builtin sub balance amount;
+          xBalances[token] := new_balance
+      end
+  | None => err= CodeNotToken; ThrowError err
+  end
+end
+
+procedure Verify(
+  token: String,
+  agent: String
+)
+  init_addr <- init;
+  accept;
+  msg = let m = {
+    _tag: "Verify";
+    _recipient: init_addr;
+    _amount: _amount;
+    token: token;
+    agent: agent
+  } in one_msg m; send msg
+end
+
+transition VerifyCallBack(
+  token: String,
+  proxy: ByStr20,
+  implementation: ByStr20
+)
+  VerifyInit;
+  dapp_records[token] := proxy;
+  xWallet[implementation] := token
+end
+  
+(* Add native funds ($ZIL ) to the xWallet *)
+transition AddFunds()
+  accept
+end
+  
+(* Send $ZIL to any recipient that implements the tag (e.g. "AddFunds", "") *)
+transition ZILout(
+  tag: String,
+  recipient: ByStr20,
+  amount: Uint128
+)
+  VerifyCaller;
+  accept;
+  msg = let m = {
+    _tag: tag;
+    _recipient: recipient;
+    _amount: amount
+  } in one_msg m; send msg
+end
+
+(* Acceptance transition - must be defined or transfers to this xWallet will fail *)
+transition RecipientAcceptTransfer(
+  sender : ByStr20,
+  recipient : ByStr20,
+  amount : Uint128
+)
+  XWallet incoming amount
+end
+
+(* Transfer ZRC-2 tokens *)
+transition XTransfer(
+  token: String,
+  agent: String,
+  recipient: ByStr20,
+  amount: Uint128
+) 
+  VerifyCaller;
+  this_balance <- xBalances[token];
+  balance = option_uint128_value this_balance;
+  is_enough = builtin lt amount balance;
+  match is_enough with
+  | True =>
+      Verify token agent;
+      proxy_addr <- dapp_records[token];
+      match proxy_addr with
+      | Some addr =>
+          msg = let m = {
+            _tag: "Transfer";
+            _recipient: addr;
+            _amount: zero;
+            to: recipient;
+            amount: amount
+          } in one_msg m ; send msg
+      | None => err= CodeNotProxy; ThrowError err
+      end
+  | False => err= CodeWrongAmount; ThrowError err
+  end
+end
+
+(* Callback transition - must be defined or transfers from this xWallet will fail *)
+transition TransferSuccessCallBack(
+  sender: ByStr20, 
+  recipient: ByStr20,
+  amount: Uint128
+)
+  XWallet outcoming amount   
+end
+
+procedure VerifySignature(
+    signedData: ByStr,
+    sig: ByStr64
+)
+  ssi_key <- ssi;
+  match ssi_key with
+  | Some key =>
+      signature_is_right = builtin schnorr_verify key signedData sig;
+      match signature_is_right with
+      | True =>
+      | False => err = CodeWrongSignature; ThrowError err
+      end
+  | None => err = CodeUndefinedKey; ThrowError err
+  end
+end
+  
+transition xZIL(
+  amount: Uint128,
+  signedData: ByStr,
+  sig: ByStr64,
+  beneficiary: String
+)
+  VerifySignature signedData sig;
+  proxy_addr <- dapp_records[solana];
+  originator <- solana_addr;
+  match proxy_addr with
+  | Some addr =>
+      accept;
+      msg = let m = {
+        _tag: "xZIL";
+        _recipient: addr;
+        _amount: amount;
+        originator: originator;
+        beneficiary: beneficiary
+      } in one_msg m ; send msg
+  | None => err= CodeNotProxy; ThrowError err
+      end
+end

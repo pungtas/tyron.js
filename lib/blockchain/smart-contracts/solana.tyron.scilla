@@ -1,0 +1,73 @@
+(*
+solana.tyron: Solana Bridge Smart Contract
+Tyron Self-Sovereign Identity Protocol
+Copyright (C) 2021 Tyron Pungtas Open Association 
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+*)
+
+scilla_version 0
+
+library Solana
+
+type Error =
+| CodeNotRightCaller
+
+let make_error = fun (error: Error) =>
+  let result = match error with
+  | CodeNotRightCaller      => Int32 -1
+  end in {_exception: "Error"; code: result}
+  
+contract Solana(
+  (* Initial admin of the smart contract *)
+  initAdmin: ByStr20
+)
+
+(* Admin of the contract *)
+  field admin: ByStr20 = initAdmin
+
+procedure ThrowError(
+  err: Error
+)
+  e = make_error err; throw e
+end
+
+(* Validate address against _sender *)
+procedure Calling(
+  check: ByStr20
+)
+  is_correct = builtin eq check _sender;
+  match is_correct with
+  | True =>
+  | False => err= CodeNotRightCaller; ThrowError err
+  end
+end
+
+(* Update the admin's address *)
+transition UpdateAdmin(
+  newAdmin: ByStr20
+)
+  admin_addr <- admin; Calling admin_addr;
+  admin := newAdmin
+end
+
+transition xZIL(
+  originator: String,
+  beneficiary: String
+)
+  accept;
+  e = {
+    _eventname: "xZIL deposit";
+    originator: originator;
+    beneficiary: originator;
+    amount: _amount
+  }; event e
+end

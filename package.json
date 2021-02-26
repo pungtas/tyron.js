@@ -1,7 +1,7 @@
 {
-  "name": "tyronzil-sdk",
+  "name": "tyronzil-js",
   "version": "0.3.1",
-  "description": "tyronzil-sdk: Tyron DID SDK - Zilliqa's DID-Method at www.tyronZIL.com",
+  "description": "tyronzil-js: Tyron Self-Sovereign Identity Library",
   "main": "dist/core.js",
   "scripts": {
     "build": "tsc && copyfiles \"package.json\" dist",
@@ -10,27 +10,27 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/julio-cabdu/tyronzil-js.git"
+    "url": "git+https://github.com/pungtas/tyronzil-js.git"
   },
   "keywords": [
     "did",
-    "did-sdk",
     "decentralized-identity",
     "decentralized-identifiers",
     "decentralized-application",
     "dapp",
     "self-sovereign identity",
+    "self-sovereign identity protocol",
     "tyron",
-    "tyron.did",
     "tyronzil",
+    "tyronzil-js",
     "zilliqa"
   ],
   "author": "https://github.com/pungtas",
   "license": "GPL-3.0-only",
   "bugs": {
-    "url": "https://github.com/pungtas/tyronzil-sdk/issues"
+    "url": "https://github.com/pungtas/tyronzil-js/issues"
   },
-  "homepage": "https://github.com/pungtas/tyronzil-sdk#readme",
+  "homepage": "https://github.com/pungtas/tyronzil-js#readme",
   "dependencies": {
     "@zilliqa-js/zilliqa": "^1.0.0-alpha.1",
     "@types/websocket": "^1.0.1",

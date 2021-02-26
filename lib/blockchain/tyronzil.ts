@@ -1,16 +1,16 @@
 /*
-	tyronzil-sdk: Tyron SSI SDK - Zilliqa's DID-Method at www.tyronZIL.com
-	Copyright (C) 2021 Julio Cesar Cabrapan Duarte
+    tyronzil-js: Tyron Self-Sovereign Identity Library
+    Copyright (C) 2021 Tyron Pungtas Open Association
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 */
 
 import { Transaction } from '@zilliqa-js/account';
@@ -19,25 +19,25 @@ import * as zcrypto from '@zilliqa-js/crypto';
 import * as Util from '@zilliqa-js/util';
 import ZilliqaInit from './zilliqa-init';
 import SmartUtil from './smart-contracts/smart-util';
-import { NetworkNamespace } from '../decentralized-identity/tyronZIL-schemes/did-scheme';
-import ErrorCode from '../decentralized-identity/util/ErrorCode';
-import { Action, DocumentElement, ServiceModel } from '../decentralized-identity/protocols/models/document-model';
-import { PublicKeyModel } from '../decentralized-identity/protocols/models/verification-method-models';
+import { NetworkNamespace } from '../did/tyronZIL-schemes/did-scheme';
+import ErrorCode from '../did/util/ErrorCode';
+import { Action, DocumentElement, ServiceModel } from '../did/protocols/models/document-model';
+import { PublicKeyModel } from '../did/protocols/models/verification-method-models';
 
-/** The `init.tyron smart contracts */
+/** The INIT.tyron smart contracts */
 export enum InitTyron {
-	Testnet = "0x63e2d8484187de4f66a571c098f3b51a793f055b",
-	Mainnet = "0x1c8272a79b5b4920bcae80f310d638c8dd4bd8aa",
-	Isolated = "0x9ded7118b3386108f1bc4e0e0699d7ab23997265"
+	Testnet = "",
+	Mainnet = "",
+	Isolated = ""
 }
 
 /** The tyronZIL transaction class */
 export default class TyronZIL extends ZilliqaInit {
-	/** The user is the owner of their DIDC */
-	public readonly contractOwner: string;
-	public readonly userPrivateKey: string;
+	/** The owner of the Self-Sovereign-Identity */
+	public readonly owner: string;
+	public readonly ownerPrivateKey: string;
 
-	/** The Zilliqa address where the `init.tyron smart-contract` resides */
+	/** The Zilliqa address of the INIT.tyron smart-contract */
 	public readonly initTyron: InitTyron;
 
 	public readonly gasPrice: Util.BN;
@@ -45,15 +45,15 @@ export default class TyronZIL extends ZilliqaInit {
 
 	private constructor(
 		network: NetworkNamespace,
-		contractOwner: string,
-		userPrivateKey: string,
+		owner: string,
+		ownerPrivateKey: string,
 		initTyron: InitTyron,
 		gasPrice: Util.BN,
 		gasLimit: Util.Long,
 	) {
 		super(network);
-		this.contractOwner = contractOwner;
-		this.userPrivateKey = userPrivateKey;
+		this.owner = owner;
+		this.ownerPrivateKey = ownerPrivateKey;
 		this.initTyron = initTyron;
 		this.gasPrice = gasPrice;
 		this.gasLimit = gasLimit
@@ -63,21 +63,20 @@ export default class TyronZIL extends ZilliqaInit {
 	public static async initialize(
 		network: NetworkNamespace,
 		initTyron: InitTyron,
-		userPrivateKey: string,
+		ownerPrivateKey: string,
 		gasLimit: number
 	): Promise<TyronZIL> {
-		let CONTRACT_OWNER = zcrypto.getAddressFromPrivateKey(userPrivateKey);
+		let CONTRACT_OWNER = zcrypto.getAddressFromPrivateKey(ownerPrivateKey);
 		let GAS_LIMIT: Util.Long.Long = new Util.Long(Number(gasLimit));
 		const ZIL_INIT = new ZilliqaInit(network);
 		
 		const transaction_init = await ZIL_INIT.API.blockchain.getMinimumGasPrice()
 		.then((min_gas_price: { result: any; }) => {
 			const GAS_PRICE = new Util.BN(min_gas_price.result!);
-			
 			return new TyronZIL(
 				network,
 				CONTRACT_OWNER,
-				userPrivateKey,
+				ownerPrivateKey,
 				initTyron,
 				GAS_PRICE,
 				GAS_LIMIT               
@@ -88,8 +87,8 @@ export default class TyronZIL extends ZilliqaInit {
 	}
 
 	/***            ****            ***/
-	
-	/** Deploys the DIDC by version
+
+	/** Deploys the SSI by version
 	 * & calls the Init transition with the avatar.agent */
 	public static async deploy(
 		agent: string,
@@ -104,9 +103,14 @@ export default class TyronZIL extends ZilliqaInit {
 				value: '0',
 			},
 			{
-				vname: 'initContractOwner',
+				vname: 'initOwner',
 				type: 'ByStr20',
-				value: `${input.contractOwner}`,
+				value: `${input.owner}`,
+			},
+			{
+				vname: 'initController',
+				type: 'ByStr20',
+				value: `${input.owner}`,
 			},
 			{
 				vname: 'initTyron',
@@ -116,9 +120,9 @@ export default class TyronZIL extends ZilliqaInit {
 		];
 		const CONTRACT = input.API.contracts.new(contractCode, CONTRACT_INIT);
 		
-		input.API.wallet.addByPrivateKey(input.userPrivateKey);
+		input.API.wallet.addByPrivateKey(input.ownerPrivateKey);
 		
-		const deployed_contract = await input.API.blockchain.getBalance(input.contractOwner)
+		const deployed_contract = await input.API.blockchain.getBalance(input.owner)
 		.then( async user_balance => {
 			const [deployTx, didc] = await CONTRACT.deploy(
 				{
@@ -133,7 +137,7 @@ export default class TyronZIL extends ZilliqaInit {
 			);
 			const IS_DEPLOYED = deployTx.isConfirmed();
 			if(!IS_DEPLOYED) {
-				throw new ErrorCode("Wrong-Deployment","The user's DIDC did not get deployed")
+				throw new ErrorCode("Wrong-Deployment","The SSI did not get deployed")
 			}
 			
 			const DEPLOYMENT_GAS = (deployTx.getReceipt())!.cumulative_gas;
@@ -189,14 +193,14 @@ export default class TyronZIL extends ZilliqaInit {
 		})
 		.then(async (operation_cost: any) => {
 			const AMOUNT = new Util.BN(operation_cost);
-			const USER_PUBKEY = zcrypto.getPubKeyFromPrivateKey(input.userPrivateKey);
+			const USER_PUBKEY = zcrypto.getPubKeyFromPrivateKey(input.ownerPrivateKey);
 			
-			const USER_BALANCE = await input.API.blockchain.getBalance(input.contractOwner);
+			const USER_BALANCE = await input.API.blockchain.getBalance(input.owner);
 		
 			const TRANSITION: Transition = {
 				_tag: tag,
 				_amount: String(AMOUNT),
-				_sender: input.contractOwner,
+				_sender: input.owner,
 				params: params
 			};
 
@@ -215,9 +219,9 @@ export default class TyronZIL extends ZilliqaInit {
 			return RAW_TX;
 		})
 		.then(async (raw_tx: any)  => {
-			input.API.wallet.addByPrivateKey(input.userPrivateKey);
+			input.API.wallet.addByPrivateKey(input.ownerPrivateKey);
 			
-			const SIGNED_TX = await input.API.wallet.signWith(raw_tx, input.contractOwner);
+			const SIGNED_TX = await input.API.wallet.signWith(raw_tx, input.owner);
 			return SIGNED_TX;
 		})
 		.then(async (signed_tx: any) => {

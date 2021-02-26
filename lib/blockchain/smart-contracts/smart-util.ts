@@ -1,6 +1,6 @@
 /*
-    tyronzil-sdk: Tyron SSI SDK - Zilliqa's DID-Method at www.tyronZIL.com
-    Copyright (C) 2021 Julio Cesar Cabrapan Duarte
+    tyronzil-js: Tyron Self-Sovereign Identity Library
+    Copyright (C) 2021 Tyron Pungtas Open Association
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

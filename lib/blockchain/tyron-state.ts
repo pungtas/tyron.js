@@ -1,6 +1,6 @@
 /*
-    tyronzil-sdk: Tyron SSI SDK - Zilliqa's DID-Method at www.tyronZIL.com
-    Copyright (C) 2021 Julio Cesar Cabrapan Duarte
+    tyronzil-js: Tyron Self-Sovereign Identity Library
+    Copyright (C) 2021 Tyron Pungtas Open Association
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,11 +13,11 @@
     GNU General Public License for more details.
 */
 
-import { NetworkNamespace } from '../decentralized-identity/tyronZIL-schemes/did-scheme';
+import { NetworkNamespace } from '../did/tyronZIL-schemes/did-scheme';
 import ZilliqaInit from './zilliqa-init';
 import SmartUtil from './smart-contracts/smart-util';
-import { OperationType } from '../decentralized-identity/protocols/sidetree';
-import ErrorCode from '../decentralized-identity/util/ErrorCode';
+import { OperationType } from '../did/protocols/sidetree';
+import ErrorCode from '../did/util/ErrorCode';
 
 export default class TyronState {
     public readonly contract_owner: string;
