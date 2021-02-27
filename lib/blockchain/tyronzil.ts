@@ -25,7 +25,7 @@ import { PublicKeyModel } from '../did/protocols/models/verification-method-mode
 
 /** The INIT.tyron smart contracts */
 export enum InitTyron {
-	Testnet = "",
+	Testnet = "0x83715890960608c7d6ca4f31ad288a8d2780d344",
 	Mainnet = "",
 	Isolated = ""
 }

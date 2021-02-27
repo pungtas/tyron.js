@@ -420,6 +420,7 @@ transition xZIL(
   beneficiary: String
 )
   VerifySignature signedData sig;
+  Verify solana solana;
   proxy_addr <- dapp_records[solana];
   originator <- solana_addr;
   match proxy_addr with
