@@ -33,7 +33,7 @@ export default class Resolver {
 		const SSI_DOMAIN = domainName.substring(DOT_INDEX);
 		const AVATAR = domainName.substring(0, DOT_INDEX);
 		
-		const DIDC_ADDRESS = await this.validateAvatar(AVATAR)
+		const ADDRESS = await this.validateAvatar(AVATAR)
 		.then( async() => {
 			return await ZIL_INIT.API.blockchain.getSmartContractState(initTyron)
 		})
@@ -48,6 +48,6 @@ export default class Resolver {
 		})
 		.catch((err: any) => { throw err });
 
-		return zcrypto.toBech32Address(DIDC_ADDRESS)
+		return zcrypto.toBech32Address(ADDRESS)
 	}
 }
