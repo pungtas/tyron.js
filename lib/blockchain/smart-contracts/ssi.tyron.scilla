@@ -109,7 +109,7 @@ contract SSI(
   initTyron: ByStr20
 )
 with
-  let init = 0x3ac8caa3881a1de466fab451f1dcc4dcea64132a in builtin eq init initTyron
+  let init = 0x83715890960608c7d6ca4f31ad288a8d2780d344 in builtin eq init initTyron
 =>
 
 (* Owner of the SSI *)

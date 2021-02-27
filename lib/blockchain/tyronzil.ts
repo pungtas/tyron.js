@@ -614,6 +614,44 @@ export default class TyronZIL extends ZilliqaInit {
 		PARAMS.push(CAMPAIGN);
 		return PARAMS;
 	}
+
+	public static async xZIL(
+		amount: string,
+		signedData: string,
+		signature: string,
+		beneficiary: string
+	): Promise<TransitionParams[]> {
+		
+		const PARAMS = [];
+		const AMOUNT: TransitionParams = {
+			vname: 'amount',
+			type: 'Uint128',
+			value: amount,
+		};
+		PARAMS.push(AMOUNT);
+
+		const SIGNED_DATA: TransitionParams = {
+			vname: 'signedData',
+			type: 'ByStr',
+			value: signedData,
+		};
+		PARAMS.push(SIGNED_DATA);
+
+		const SIGNATURE: TransitionParams = {
+			vname: 'signature',
+			type: 'ByStr64',
+			value: signature,
+		};
+		PARAMS.push(SIGNATURE);
+
+		const BENEFICIARY:TransitionParams = {
+			vname: 'beneficiary',
+			type: 'string',
+			value: beneficiary,
+		};
+		PARAMS.push(BENEFICIARY);
+		return PARAMS;
+	}
 }
 
 /***            ** interfaces **            ***/
@@ -641,7 +679,8 @@ export enum TransitionTag {
 	Dns = "SetSsiDomain",
 	XTransfer = "XTransfer",
 	SsiToken = "SsiToken",
-	Donate = "Donate"
+	Donate = "Donate",
+	Xzil = "xZIL"
 }
 
 interface TransitionParams {
