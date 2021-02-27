@@ -27,7 +27,7 @@ export default class Resolver {
 			throw new CodeError("DomainNameInvalid", "The domain name must be 15 characters or less and contain only letters, numbers and underscores, and no spaces") 
 		}
 	}
-	public static async resolveDns(network: NetworkNamespace, initTyron: InitTyron, domainName: string): Promise<string> {
+	public static async resolveDns(network: NetworkNamespace, initTyron: string, domainName: string): Promise<string> {
 		const ZIL_INIT = new ZilliqaInit(network);
 		const DOT_INDEX = domainName.lastIndexOf(".");
 		const SSI_DOMAIN = domainName.substring(DOT_INDEX);
