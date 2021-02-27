@@ -230,8 +230,7 @@ transition SetGas(
   admin_addr <- admin; Calling admin_addr;
   gas[operation] := units
 end
-  
-(* Sets the agent_commission *)
+
 transition AgentCommission(
   agent: String,
   commission: Uint128
@@ -245,27 +244,19 @@ transition AgentCommission(
   end
 end
 
-(* Sets a Self-Sovereign Identity domain name in the DNS *)
+(* Set a domain name in the DNS *)
 transition SetDomain(
   domain: String,
-  avatar: String,
+  username: String,
   agent: String
 )
-  (*Payment domain agent*);
-  taken <- exists dns[domain][avatar];
+  (*Payment domain agent;*)
+  taken <- exists dns[domain][username];
   match taken with
   | True =>
-      err = CodeDomainTaken;
-      ThrowError err
+      err = CodeDomainTaken; ThrowError err
   | False =>
-      dns[domain][avatar] := _sender;
-      msg = let m = {
-        _tag: "SetDomainCallBack";
-        _recipient: _sender;
-        _amount: zero;
-        domain: domain;
-        avatar: avatar
-      } in one_msg m; send msg
+      dns[domain][username] := _sender
   end
 end
 
@@ -291,7 +282,7 @@ transition Verify(
   token: String,
   agent: String
 )
-  (*Payment verify agent*);
+  (*Payment verify agent;*)
   proxy_addr <- records[token];
   match proxy_addr with
   | Some addr =>

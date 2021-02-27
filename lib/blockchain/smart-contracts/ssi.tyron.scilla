@@ -64,11 +64,13 @@ let option_uint128_value =
 
 let option_bystr33_value =
   let f = @option_value ByStr33 in f 
+
 let create = "DIDcreate"
 let recover = "DIDrecover"
 let update = "DIDupdate"
 let deactivate = "DIDdeactivate"
 let solana = "solana"
+let ssi = "ssi"
 
 type Action =
 | Add
@@ -124,7 +126,7 @@ with
   field init: ByStr20 = initTyron
 
 (* Dapp records
-  @key: DID domain name
+  @key: Domain name
 	@value: Address of dapp *)
   field dapp_records: Map String ByStr20 = Emp String ByStr20
 
@@ -194,11 +196,11 @@ end
 
 (* Update the owner address in a DID dapp *)
 transition UpdateDIDowner(
-  domain: String,
+  did: String,
   newOwner: ByStr20
 )
   VerifyCaller;
-  did_addr <- dapp_records[domain];
+  did_addr <- dapp_records[did];
   match did_addr with
   | Some addr =>
       msg = let m = {
@@ -211,18 +213,21 @@ transition UpdateDIDowner(
   end
 end
 
-(* Username for the Self-Sovereign Identity *)
-transition SetUsername(
-	username: String
+(* Set Domain for the Self-Sovereign Identity *)
+transition SetDomain(
+  username: String,
+  agent: String
 )
 	VerifyCaller;
   init_addr <- init;
 	accept;
 	msg = let m = {
-		_tag: "SetUsername";
+		_tag: "SetDomain";
 		_recipient: init_addr;
 		_amount: _amount;
-		username: username
+		domain: ssi;
+    username: username;
+    agent: agent
 	} in one_msg m; send msg
 end
 

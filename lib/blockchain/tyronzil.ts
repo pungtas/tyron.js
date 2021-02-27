@@ -18,7 +18,6 @@ import { Contract} from '@zilliqa-js/contract';
 import * as zcrypto from '@zilliqa-js/crypto';
 import * as Util from '@zilliqa-js/util';
 import ZilliqaInit from './zilliqa-init';
-import SmartUtil from './smart-contracts/smart-util';
 import { NetworkNamespace } from '../did/tyronZIL-schemes/did-scheme';
 import ErrorCode from '../did/util/ErrorCode';
 import { Action, DocumentElement, ServiceModel } from '../did/protocols/models/document-model';
@@ -31,7 +30,7 @@ export enum InitTyron {
 	Isolated = ""
 }
 
-/** The tyronZIL transaction class */
+/** tyronzil transaction class */
 export default class TyronZIL extends ZilliqaInit {
 	/** The owner of the Self-Sovereign-Identity */
 	public readonly owner: string;
@@ -177,22 +176,22 @@ export default class TyronZIL extends ZilliqaInit {
 		return deployed_contract;
 	}
 
-	/** Submits a tyronZIL transaction */
+	/***            ****            ***/
+
+	/** Submits a tyronzil transaction */
 	public static async submit(
-		input: TyronZIL,
-		didcAddr: string,
 		tag: TransitionTag,
-		params: TransitionParams[],
-		operation: string       // e.g. ".did"
+		input: TyronZIL,
+		ssiAddr: string,
+		amount: string,		
+		params: TransitionParams[]
 	): Promise<Transaction|void> {
 		
-		const SUBMIT = await input.API.blockchain.getSmartContractState(didcAddr)
-		.then(async smart_contract_state => {
-			const OPERATION_COST = smart_contract_state.result.operation_cost;
-			return await SmartUtil.getValuefromMap(OPERATION_COST, operation);
-		})
-		.then(async (operation_cost: any) => {
-			const AMOUNT = new Util.BN(operation_cost);
+		const SUBMIT = await input.API.blockchain.getSmartContractState(ssiAddr)
+		.then(async (smart_contract_state) => {
+			console.log(smart_contract_state);
+
+			const AMOUNT = new Util.BN(amount);
 			const USER_PUBKEY = zcrypto.getPubKeyFromPrivateKey(input.ownerPrivateKey);
 			
 			const USER_BALANCE = await input.API.blockchain.getBalance(input.owner);
@@ -210,7 +209,7 @@ export default class TyronZIL extends ZilliqaInit {
 				nonce: Number(USER_BALANCE.result.nonce)+ 1,
 				gasLimit: input.gasLimit,
 				gasPrice: input.gasPrice,
-				toAddr: didcAddr,
+				toAddr: ssiAddr,
 				pubKey: USER_PUBKEY,
 				data: JSON.stringify(TRANSITION),
 			};
@@ -220,12 +219,11 @@ export default class TyronZIL extends ZilliqaInit {
 		})
 		.then(async (raw_tx: any)  => {
 			input.API.wallet.addByPrivateKey(input.ownerPrivateKey);
-			
 			const SIGNED_TX = await input.API.wallet.signWith(raw_tx, input.owner);
 			return SIGNED_TX;
 		})
 		.then(async (signed_tx: any) => {
-			/** Sends the tyronZIL transaction to the Zilliqa blockchain platform */
+			/** Sends the tyronzil transaction to the Zilliqa blockchain platform */
 			const TX = await input.API.blockchain.createTransaction(signed_tx, 33, 1000);
 			return TX;
 		})
