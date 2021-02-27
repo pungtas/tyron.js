@@ -23,13 +23,6 @@ import ErrorCode from '../did/util/ErrorCode';
 import { Action, DocumentElement, ServiceModel } from '../did/protocols/models/document-model';
 import { PublicKeyModel } from '../did/protocols/models/verification-method-models';
 
-/** The INIT.tyron smart contracts */
-export enum InitTyron {
-	Testnet = "0x83715890960608c7d6ca4f31ad288a8d2780d344",
-	Mainnet = "",
-	Isolated = ""
-}
-
 /** tyronzil transaction class */
 export default class TyronZIL extends ZilliqaInit {
 	/** The owner of the Self-Sovereign-Identity */
@@ -37,7 +30,7 @@ export default class TyronZIL extends ZilliqaInit {
 	public readonly ownerPrivateKey: string;
 
 	/** The Zilliqa address of the INIT.tyron smart-contract */
-	public readonly initTyron: InitTyron;
+	public readonly initTyron: string;
 
 	public readonly gasPrice: Util.BN;
 	public readonly gasLimit: Util.Long;
@@ -46,7 +39,7 @@ export default class TyronZIL extends ZilliqaInit {
 		network: NetworkNamespace,
 		owner: string,
 		ownerPrivateKey: string,
-		initTyron: InitTyron,
+		initTyron: string,
 		gasPrice: Util.BN,
 		gasLimit: Util.Long,
 	) {
@@ -61,7 +54,7 @@ export default class TyronZIL extends ZilliqaInit {
 	/** Retrieves the minimum gas price & validates the account info */
 	public static async initialize(
 		network: NetworkNamespace,
-		initTyron: InitTyron,
+		initTyron: string,
 		ownerPrivateKey: string,
 		gasLimit: number
 	): Promise<TyronZIL> {
