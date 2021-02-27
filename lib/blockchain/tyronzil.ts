@@ -116,7 +116,7 @@ export default class TyronZIL extends ZilliqaInit {
 		
 		const deployed_contract = await input.API.blockchain.getBalance(input.owner)
 		.then( async user_balance => {
-			const [deployTx, didc] = await CONTRACT.deploy(
+			const [deployTx, contract] = await CONTRACT.deploy(
 				{
 					version: input.zilVersion,
 					gasPrice: input.gasPrice,
@@ -135,7 +135,7 @@ export default class TyronZIL extends ZilliqaInit {
 			const DEPLOYMENT_GAS = (deployTx.getReceipt())!.cumulative_gas;
 		
 			// Calling the Init transition
-			const INIT_CALL = await didc.call(
+			const INIT_CALL = await contract.call(
 				'Init',
 				[
 					{
@@ -155,11 +155,11 @@ export default class TyronZIL extends ZilliqaInit {
 				false
 			);
 			if(!INIT_CALL.isConfirmed()) {
-				throw new ErrorCode("CodeNotInitialized", "The DIDC did not get initialized")
+				throw new ErrorCode("CodeNotInitialized", "The contract did not get initialized")
 			}
 			const DEPLOYED_CONTRACT: DeployedContract = {
 				transaction: deployTx,
-				contract: didc,
+				contract: contract,
 				gas: DEPLOYMENT_GAS,
 				initCall: INIT_CALL
 			};
@@ -225,7 +225,7 @@ export default class TyronZIL extends ZilliqaInit {
 			const TRANSACTION = await transaction.confirm(TRAN_ID, 33, 1000)
 			const STATUS = transaction.isConfirmed();
 			if(!STATUS){
-				throw new ErrorCode("TyronZIL","The ${tag} tyronZIL transaction was unsuccessful!");
+				throw new ErrorCode("TyronZIL",`The ${tag} tyronZIL transaction was unsuccessful!`);
 			}
 			return TRANSACTION;
 		})
@@ -639,7 +639,7 @@ export default class TyronZIL extends ZilliqaInit {
 
 		const BENEFICIARY:TransitionParams = {
 			vname: 'beneficiary',
-			type: 'string',
+			type: 'String',
 			value: beneficiary,
 		};
 		PARAMS.push(BENEFICIARY);
@@ -649,7 +649,7 @@ export default class TyronZIL extends ZilliqaInit {
 
 /***            ** interfaces **            ***/
 
-/** The result of a DIDC deployment */
+/** The result of a contract deployment */
 export interface DeployedContract {
 	transaction: Transaction,
 	contract: Contract,
