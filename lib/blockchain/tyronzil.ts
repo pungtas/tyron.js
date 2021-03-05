@@ -178,7 +178,7 @@ export default class TyronZIL extends ZilliqaInit {
 		ssiAddr: string,
 		amount: string,		
 		params: TransitionParams[]
-	): Promise<Transaction|void> {
+	): Promise<Transaction> {
 		
 		const SUBMIT = await input.API.blockchain.getSmartContractState(ssiAddr)
 		.then(async (smart_contract_state) => {
