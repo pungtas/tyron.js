@@ -28,7 +28,7 @@ export default class SmartUtil {
         return VALUE![0];
     }
 
-    /** Gets the DID-Status out of a DID.tyron field Option */
+    /** Gets the DID-Status out of field Option */
     public static async getStatus(object: any): Promise<string> {
         const ENTRIES = Object.entries(object);
         let VALUE: string;

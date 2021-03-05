@@ -67,7 +67,7 @@ transition xZIL(
   e = {
     _eventname: "xZIL deposit";
     originator: originator;
-    beneficiary: originator;
+    beneficiary: beneficiary;
     amount: _amount
   }; event e
 end

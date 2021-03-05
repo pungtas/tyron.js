@@ -39,7 +39,7 @@ export default class SsiState {
             const STATE = {
                     owner: String(contract_state.result.owner),
                     ssi: String(contract_state.result.ssi),
-                    solana_addr: String()
+                    solana_addr: String(contract_state.result.solana_addr)
                 };
             return new SsiState(STATE);
         })
