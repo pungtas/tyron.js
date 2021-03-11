@@ -1,6 +1,6 @@
 /*
-    tyronzil-js: Tyron Self-Sovereign Identity Library
-    Copyright (C) 2021 Tyron Pungtas Open Association
+    tyron.js: Tyron Self-Sovereign Identity Library
+    Copyright (C) 2021 Tyron Pungtas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ import { OperationType } from '../protocols/sidetree';
 import { Cryptography, OperationKeyPairInput, TyronPrivateKeys } from '../util/did-keys';
 import { TransitionValue } from '../../blockchain/tyronzil';
 import { PrivateKeyModel, PublicKeyInput } from '../protocols/models/verification-method-models';
-import { NetworkNamespace } from '../tyronZIL-schemes/did-scheme';
+import { NetworkNamespace } from '../tyronzil-schemes/did-scheme';
 
 /** Generates a `Tyron DID-Create` operation
  *  which produces the `DID-Document` & metadata */

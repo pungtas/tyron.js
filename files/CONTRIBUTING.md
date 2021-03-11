@@ -2,7 +2,7 @@
 
 Thanks for your interest in contributing to this project.
 
-It'd be so cool to have a growing number of contributors, and you are encouraged to become one of them! That would help tyron to achieve its purpose:
+It'd be so cool to have a growing number of contributors, and you are encouraged to become one of them! That would help Tyron to achieve its purpose:
 
 ```rust
 To give people sovereignty over their data
@@ -36,6 +36,6 @@ To share your contributions, please send a pull request.
 
 ## Contact info
 
-eMail: juliocabdu@pm.me
+Tyron Pungtas
 
-Mobile: (+45)429-553-20 (same number on Signal, Telegram, WhatsApp and iMessage)
+eMail: pungtas@pm.me

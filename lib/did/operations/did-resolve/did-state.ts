@@ -14,8 +14,8 @@
 */
 
 import TyronState from '../../../blockchain/tyron-state';
-import { NetworkNamespace } from '../../tyronZIL-schemes/did-scheme';
-import DidUrlScheme from '../../tyronZIL-schemes/did-url-scheme';
+import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
+import DidUrlScheme from '../../tyronzil-schemes/did-url-scheme';
 import { OperationType } from '../../protocols/sidetree';
 
 /** The Tyron DID-State */

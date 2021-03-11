@@ -1,7 +1,7 @@
 (*
-solana.tyron: Solana Bridge Smart Contract
+bridge.tyron: SSI Bridge Smart Contract
 Tyron Self-Sovereign Identity Protocol
-Copyright (C) 2021 Tyron Pungtas Open Association 
+Copyright (C) 2021 Tyron Pungtas
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@ GNU General Public License for more details.
 
 scilla_version 0
 
-library Solana
+library Bridge
 
 type Error =
 | CodeNotRightCaller
@@ -26,7 +26,7 @@ let make_error = fun (error: Error) =>
   | CodeNotRightCaller      => Int32 -1
   end in {_exception: "Error"; code: result}
   
-contract Solana(
+contract Bridge(
   (* Initial admin of the smart contract *)
   initAdmin: ByStr20
 )

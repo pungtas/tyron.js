@@ -1,6 +1,6 @@
 /*
-    tyronzil-js: Tyron Self-Sovereign Identity Library
-    Copyright (C) 2021 Tyron Pungtas Open Association
+    tyron.js: Tyron Self-Sovereign Identity Library
+    Copyright (C) 2021 Tyron Pungtas
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
     GNU General Public License for more details.
 */
 
-import { NetworkNamespace } from '../did/tyronZIL-schemes/did-scheme';
+import { NetworkNamespace } from '../did/tyronzil-schemes/did-scheme';
 import * as API from '@zilliqa-js/zilliqa';
 import * as Util from '@zilliqa-js/util';
 

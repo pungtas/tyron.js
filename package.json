@@ -1,7 +1,7 @@
 {
-  "name": "tyronzil-js",
+  "name": "tyron.js",
   "version": "1.3.6",
-  "description": "tyronzil-js: Tyron Self-Sovereign Identity Library",
+  "description": "tyron.js: Tyron Self-Sovereign Identity Library",
   "main": "dist/core.js",
   "scripts": {
     "build": "tsc && copyfiles \"package.json\" dist",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pungtas/tyronzil-js.git"
+    "url": "git+https://github.com/pungtas/tyron.js.git"
   },
   "keywords": [
     "did",
@@ -22,15 +22,15 @@
     "self-sovereign identity protocol",
     "tyron",
     "tyronzil",
-    "tyronzil-js",
+    "tyron.js",
     "zilliqa"
   ],
   "author": "https://github.com/pungtas",
   "license": "GPL-3.0-only",
   "bugs": {
-    "url": "https://github.com/pungtas/tyronzil-js/issues"
+    "url": "https://github.com/pungtas/tyron.js/issues"
   },
-  "homepage": "https://github.com/pungtas/tyronzil-js#readme",
+  "homepage": "https://github.com/pungtas/tyron.js#readme",
   "dependencies": {
     "@types/websocket": "^1.0.1",
     "@zilliqa-js/zilliqa": "2.2.0",

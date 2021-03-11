@@ -16,7 +16,7 @@
 import * as zcrypto from '@zilliqa-js/crypto';
 import SmartUtil from "../../../blockchain/smart-contracts/smart-util";
 import ZilliqaInit from '../../../blockchain/zilliqa-init';
-import { NetworkNamespace } from '../../tyronZIL-schemes/did-scheme';
+import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
 import CodeError from '../../util/ErrorCode';
 
 export default class Resolver {

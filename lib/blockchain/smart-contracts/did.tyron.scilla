@@ -1,7 +1,7 @@
 (*
 DID.tyron: Decentralized Identifier Smart Contract
 Tyron Self-Sovereign Identity Protocol
-Copyright (C) 2021 Tyron Pungtas Open Association
+Copyright (C) 2021 Tyron Pungtas
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -319,6 +319,18 @@ procedure Timestamp()
   transaction_number := new_tx_number
 end
 
+procedure SetDomain(
+  domain: String
+)
+  owner_addr <- owner;
+  msg = let m = {
+		_tag: "SetDidDomain";
+		_recipient: owner_addr;
+		_amount: zero;
+		domain: domain
+	} in one_msg m; send msg
+end
+
 transition UpdateOwner(
   newOwner: ByStr20
 )
@@ -331,7 +343,8 @@ transition DIDcreate(
   updateKey: Option ByStr33,
   document: Option (List Document),
   signedData: Option ByStr,
-  signature: Option ByStr64
+  signature: Option ByStr64,
+  domain: String
 )
   VerifyOwner; IsOperational;
   this_did =
@@ -348,7 +361,8 @@ transition DIDcreate(
       current_block <- &BLOCKNUMBER;
       created := current_block;
       Timestamp
-  end
+  end;
+  SetDomain domain
 end
 
 transition DIDrecover(

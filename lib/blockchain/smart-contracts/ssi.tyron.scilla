@@ -1,7 +1,7 @@
 (*
 SSI.tyron: Self-Sovereign Identity Smart Contract
 Tyron Self-Sovereign Identity Protocol
-Copyright (C) 2021 Tyron Pungtas Open Association 
+Copyright (C) 2021 Tyron Pungtas 
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -69,7 +69,6 @@ let create = "DIDcreate"
 let recover = "DIDrecover"
 let update = "DIDupdate"
 let deactivate = "DIDdeactivate"
-let solana = "solana"
 let ssi = "ssi"
 
 type Action =
@@ -103,7 +102,7 @@ contract SSI(
 	initOwner: ByStr20,
 
   (* For meta-transactions *)
-  initController: ByStr20,
+  initAgent: ByStr20,
   
   (* INIT.tyron smart contract *)
   initTyron: ByStr20
@@ -116,19 +115,26 @@ with
   field owner: ByStr20 = initOwner
 
   field ssi: Option ByStr33 = None{ByStr33}
+  
+  field social_recovery: ByStr33 = zero_bystr33
 
-  field solana_addr: String = solana
+  field network_addr: String = ""
 
-(* The controller can make meta-transactions and pay the gas *)
-  field controller: ByStr20 = initController
+(* The agent can make meta-transactions and pay the gas *)
+  field agent: ByStr20 = initAgent
 
 (* INIT.tyron current implementation *)
   field init: ByStr20 = initTyron
 
 (* Dapp records
   @key: Domain name
-	@value: Address of dapp *)
+	@value: Dapp address *)
   field dapp_records: Map String ByStr20 = Emp String ByStr20
+
+(* DID records
+  @key: Domain name
+	@value: DID address *)
+  field did_records: Map String ByStr20 = Emp String ByStr20
 
 (* Token implementations
   @key: address
@@ -151,10 +157,10 @@ end
 
 procedure VerifyCaller()
   owner_addr <- owner;
-  controller_addr <- controller;
+  agent_addr <- agent;
   is_caller =
     let is_owner = builtin eq owner_addr _sender in
-    let is_controller = builtin eq controller_addr _sender in orb is_owner is_controller;
+    let is_agent = builtin eq agent_addr _sender in orb is_owner is_agent;
   match is_caller with
   | True =>
   | False => err= CodeWrongCaller; ThrowError err
@@ -178,12 +184,12 @@ transition UpdateOwner(
   owner := newOwner
 end
 
-(* Update the controller address *)
-transition UpdateController(
-  newController: ByStr20
+(* Update the agent address *)
+transition UpdateAgent(
+  newAgent: ByStr20
 )
   VerifyCaller;
-  controller := newController
+  agent := newAgent
 end
 
 (* Update the INIT.tyron address *)
@@ -213,10 +219,9 @@ transition UpdateDIDowner(
   end
 end
 
-(* Set Domain for the Self-Sovereign Identity *)
+(* Set a domain name for the Self-Sovereign Identity *)
 transition SetDomain(
-  username: String,
-  agent: String
+  username: String
 )
 	VerifyCaller;
   init_addr <- init;
@@ -227,8 +232,22 @@ transition SetDomain(
 		_amount: _amount;
 		domain: ssi;
     username: username;
-    agent: agent
+    agent: _sender
 	} in one_msg m; send msg
+end
+
+(* Set a DID domain name in the did_records *)
+transition SetDidDomain(
+  domain: String
+)
+  (* WIP: do remote read to verify DID has the SSI as owner *)
+  taken <- exists did_records[domain];
+  match taken with
+  | True =>
+      err = CodeNotValid; ThrowError err
+  | False =>
+      did_records[domain] := _sender
+  end
 end
 
 (* Decentralized Identifier CRUD operations *)
@@ -242,8 +261,8 @@ transition CRUD(
   signature: Option ByStr64
 )
   VerifyCaller;
-  this_addr <- dapp_records[domain];
-  match this_addr with
+  did_addr <- did_records[domain];
+  match did_addr with
   | Some addr =>
       msg = let m = {
         _tag: tag;
@@ -254,19 +273,18 @@ transition CRUD(
         recoveryKey: recoveryKey;
         updateKey: updateKey
       } in one_msg m; send msg
-  | None =>
-      err = CodeWrongDomain;
-      ThrowError err
+  | None => err = CodeWrongDomain; ThrowError err
   end
 end
 
+(* WIP: send funds to dapp *)
 transition DIDdapp(
   domain: String,
   tag: String
 )
   VerifyCaller;
-  this_addr <- dapp_records[domain];
-  match this_addr with
+  dapp_addr <- dapp_records[domain];
+  match dapp_addr with
   | Some addr =>
       msg = let m = {
         _tag: tag;
@@ -281,6 +299,20 @@ end
 (*---------*)
 (* xWallet *)
 (*---------*)
+
+transition SocialRecovery(
+  newOwner: ByStr20,
+  signature: ByStr64
+)
+  VerifyCaller;
+  social_recovery_key <- social_recovery;
+  signed_data = builtin to_bystr newOwner;
+  signature_is_right = builtin schnorr_verify social_recovery_key signed_data signature;
+  match signature_is_right with
+  | False => err = CodeWrongSignature; ThrowError err
+  | True => owner := newOwner
+  end
+end
 
 (* Verifify the validity, check & update the balance of tokens *)
 procedure XWallet(
@@ -305,8 +337,7 @@ procedure XWallet(
 end
 
 procedure Verify(
-  token: String,
-  agent: String
+  token: String
 )
   init_addr <- init;
   accept;
@@ -315,7 +346,7 @@ procedure Verify(
     _recipient: init_addr;
     _amount: _amount;
     token: token;
-    agent: agent
+    agent: _sender
   } in one_msg m; send msg
 end
 
@@ -361,7 +392,6 @@ end
 (* Transfer ZRC-2 tokens *)
 transition XTransfer(
   token: String,
-  agent: String,
   recipient: ByStr20,
   amount: Uint128
 ) 
@@ -371,7 +401,7 @@ transition XTransfer(
   is_enough = builtin lt amount balance;
   match is_enough with
   | True =>
-      Verify token agent;
+      Verify token;
       proxy_addr <- dapp_records[token];
       match proxy_addr with
       | Some addr =>
@@ -398,13 +428,13 @@ transition TransferSuccessCallBack(
 end
 
 procedure VerifySignature(
-    signedData: ByStr,
-    sig: ByStr64
+  signedData: ByStr,
+  signature: ByStr64
 )
   ssi_key <- ssi;
   match ssi_key with
   | Some key =>
-      signature_is_right = builtin schnorr_verify key signedData sig;
+      signature_is_right = builtin schnorr_verify key signedData signature;
       match signature_is_right with
       | True =>
       | False => err = CodeWrongSignature; ThrowError err
@@ -414,15 +444,17 @@ procedure VerifySignature(
 end
   
 transition xZIL(
+  network: String,
   amount: Uint128,
   signedData: ByStr,
   sig: ByStr64,
   beneficiary: String
 )
+  VerifyCaller;
   VerifySignature signedData sig;
-  Verify solana solana;
-  proxy_addr <- dapp_records[solana];
-  originator <- solana_addr;
+  Verify network;
+  proxy_addr <- dapp_records[network];
+  originator <- network_addr;
   match proxy_addr with
   | Some addr =>
       accept;
@@ -434,5 +466,5 @@ transition xZIL(
         beneficiary: beneficiary
       } in one_msg m ; send msg
   | None => err= CodeNotProxy; ThrowError err
-      end
+  end
 end
