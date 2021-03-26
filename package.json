@@ -2,15 +2,14 @@
   "name": "tyron.js",
   "version": "1.4.2",
   "description": "tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library",
-  "unpkg": "bundles/tyron.min.js",
   "files": [
     "bundles"
   ],
   "scripts": {
-    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"zilliqa.min.js\" dist/bundles",
     "lint": "eslint . --ext .ts",
     "typedoc": "typedoc --out typedocs",
-    "build:web": "webpack --progress --config webpack.config.js"
+    "build:web": "webpack --progress --config webpack.config.js",
+    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"zilliqa.min.js\" bundles && npm run build:web"
   },
   "repository": {
     "type": "git",
@@ -43,12 +42,13 @@
     "@types/websocket": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
+    "babel-minify-webpack-plugin": "^0.3.1",
     "copyfiles": "^2.3.0",
     "eslint": "^7.6.0",
     "ts-loader": "^8.0.4",
     "typedoc": "^0.17.8",
     "typescript": "^3.9.7",
-    "webpack": "^4.20.2",
+    "webpack": "^4.0.0",
     "webpack-command": "^0.4.1"
   }
 }

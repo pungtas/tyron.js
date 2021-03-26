@@ -1,42 +1,31 @@
-const path = require('path');
-const webpack = require('webpack');
+const BabelMinify = require("babel-minify-webpack-plugin");
+const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
-  // generate source maps
   devtool: 'source-map',
 
-  // bundling mode
   mode: 'production',
   target: 'web',
   node: {
     fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
   },
 
-  // entry files
   entry: {
-    tyron: path.resolve(__dirname, 'lib/index.ts'),
+    tyron: path.resolve(__dirname, "dist/index.js"),
   },
 
-  // output bundles (location)
   output: {
-    path: path.resolve(__dirname, 'dist/bundles'),
     filename: '[name].min.js',
-    library: 'tyron',
-    libraryTarget: 'umd',
+    path: path.resolve(__dirname, "bundles")
   },
 
-  // file resolutions
   resolve: {
-    extensions: ['.ts', '.js'],
     alias: {
-      'tyron': path.resolve(
-        __dirname,
-        'lib/index.ts',
-      ),
+      process: "process/browser",
+      crypto: "crypto-browserify",
+      stream: "stream-browserify"
     },
-    modules: ['node_modules'],
   },
 
   // loaders
@@ -55,12 +44,14 @@ module.exports = {
     ],
   },
 
-  // plugins
   plugins: [
-    new webpack.SourceMapDevToolPlugin({
-      filename: '[file].map',
+    new webpack.ProvidePlugin({
+      process: 'process/browser'
     }),
   ],
+  optimization: {
+    minimizer: [new BabelMinify({ mangle: false })]
+  },
 
   // set watch mode to `true`
   watch: false,
