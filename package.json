@@ -5,6 +5,7 @@
   "files": [
     "bundles"
   ],
+  "unpkg": "bundles",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "typedoc": "typedoc --out typedocs",
