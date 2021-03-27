@@ -2,7 +2,7 @@
 
 ```own your data, empower your world```
 
-Open-source TypeScript library to build React Native applications and Node.js clients that integrate the [Tyron Self-Sovereign Identity Protocol](https://www.tyronzil.com).
+Open-source JavaScript/TypeScript library to build web applications and Node.js clients that integrate the [Tyron Self-Sovereign Identity Protocol](https://www.tyronzil.com).
 
 ## W3C DID Method
 
