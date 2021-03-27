@@ -1,11 +1,11 @@
 {
-  "name": "tyron.js",
-  "version": "1.4.3",
+  "name": "tyron",
+  "version": "1.4.4",
   "description": "tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library",
   "files": [
     "bundles"
   ],
-  "unpkg": "bundles",
+  "unpkg": "bundles/tyron.min.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "typedoc": "typedoc --out typedocs",
