@@ -25,13 +25,11 @@ import { PublicKeyModel } from '../did/protocols/models/verification-method-mode
 
 /** tyronzil transaction class */
 export default class TyronZIL extends ZilliqaInit {
-	/** The owner of the Self-Sovereign-Identity */
+	/** Address of the owner of the self-sovereign identity */
 	public readonly owner: string;
 	public readonly ownerPrivateKey: string;
-
-	/** The Zilliqa address of the INIT.tyron smart-contract */
+	/** Address of the INIT.tyron smart contract */
 	public readonly initTyron: string;
-
 	public readonly gasPrice: Util.BN;
 	public readonly gasLimit: Util.Long;
 
@@ -78,10 +76,8 @@ export default class TyronZIL extends ZilliqaInit {
 		return transaction_init;
 	}
 
-	/***            ****            ***/
-
 	/** Deploys the SSI by version
-	 * & calls the Init transition with the avatar.agent */
+	 * & calls the Init transition with the agent's name */
 	public static async deploy(
 		agent: string,
 		input: TyronZIL,
@@ -129,7 +125,7 @@ export default class TyronZIL extends ZilliqaInit {
 			);
 			const IS_DEPLOYED = deployTx.isConfirmed();
 			if(!IS_DEPLOYED) {
-				throw new ErrorCode("Wrong-Deployment","The SSI did not get deployed")
+				throw new ErrorCode("Wrong-Deployment","The SSI did not get deployed.")
 			}
 			
 			const DEPLOYMENT_GAS = (deployTx.getReceipt())!.cumulative_gas;
@@ -168,8 +164,6 @@ export default class TyronZIL extends ZilliqaInit {
 		.catch(err => { throw err });
 		return deployed_contract;
 	}
-
-	/***            ****            ***/
 
 	/** Submits a tyronzil transaction */
 	public static async submit(
