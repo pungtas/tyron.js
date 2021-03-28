@@ -1,3 +1,4 @@
-dist/
-node_modules/
-typedocs/
+/dist
+/node_modules
+/typedocs
+/bundles
