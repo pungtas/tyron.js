@@ -27,7 +27,7 @@ export enum Accept {
 	Result = "application/did+json;profile='https://w3c-ccg.github.io/did-resolution'"        //requests a DID-Resolution-Result as output
 }
 
-/** Generates a `Tyron DID-Document` */
+/** Generates a Tyron DID Document */
 export default class DidDoc {
 	public readonly id: string;
 	public readonly publicKey?: VerificationMethodModel;
@@ -51,8 +51,6 @@ export default class DidDoc {
 		this.xsgdKey = scheme.verificationMethods!.xsgdKey;
 		this.service = scheme.service;
 	}
-
-	/***            ****            ***/
 
 	/** The `Tyron DID-Resolution` method */
 	public static async resolution(network: NetworkNamespace, input: ResolutionInput): Promise<DidDoc|ResolutionResult> {
@@ -85,8 +83,6 @@ export default class DidDoc {
 		.catch(err => { throw err })
 		return DID_RESOLVED;
 	}
-
-	/***            ****            ***/
 
 	/** Generates a 'Tyron DID-Read' operation, resolving any `Tyron DID-state` into its DID-Document */
 	public static async read(state: DidState): Promise<DidDoc> {
@@ -140,8 +136,6 @@ export default class DidDoc {
 				}
 			};
 			
-			/***            ****            ***/
-
 			/** Service property */
 			const services = state.services;
 			const SERVICES = [];
