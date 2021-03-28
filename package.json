@@ -3,14 +3,14 @@
   "version": "1.5.0",
   "description": "tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library",
   "files": [
-    "dist/bundles"
+    "bundles"
   ],
-  "unpkg": "dist/bundles/tyron.min.js",
+  "unpkg": "bundles/tyron.min.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "typedoc": "typedoc --out typedocs",
     "build:web": "webpack --progress --config webpack.config.js",
-    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"zilliqa.min.js\" dist/bundles && copyfiles \"LICENSE\" dist && npm run build:web"
+    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"zilliqa.min.js\" bundles && copyfiles \"LICENSE\" dist && npm run build:web"
   },
   "repository": {
     "type": "git",
