@@ -17,7 +17,7 @@ module.exports = {
 
   output: {
     filename: '[name].min.js',
-    path: path.resolve(__dirname, "bundles"),
+    path: path.resolve(__dirname, "dist/bundles"),
     library: "Tyron"
   },
 
