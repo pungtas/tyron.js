@@ -1,7 +1,7 @@
 {
   "name": "tyron",
   "version": "1.5.3",
-  "description": "tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library",
+  "description": "tyron.js: Tyron Self-Sovereign Identity Protocol JavaScript/TypeScipt library",
   "files": [
     "bundles"
   ],
@@ -17,17 +17,19 @@
     "url": "git+https://github.com/pungtas/tyron.js.git"
   },
   "keywords": [
-    "did",
+    "tyron",
+    "tyron-ssi",
+    "self-sovereign-identity",
+    "ssi",
     "decentralized-identity",
     "decentralized-identifiers",
+    "did",
     "decentralized-application",
     "dapp",
-    "self-sovereign identity",
-    "self-sovereign identity protocol",
-    "tyron",
+    "zilliqa",
+    "scilla",
     "tyronzil",
-    "tyron.js",
-    "zilliqa"
+    "tyron.js"
   ],
   "author": "https://github.com/pungtas",
   "license": "GPL-3.0-only",
