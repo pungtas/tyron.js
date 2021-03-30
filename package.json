@@ -1,6 +1,6 @@
 {
   "name": "tyron",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "description": "tyron.js: Tyron Self-Sovereign Identity Protocol JavaScript/TypeScipt library",
   "files": [
     "bundles"
