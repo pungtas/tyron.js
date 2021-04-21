@@ -52,6 +52,6 @@
     "typedoc": "^0.17.8",
     "typescript": "^3.9.7",
     "webpack": "^4.0.0",
-    "webpack-command": "^0.4.1"
+    "webpack-command": "^0.1.1"
   }
 }
