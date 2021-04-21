@@ -1,6 +1,6 @@
 /*
     tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+	Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
