@@ -1,6 +1,7 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+    tyron.js: SSI Protocol's JavaScript/TypeScipt library
+    Self-Sovereign Identity Protocol.
+    Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,37 +16,29 @@
 
 import { NetworkNamespace } from '../did/tyronzil-schemes/did-scheme';
 import ZilliqaInit from './zilliqa-init';
-import SmartUtil from './smart-contracts/smart-util';
+import SmartUtil from './smart-util';
 import { OperationType } from '../did/protocols/sidetree';
 import ErrorCode from '../did/util/ErrorCode';
 
 export default class TyronState {
-    public readonly contract_owner: string;
-    public readonly decentralized_identifier: string;
-    public readonly tyron_hash: string;
+    public readonly did: string;
     public readonly did_status: OperationType;
+    public readonly owner: string;
     public readonly verification_methods: Map<string, string>;
     public readonly services: Map<string, [string, string]>
     public readonly did_update_key: string;
     public readonly did_recovery_key: string;
-    public readonly created: number;
-    public readonly ledger_time: number;
-    public readonly sidetree_transaction_number: number;
 
     private constructor(
         state: TyronStateModel
     ) {
-        this.contract_owner = state.contract_owner;
-        this.decentralized_identifier = state.decentralized_identifier;
-        this.tyron_hash = state.tyron_hash;
+        this.did = state.did;
         this.did_status = state.did_status as OperationType;
+        this.owner = state.owner;
         this.verification_methods = state.verification_methods;
         this.services = state.services;
         this.did_update_key = state.did_update_key;
         this.did_recovery_key = state.did_recovery_key;
-        this.created = state.created;
-        this.ledger_time = state.ledger_time;
-        this.sidetree_transaction_number = state.sidetree_transaction_number;
     }
 
     /** Fetches the current state from the blockchain 
@@ -61,17 +54,13 @@ export default class TyronState {
                     throw new ErrorCode("DidDeactivated", "The requested DID is deactivated");
                 default:
                     const STATE: TyronStateModel = {
-                        contract_owner: String(didc_state.result.contract_owner),
-                        decentralized_identifier: String(didc_state.result.decentralized_identifier),
-                        tyron_hash: await SmartUtil.getValue(didc_state.result.tyron_hash),
+                        owner: String(didc_state.result.owner),
+                        did: String(didc_state.result.did),
                         did_status: STATUS,
                         verification_methods: await SmartUtil.intoMap(didc_state.result.verification_methods),
                         services: await SmartUtil.fromServices(didc_state.result.services),
                         did_update_key: await SmartUtil.getValue(didc_state.result.did_update_key),
-                        did_recovery_key: await SmartUtil.getValue(didc_state.result.did_recovery_key),
-                        created: Number(didc_state.result.created),
-                        ledger_time: Number(didc_state.result.ledger_time),
-                        sidetree_transaction_number: Number(didc_state.result.sidetree_transaction_number),
+                        did_recovery_key: await SmartUtil.getValue(didc_state.result.did_recovery_key)
                     };
                     return new TyronState(STATE);
             }
@@ -81,19 +70,13 @@ export default class TyronState {
     }
 }
 
-/***            ** interfaces **            ***/
-
 /** The Tyron State Model */
 export interface TyronStateModel {
-    contract_owner: string;
-    decentralized_identifier: string;
-    tyron_hash: string;
+    did: string;
     did_status: string;
+    owner: string;
     verification_methods: Map<string, string>;
     services: Map<string, [string, string]>;
     did_update_key: string;
     did_recovery_key: string;
-    created: number;
-    ledger_time: number;
-    sidetree_transaction_number: number;
 }

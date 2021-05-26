@@ -1,6 +1,7 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+	Self-Sovereign Identity Protocol.
+	Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,23 +21,20 @@ import { OperationType } from '../../protocols/sidetree';
 
 /** The Tyron DID-State */
 export default class DidState {
-	public readonly contract_owner: string;
-	public readonly decentralized_identifier: string;
-	public readonly did_status: OperationType;
-	public readonly tyron_hash: string;
+	public readonly did: string;
+    public readonly did_status: OperationType;
+    public readonly owner: string;
 	public readonly verification_methods: Map<string, string>;
 	public readonly services: Map<string, [string, string]>;
-	
 	public readonly did_update_key: string;
 	public readonly did_recovery_key: string;
 	
 	private constructor(
 		state: DidStateModel
 	) {
-		this.contract_owner = state.contract_owner;
-		this.decentralized_identifier = state.decentralized_identifier;
-		this.did_status = state.did_status;
-		this.tyron_hash = state.tyron_hash;
+		this.did = state.did;
+        this.did_status = state.did_status as OperationType;
+        this.owner = state.owner;
 		this.verification_methods = state.verification_methods;
 		this.services = state.services;
 		this.did_update_key = state.did_update_key;
@@ -50,33 +48,29 @@ export default class DidState {
 		const did_state = await TyronState.fetch(network, didcAddr)
 		.then(async tyron_state => {
 			// Validates the Tyron DID-Scheme
-			await DidUrlScheme.validate(tyron_state.decentralized_identifier);
+			await DidUrlScheme.validate(tyron_state.did);
 			
-			const THIS_STATE: DidStateModel = {
-				contract_owner: tyron_state.contract_owner,
-				decentralized_identifier: tyron_state.decentralized_identifier,
+			const this_state: DidStateModel = {
+				did: tyron_state.did,
 				did_status: tyron_state.did_status,
-				tyron_hash: tyron_state.tyron_hash,
+				owner: tyron_state.owner,
 				verification_methods: tyron_state.verification_methods,
 				services: tyron_state.services,
 				did_update_key: tyron_state.did_update_key,
 				did_recovery_key: tyron_state.did_recovery_key
 			};
-			return new DidState(THIS_STATE);
+			return new DidState(this_state);
 		})
 		.catch(err => { throw err })
 		return did_state;
 	}
 }
 
-/***            ** interfaces **            ***/
-
 /** The state model of a Tyron Decentralized Identifier */
 export interface DidStateModel {
-	contract_owner: string;
-	decentralized_identifier: string;
+	did: string;
 	did_status: OperationType;
-	tyron_hash: string;
+	owner: string;
 	verification_methods: Map<string, string>;
 	services: Map<string, [string, string]>;
 	did_update_key: string;

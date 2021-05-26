@@ -1,6 +1,7 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+	Self-Sovereign Identity Protocol.
+	Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,7 +87,7 @@ export default class DidDoc {
 
 	/** Generates a 'Tyron DID-Read' operation, resolving any `Tyron DID-state` into its DID-Document */
 	public static async read(state: DidState): Promise<DidDoc> {
-		const DID_DOC = await DidUrlScheme.validate(state.decentralized_identifier)
+		const DID_DOC = await DidUrlScheme.validate(state.did)
 		.then(async did_scheme => {
 			const ID = did_scheme.did;
 			

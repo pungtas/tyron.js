@@ -1,17 +1,19 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+  	Self-Sovereign Identity Protocol.
+  	Copyright (C) Tyron Pungtas and its affiliates.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 */
+
 
 import * as zcrypto from '@zilliqa-js/crypto';
 import TyronZIL, { TransitionValue } from '../../blockchain/tyronzil';
@@ -21,7 +23,7 @@ import ErrorCode from './ErrorCode';
 
 /** Defines input data to generate a cryptographic key pair */
 export interface OperationKeyPairInput {
-  id: string        //the key purpose      
+	id: string        //the key purpose      
 }
 
 /** Generates cryptographic operations */
@@ -29,108 +31,108 @@ export class Cryptography {
   	/** Asymmetric cryptography to generate the key pair using the KEY_ALGORITHM (secp256k1)
     * @returns [publicKey, privateKey] */
   	public static async operationKeyPair(input: OperationKeyPairInput): Promise<[TransitionValue, PrivateKeyModel]> {
-		const PRIVATE_KEY = zcrypto.schnorr.generatePrivateKey();
-		const PUBLIC_KEY = "0x"+ zcrypto.getPubKeyFromPrivateKey(PRIVATE_KEY);
-		const VERIFICATION_METHOD: PublicKeyModel = {
+		const private_key = zcrypto.schnorr.generatePrivateKey();
+		const public_key = "0x"+ zcrypto.getPubKeyFromPrivateKey(private_key);
+		const verification_method: PublicKeyModel = {
 			id: input.id,
-			key: PUBLIC_KEY
+			key: public_key
 		};
-		const DOC_ELEMENT = await TyronZIL.documentElement(
+		const doc_element = await TyronZIL.documentElement(
 			DocumentElement.VerificationMethod,
 			Action.Adding,
-			VERIFICATION_METHOD
+			verification_method
 		);
-		const PRIVATE_KEY_MODEL: PrivateKeyModel = {
+		const private_key_model: PrivateKeyModel = {
 			id: input.id,
-			key: PRIVATE_KEY
+			key: private_key
 		};
 
-		return [DOC_ELEMENT, PRIVATE_KEY_MODEL];
+		return [doc_element, private_key_model];
 	}
 
 	/** Generates a secp256k1 key pair
 	 * @returns [publicKey, privateKey] */
-	public static async keyPair(id: string): Promise<[string, PrivateKeyModel]> {
-		const PRIVATE_KEY = zcrypto.schnorr.generatePrivateKey();
-		const PUBLIC_KEY = zcrypto.getPubKeyFromPrivateKey(PRIVATE_KEY);
-		const PRIVATE_KEY_MODEL = {
+	public static async keyPair(id: string): Promise< [string, PrivateKeyModel] > {
+		const private_key = zcrypto.schnorr.generatePrivateKey();
+		const public_key = zcrypto.getPubKeyFromPrivateKey(private_key);
+		const private_key_model = {
 			id: id,
-			key: PRIVATE_KEY
+			key: private_key
 		}
-		return [PUBLIC_KEY, PRIVATE_KEY_MODEL];
+		return [public_key, private_key_model];
 	}
 
-	public static async processKeys(input: PublicKeyModel[]|PrivateKeyModel[]): Promise<TyronPublicKeys|TyronPrivateKeys> {
-		const KEY_ID_SET: Set<string> = new Set();
-		let KEYS = {};
-		let NEW_KEY;
+	public static async processKeys( input: PublicKeyModel[]|PrivateKeyModel[] ): Promise< TyronPublicKeys|TyronPrivateKeys > {
+		const key_id_set: Set<string> = new Set();
+		let keys = {};
+		let new_key;
 		for(const key of input) {
 			// IDs must be unique
-			if(!KEY_ID_SET.has(key.id)) {
-			KEY_ID_SET.add(key.id);
+			if( !key_id_set.has(key.id) ) {
+			key_id_set.add(key.id);
 			} else {
 			throw new ErrorCode("KeyDuplicated", "The key ID must be unique");
 			}
 			switch (key.id) {
 				case PublicKeyPurpose.General:
-					NEW_KEY = {
+					new_key = {
 					general: "0x"+ key.key
 					};
-					Object.assign(KEYS, NEW_KEY)             
+					Object.assign(keys, new_key)             
 					break;
 				case PublicKeyPurpose.Auth:
-					NEW_KEY = {
+					new_key = {
 					authentication: "0x"+ key.key
 					};
-					Object.assign(KEYS, NEW_KEY)  
+					Object.assign(keys, new_key)  
 					break;
 				case PublicKeyPurpose.Assertion:
-					NEW_KEY = {
+					new_key = {
 					assertion: "0x"+ key.key
 					};
-					Object.assign(KEYS, NEW_KEY);                
+					Object.assign(keys, new_key);                
 					break;
 				case PublicKeyPurpose.Agreement:
-					NEW_KEY = {
+					new_key = {
 					agreement: "0x"+ key.key
 					};
-					Object.assign(KEYS, NEW_KEY);
+					Object.assign(keys, new_key);
 					break;
 				case PublicKeyPurpose.Invocation:
-					NEW_KEY = {
+					new_key = {
 					invocation: "0x"+ key.key
 					};
-					Object.assign(KEYS, NEW_KEY);
+					Object.assign(keys, new_key);
 					break;
 				case PublicKeyPurpose.Delegation:
-					NEW_KEY = {
+					new_key = {
 					delegation: "0x"+ key.key
 					};
-					Object.assign(KEYS, NEW_KEY);
+					Object.assign(keys, new_key);
 					break;
 				case PublicKeyPurpose.XSGD:
-					NEW_KEY = {
+					new_key = {
 					xsgd: "0x"+ key.key
 					};
-					Object.assign(KEYS, NEW_KEY);
+					Object.assign(keys, new_key);
 					break;
 				case "update":
-					NEW_KEY = {
+					new_key = {
 					did_update: key.key
 					};
-					Object.assign(KEYS, NEW_KEY);
+					Object.assign(keys, new_key);
 					break;  
 				case "recovery":
-					NEW_KEY = {
+					new_key = {
 					did_recovery: key.key
 					};
-					Object.assign(KEYS, NEW_KEY);
+					Object.assign(keys, new_key);
 					break;               
 				default:
 					throw new ErrorCode("InvalidID", `The client detected an invalid key ID`);
 			}
 		}
-		return KEYS;      
+		return keys;      
 	}
 }
 

@@ -1,16 +1,17 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+	Self-Sovereign Identity Protocol.
+	Copyright (C) Tyron Pungtas and its affiliates.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 */
 
 import * as zcrypto from '@zilliqa-js/crypto';
@@ -20,10 +21,10 @@ import { PatchModel } from '../protocols/models/document-model';
 import DidState from './did-resolve/did-state';
 import { TransitionValue } from '../../blockchain/tyronzil';
 
-/** Generates a `Tyron DID-Update` operation */
+/** Generates a `Tyron DID Update` operation */
 export default class DidUpdate{
 	public readonly type = OperationType.Update;
-	public readonly decentralized_identifier: string;
+	public readonly did: string;
 	public readonly newDocument: TransitionValue[];
 	public readonly docHash: string;
 	public readonly signature: string;
@@ -33,7 +34,7 @@ export default class DidUpdate{
 	private constructor (
 		operation: UpdateOperationModel
 	) {
-		this.decentralized_identifier = operation.did;
+		this.did = operation.did;
 		this.newDocument = operation.newDocument;
 		this.docHash = "0x"+ operation.docHash;
 		this.signature = "0x"+ operation.signature;
@@ -41,42 +42,38 @@ export default class DidUpdate{
 		this.privateKeys = operation.privateKeys;
 	}
 
-	/***            ****            ***/
-	
-	/** Generates a `Tyron DID-Update` operation with input from the CLI */
-	public static async execute(input: UpdateOperationInput): Promise<DidUpdate> {
-		const operation = await Sidetree.processPatches(input.patches)
-		.then(async update => {
-			const DOC_OBJECT = Object.assign({}, update.updateDocument);
-			const DOC_BUFFER = Buffer.from(JSON.stringify(DOC_OBJECT));
-			const DOC_HASH = require("crypto").createHash("sha256").update(DOC_BUFFER).digest('hex');
+	/** Generates a `Tyron DID Update` operation with input from the CLI */
+	public static async execute( input: UpdateOperationInput ): Promise< DidUpdate > {
+		const operation = await Sidetree.processPatches( input.patches )
+		.then( async update => {
+			const doc_object = Object.assign({}, update.updateDocument);
+			const doc_buffer = Buffer.from(JSON.stringify(doc_object));
+			const doc_hash = require("crypto").createHash("sha256").update(doc_buffer).digest('hex');
 
-			const PREVIOUS_UPDATE_KEY = zcrypto.getPubKeyFromPrivateKey(input.updatePrivateKey);
-			const SIGNATURE = zcrypto.sign(Buffer.from(DOC_HASH, 'hex'), input.updatePrivateKey, PREVIOUS_UPDATE_KEY);
+			const previous_update_key = zcrypto.getPubKeyFromPrivateKey(input.updatePrivateKey);
+			const signature = zcrypto.sign(Buffer.from(doc_hash, 'hex'), input.updatePrivateKey, previous_update_key);
 			
 			// Generates key-pair for the next DID-Update operation
-			const [NEW_UPDATE_KEY, NEW_UPDATE_PRIVATE_KEY] = await Cryptography.keyPair("update");
-			update.privateKeys.push(NEW_UPDATE_PRIVATE_KEY);
+			const [new_update_key, new_update_private_key] = await Cryptography.keyPair("update");
+			update.privateKeys.push(new_update_private_key);
 
-			const PRIVATE_KEYS = await Cryptography.processKeys(update.privateKeys);
+			const private_keys = await Cryptography.processKeys(update.privateKeys);
 
 			/** Output data from a Tyron `DID-Update` operation */
-			const OPERATION_OUTPUT: UpdateOperationModel = {
-				did: input.state.decentralized_identifier,
+			const operation_output: UpdateOperationModel = {
+				did: input.state.did,
 				newDocument: update.updateDocument,
-				docHash: DOC_HASH,
-				signature: SIGNATURE,
-				newUpdateKey: NEW_UPDATE_KEY,
-				privateKeys: PRIVATE_KEYS
+				docHash: doc_hash,
+				signature: signature,
+				newUpdateKey: new_update_key,
+				privateKeys: private_keys
 			};
-			return new DidUpdate(OPERATION_OUTPUT);
+			return new DidUpdate(operation_output);
 		})
 		.catch(err => { throw err })
 		return operation;
 	}
 }
-
-/***            ** interfaces **            ***/
 
 /** Defines input data for a `Tyron DID-Update` operation */
 export interface UpdateOperationInput {

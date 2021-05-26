@@ -1,7 +1,7 @@
 {
   "name": "tyron",
   "version": "1.6.0",
-  "description": "tyron.js: Tyron Self-Sovereign Identity Protocol JavaScript/TypeScipt library",
+  "description": "tyron.js: SSI Protocol's JavaScript/TypeScipt library",
   "files": [
     "bundles"
   ],
@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "typedoc": "typedoc --out typedocs",
-    "build:web": "webpack --progress --config webpack.config.js",
+    "build:web": "webpack --config webpack.config.js",
     "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"zilliqa.min.js\" bundles && copyfiles \"LICENSE\" dist && npm run build:web"
   },
   "repository": {
@@ -17,6 +17,7 @@
     "url": "git+https://github.com/pungtas/tyron.js.git"
   },
   "keywords": [
+    "ssi-protocol",
     "tyron",
     "tyron-ssi",
     "self-sovereign-identity",

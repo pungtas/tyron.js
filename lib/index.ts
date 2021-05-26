@@ -1,6 +1,7 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+    tyron.js: SSI Protocol's JavaScript/TypeScipt library
+    Self-Sovereign Identity Protocol.
+    Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,7 +14,7 @@
     GNU General Public License for more details.
 */
 
-export * as SmartUtil from './blockchain/smart-contracts/smart-util';
+export * as SmartUtil from './blockchain/smart-util';
 export * as SsiState from './blockchain/ssi-state';
 export * as TyronState from './blockchain/tyron-state';
 export * as TyronZil from './blockchain/tyronzil';

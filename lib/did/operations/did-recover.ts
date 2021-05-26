@@ -1,6 +1,7 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+	Self-Sovereign Identity Protocol.
+	Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,20 +24,18 @@ import { InputModel } from './did-create';
 /** Generates a `Tyron DID-Recover` operation */
 export default class DidRecover {
 	public readonly type = OperationType.Recover;
-	public readonly decentralized_identifier: string;
+	public readonly did: string;
 	public readonly newDocument: TransitionValue[];
 	public readonly docHash: string;
 	public readonly signature: string;
 	public readonly newUpdateKey: string;
 	public readonly newRecoveryKey: string;
 	public readonly privateKeys: TyronPrivateKeys;
-	
-	/***            ****            ***/
 
 	private constructor (
 		operation: RecoverOperationModel
 	) {
-		this.decentralized_identifier = operation.did;
+		this.did = operation.did;
 		this.newDocument = operation.newDocument;
 		this.docHash = "0x"+ operation.docHash;
 		this.signature = "0x"+ operation.signature;
@@ -47,8 +46,8 @@ export default class DidRecover {
 
 	/** Generates a `Tyron DID-Recover` operation */
 	public static async execute(recover: RecoverOperationInput): Promise<DidRecover> {
-		const VERIFICATION_METHODS: TransitionValue[] = [];
-		const PRIVATE_KEY_MODEL: PrivateKeyModel[] = [];
+		const verification_methods: TransitionValue[] = [];
+		const private_key_model: PrivateKeyModel[] = [];
 
 		const PUBLIC_KEY_INPUT = recover.input.publicKeyInput;
 		for(const key_input of PUBLIC_KEY_INPUT) {
@@ -57,43 +56,41 @@ export default class DidRecover {
 				id: key_input.id
 			}
 			const [VERIFICATION_METHOD, PRIVATE_KEY] = await Cryptography.operationKeyPair(KEY_PAIR_INPUT);
-			VERIFICATION_METHODS.push(VERIFICATION_METHOD);
-			PRIVATE_KEY_MODEL.push(PRIVATE_KEY);
+			verification_methods.push(VERIFICATION_METHOD);
+			private_key_model.push(PRIVATE_KEY);
 		}
 		
-		const DOCUMENT = VERIFICATION_METHODS.concat(recover.input.services);
-		const DOC_OBJECT = Object.assign({}, DOCUMENT);
-		const DOC_BUFFER = Buffer.from(JSON.stringify(DOC_OBJECT));
-		const DOC_HASH = require("crypto").createHash("sha256").update(DOC_BUFFER).digest('hex');
+		const document = verification_methods.concat(recover.input.services);
+		const doc_object = Object.assign({}, document);
+		const doc_buffer = Buffer.from(JSON.stringify(doc_object));
+		const doc_hash = require("crypto").createHash("sha256").update(doc_buffer).digest('hex');
 		
-		const PREVIOUS_RECOVERY_KEY = zcrypto.getPubKeyFromPrivateKey(recover.recoveryPrivateKey);
-		const SIGNATURE = zcrypto.sign(Buffer.from(DOC_HASH, 'hex'), recover.recoveryPrivateKey!, PREVIOUS_RECOVERY_KEY);
+		const previous_recovery_key = zcrypto.getPubKeyFromPrivateKey(recover.recoveryPrivateKey);
+		const signature = zcrypto.sign(Buffer.from(doc_hash, 'hex'), recover.recoveryPrivateKey!, previous_recovery_key);
 		
 		/** Key-pair for the next DID-Upate operation */
-		const [UPDATE_KEY, UPDATE_PRIVATE_KEY] = await Cryptography.keyPair("update");
-		PRIVATE_KEY_MODEL.push(UPDATE_PRIVATE_KEY);
+		const [update_key, update_private_key] = await Cryptography.keyPair("update");
+		private_key_model.push(update_private_key);
 
 		/** Key-pair for the next DID-Recover or Deactivate operation */
-		const [RECOVERY_KEY, RECOVERY_PRIVATE_KEY] = await Cryptography.keyPair("recovery");
-		PRIVATE_KEY_MODEL.push(RECOVERY_PRIVATE_KEY);
+		const [recovery_key, recovery_private_key] = await Cryptography.keyPair("recovery");
+		private_key_model.push(recovery_private_key);
 
-		const PRIVATE_KEYS = await Cryptography.processKeys(PRIVATE_KEY_MODEL);
+		const private_keys = await Cryptography.processKeys(private_key_model);
 		
 		/** Output data from a Tyron `DID-Recover` operation */
-		const OPERATION_OUTPUT: RecoverOperationModel = {
+		const operation_output: RecoverOperationModel = {
 			did: recover.did,
-			newDocument: DOCUMENT,
-			docHash: DOC_HASH,
-			signature: SIGNATURE,
-			newUpdateKey: UPDATE_KEY,
-			newRecoveryKey: RECOVERY_KEY,
-			privateKeys: PRIVATE_KEYS 
+			newDocument: document,
+			docHash: doc_hash,
+			signature: signature,
+			newUpdateKey: update_key,
+			newRecoveryKey: recovery_key,
+			privateKeys: private_keys 
 		};
-		return new DidRecover(OPERATION_OUTPUT);
+		return new DidRecover(operation_output);
 	}
 }
-
-/***            ** interfaces **            ***/
 
 /** Defines input data for a `Tyron DID-Recover` operation */
 export interface RecoverOperationInput {

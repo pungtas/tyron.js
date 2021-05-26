@@ -1,6 +1,7 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+	Self-Sovereign Identity Protocol.
+	Copyright (C) Tyron Pungtas and its affiliates.
 	
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,35 +21,30 @@ import DidState from './did-resolve/did-state';
 /** Generates a `Tyron DID-Deactivate` operation */
 export default class DidDeactivate {
 	public readonly type = OperationType.Deactivate;
-	public readonly decentralized_identifier: string;
+	public readonly did: string;
 	public readonly signature: string;
-	
-	/***            ****            ***/
 
 	private constructor (
 		operation: DeactivateOperationModel
 	) {
-	   this.decentralized_identifier = operation.did;
+	   this.did = operation.did;
 		this.signature = "0x"+ operation.signature;
 	}
 
 	/** Generates a Sidetree-based `DID-Deactivate` operation */
 	public static async execute(input: DeactivateOperationInput): Promise<DidDeactivate> {
-		const TYRON_HASH = input.state.tyron_hash.substring(2);
-		const PREVIOUS_RECOVERY_KEY = zcrypto.getPubKeyFromPrivateKey(input.recoveryPrivateKey);
+		const previous_recovery_key = zcrypto.getPubKeyFromPrivateKey(input.recoveryPrivateKey);
 
-		const SIGNATURE = zcrypto.sign(Buffer.from(TYRON_HASH, 'hex'), input.recoveryPrivateKey, PREVIOUS_RECOVERY_KEY);
+		const signature = zcrypto.sign(Buffer.from(input.state.did), input.recoveryPrivateKey, previous_recovery_key);
 		
 		/** Output data from a Tyron `DID-Deactivate` operation */
-		const OPERATION_OUTPUT: DeactivateOperationModel = {
-			did: input.state.decentralized_identifier,
-			signature: SIGNATURE 
+		const operation_output: DeactivateOperationModel = {
+			did: input.state.did,
+			signature: signature 
 		};
-		return new DidDeactivate(OPERATION_OUTPUT);
+		return new DidDeactivate(operation_output);
 	}
 }
-
-/***            ** interfaces **            ***/
 
 /** Defines input data for a `Tyron DID-Deactivate` operation */
 export interface DeactivateOperationInput {

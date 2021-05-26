@@ -1,6 +1,7 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+	Self-Sovereign Identity Protocol.
+	Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,8 +28,6 @@ export default class DidCreate {
 	public readonly updateKey: string;
 	public readonly recoveryKey: string;
 	public readonly privateKeys: TyronPrivateKeys;
-	
-	/***            ****            ***/
 
 	private constructor (
 		operation: CreateOperationModel
@@ -39,47 +38,43 @@ export default class DidCreate {
 		this.privateKeys = operation.privateKeys;
 	}
 
-	/***            ****            ***/
-
 	/** Generates a Tyron `DID-Create` operation with input from the CLI */
 	public static async execute(input: InputModel): Promise<DidCreate> {
-		const VERIFICATION_METHODS: TransitionValue[] = [];
-		const PRIVATE_KEY_MODEL: PrivateKeyModel[] = [];
+		const verification_methods: TransitionValue[] = [];
+		const private_key_model: PrivateKeyModel[] = [];
 
 		for(const key_input of input.publicKeyInput) {
 			// Creates the cryptographic key pair
-			const KEY_PAIR_INPUT: OperationKeyPairInput = {
+			const key_pair_input: OperationKeyPairInput = {
 				id: key_input.id
 			}
-			const [VERIFICATION_METHOD, PRIVATE_KEY] = await Cryptography.operationKeyPair(KEY_PAIR_INPUT);
-			VERIFICATION_METHODS.push(VERIFICATION_METHOD);
-			PRIVATE_KEY_MODEL.push(PRIVATE_KEY);
+			const [verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);
+			verification_methods.push(verification_method);
+			private_key_model.push(private_key);
 		}
 
-		const DOCUMENT = VERIFICATION_METHODS.concat(input.services);
+		const document = verification_methods.concat(input.services);
 			
 		// Creates the update key-pair (necessary for the next update operation)
-		const [UPDATE_KEY, UPDATE_PRIVATE_KEY] = await Cryptography.keyPair("update");
-		PRIVATE_KEY_MODEL.push(UPDATE_PRIVATE_KEY);
+		const [update_key, update_private_key] = await Cryptography.keyPair("update");
+		private_key_model.push(update_private_key);
 
 		// Creates the recovery key-pair (necessary for next recovery or deactivate operation)
-		const [RECOVERY_KEY, RECOVERY_PRIVATE_KEY] = await Cryptography.keyPair("recovery");
-		PRIVATE_KEY_MODEL.push(RECOVERY_PRIVATE_KEY);
+		const [recovery_key, recovery_private_key] = await Cryptography.keyPair("recovery");
+		private_key_model.push(recovery_private_key);
 
-		const PRIVATE_KEYS = await Cryptography.processKeys(PRIVATE_KEY_MODEL);
+		const private_keys = await Cryptography.processKeys(private_key_model);
 		
 		/** Output data from a Tyron `DID-Create` operation */
-		const OPERATION_OUTPUT: CreateOperationModel = {
-			document: DOCUMENT,
-			updateKey: UPDATE_KEY,
-			recoveryKey: RECOVERY_KEY,
-			privateKeys: PRIVATE_KEYS
+		const operation_output: CreateOperationModel = {
+			document: document,
+			updateKey: update_key,
+			recoveryKey: recovery_key,
+			privateKeys: private_keys
 		};
-		return new DidCreate(OPERATION_OUTPUT);
+		return new DidCreate(operation_output);
 	}
 }
-
-/***            ** interfaces **            ***/
 
 /** Defines output data for a Sidetree-based `DID-Create` operation */
 interface CreateOperationModel {

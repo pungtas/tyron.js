@@ -1,6 +1,7 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
-    Copyright (C) 2021 Tyron Pungtas
+    tyron.js: SSI Protocol's JavaScript/TypeScipt library
+    Self-Sovereign Identity Protocol.
+    Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,39 +15,22 @@
 */
 
 import * as zcrypto from '@zilliqa-js/crypto';
-import SmartUtil from "../../../blockchain/smart-contracts/smart-util";
+import SmartUtil from "../../../blockchain/smart-util";
 import ZilliqaInit from '../../../blockchain/zilliqa-init';
 import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
-import CodeError from '../../util/ErrorCode';
 
 export default class Resolver {
-	public static async validateAvatar(avatar: string): Promise<void> {
-		const regex = /^[\w\d_]+$/;
-		if(!regex.test(avatar) || avatar.length > 15 ) {
-			throw new CodeError("DomainNameInvalid", "The domain name must be 15 characters or less and contain only letters, numbers and underscores, and no spaces") 
-		}
-	}
-	public static async resolveDns(network: NetworkNamespace, initTyron: string, domainName: string): Promise<string> {
-		const ZIL_INIT = new ZilliqaInit(network);
-		const DOT_INDEX = domainName.lastIndexOf(".");
-		const SSI_DOMAIN = domainName.substring(DOT_INDEX);
-		const AVATAR = domainName.substring(0, DOT_INDEX);
-		
-		const ADDRESS = await this.validateAvatar(AVATAR)
-		.then( async() => {
-			return await ZIL_INIT.API.blockchain.getSmartContractState(initTyron)
+	public static async resolveDns(network: NetworkNamespace, initTyron: string, username: string, domain: string): Promise<string> {
+		const zil_init = new ZilliqaInit(network);
+		const addr = await zil_init.API.blockchain.getSmartContractState(initTyron)
+		.then(async state => {
+			const dns = state.result.dns;
+			return await SmartUtil.getValuefromMap(dns, domain);
 		})
-		.then(async STATE => {
-			return STATE.result.dns;
-		})
-		.then(async (dns: any) => {
-			return await SmartUtil.getValuefromMap(dns, SSI_DOMAIN);
-		})
-		.then(async (resourceRecords: any) => {
-			return await SmartUtil.getValuefromMap(resourceRecords, AVATAR);
+		.then(async (records: any) => {
+			return await SmartUtil.getValuefromMap(records, username);
 		})
 		.catch((err: any) => { throw err });
-
-		return zcrypto.toBech32Address(ADDRESS)
+		return zcrypto.toBech32Address(addr)
 	}
 }

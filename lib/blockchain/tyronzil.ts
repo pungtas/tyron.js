@@ -1,5 +1,6 @@
 /*
-    tyron.js: Self-Sovereign Identity JavaScript/TypeScipt Library
+	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+	Self-Sovereign Identity Protocol.
 	Copyright (C) Tyron Pungtas and its affiliates.
 
     This program is free software: you can redistribute it and/or modify
