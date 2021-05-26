@@ -28,7 +28,7 @@ import { PublicKeyModel } from '../did/protocols/models/verification-method-mode
 export default class TyronZIL extends ZilliqaInit {
 	/** Address of the owner of the self-sovereign identity */
 	public readonly owner: string;
-	public readonly ownerPrivateKey: string;
+	public readonly ownerZilSecretKey: string;
 	/** Address of the INIT.tyron smart contract */
 	public readonly initTyron: string;
 	public readonly gasPrice: Util.BN;
@@ -37,14 +37,14 @@ export default class TyronZIL extends ZilliqaInit {
 	private constructor(
 		network: NetworkNamespace,
 		owner: string,
-		ownerPrivateKey: string,
+		ownerZilSecretKey: string,
 		initTyron: string,
 		gasPrice: Util.BN,
 		gasLimit: Util.Long,
 	) {
 		super(network);
 		this.owner = owner;
-		this.ownerPrivateKey = ownerPrivateKey;
+		this.ownerZilSecretKey = ownerZilSecretKey;
 		this.initTyron = initTyron;
 		this.gasPrice = gasPrice;
 		this.gasLimit = gasLimit
@@ -54,38 +54,35 @@ export default class TyronZIL extends ZilliqaInit {
 	public static async initialize(
 		network: NetworkNamespace,
 		initTyron: string,
-		ownerPrivateKey: string,
+		ownerZilSecretKey: string,
 		gasLimit: number
 	): Promise<TyronZIL> {
-		let CONTRACT_OWNER = zcrypto.getAddressFromPrivateKey(ownerPrivateKey);
-		let GAS_LIMIT: Util.Long.Long = new Util.Long(Number(gasLimit));
-		const ZIL_INIT = new ZilliqaInit(network);
+		let owner = zcrypto.getAddressFromPrivateKey(ownerZilSecretKey);
+		let gas_limit: Util.Long.Long = new Util.Long(gasLimit);
+		const zil_init = new ZilliqaInit(network);
 		
-		const transaction_init = await ZIL_INIT.API.blockchain.getMinimumGasPrice()
+		const transaction_init = await zil_init.API.blockchain.getMinimumGasPrice()
 		.then((min_gas_price: { result: any; }) => {
-			const GAS_PRICE = new Util.BN(min_gas_price.result!);
+			const gas_price = new Util.BN(min_gas_price.result!);
 			return new TyronZIL(
 				network,
-				CONTRACT_OWNER,
-				ownerPrivateKey,
+				owner,
+				ownerZilSecretKey,
 				initTyron,
-				GAS_PRICE,
-				GAS_LIMIT               
+				gas_price,
+				gas_limit               
 			);
 		})
 		.catch((err: any) => {throw err});
 		return transaction_init;
 	}
 
-	/** Deploys the SSI by version
-	 * & calls the Init transition with the agent's name */
 	public static async deploy(
-		agent: string,
 		input: TyronZIL,
 		contractCode: string
 	): Promise<DeployedContract> {
 		
-		const CONTRACT_INIT = [
+		const contract_init = [
 			{
 				vname: '_scilla_version',
 				type: 'Uint32',
@@ -107,13 +104,13 @@ export default class TyronZIL extends ZilliqaInit {
 				value: `${input.initTyron}`,
 			}
 		];
-		const CONTRACT = input.API.contracts.new(contractCode, CONTRACT_INIT);
+		const smart_contract = input.API.contracts.new(contractCode, contract_init);
 		
-		input.API.wallet.addByPrivateKey(input.ownerPrivateKey);
+		input.API.wallet.addByPrivateKey(input.ownerZilSecretKey);
 		
 		const deployed_contract = await input.API.blockchain.getBalance(input.owner)
 		.then( async user_balance => {
-			const [deployTx, contract] = await CONTRACT.deploy(
+			const [deployTx, contract] = await smart_contract.deploy(
 				{
 					version: input.zilVersion,
 					gasPrice: input.gasPrice,
@@ -124,43 +121,19 @@ export default class TyronZIL extends ZilliqaInit {
 				1000,
 				false,
 			);
-			const IS_DEPLOYED = deployTx.isConfirmed();
-			if(!IS_DEPLOYED) {
-				throw new ErrorCode("Wrong-Deployment","The SSI did not get deployed.")
+			const is_deployed = deployTx.isConfirmed();
+			if(!is_deployed) {
+				throw new ErrorCode("Wrong-Deployment","The contract did not get deployed.")
 			}
 			
-			const DEPLOYMENT_GAS = (deployTx.getReceipt())!.cumulative_gas;
+			const deployment_gas = (deployTx.getReceipt())!.cumulative_gas;
 		
-			// Calling the Init transition
-			const INIT_CALL = await contract.call(
-				'Init',
-				[
-					{
-						vname: 'agent',
-						type: 'String',
-						value: `${agent}`
-					}
-				],
-				{
-					version: input.zilVersion,
-					amount: new Util.BN(0),
-					gasPrice: input.gasPrice,
-					gasLimit: input.gasLimit
-				},
-				33,
-				1000,
-				false
-			);
-			if(!INIT_CALL.isConfirmed()) {
-				throw new ErrorCode("CodeNotInitialized", "The contract did not get initialized")
-			}
-			const DEPLOYED_CONTRACT: DeployedContract = {
+			const deployed_contract: DeployedContract = {
 				transaction: deployTx,
 				contract: contract,
-				gas: DEPLOYMENT_GAS,
-				initCall: INIT_CALL
+				gas: deployment_gas
 			};
-			return DEPLOYED_CONTRACT;
+			return deployed_contract;
 		})
 		.catch(err => { throw err });
 		return deployed_contract;
@@ -180,7 +153,7 @@ export default class TyronZIL extends ZilliqaInit {
 			console.log(smart_contract_state);
 
 			const AMOUNT = new Util.BN(amount);
-			const USER_PUBKEY = zcrypto.getPubKeyFromPrivateKey(input.ownerPrivateKey);
+			const USER_PUBKEY = zcrypto.getPubKeyFromPrivateKey(input.ownerZilSecretKey);
 			
 			const USER_BALANCE = await input.API.blockchain.getBalance(input.owner);
 		
@@ -206,7 +179,7 @@ export default class TyronZIL extends ZilliqaInit {
 			return RAW_TX;
 		})
 		.then(async (raw_tx: any)  => {
-			input.API.wallet.addByPrivateKey(input.ownerPrivateKey);
+			input.API.wallet.addByPrivateKey(input.ownerZilSecretKey);
 			const SIGNED_TX = await input.API.wallet.signWith(raw_tx, input.owner);
 			return SIGNED_TX;
 		})
@@ -648,8 +621,7 @@ export default class TyronZIL extends ZilliqaInit {
 export interface DeployedContract {
 	transaction: Transaction,
 	contract: Contract,
-	gas: any,
-	initCall: any
+	gas: any
 }
 
 interface Transition {
