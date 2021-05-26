@@ -2,15 +2,11 @@
   "name": "tyron",
   "version": "1.6.0",
   "description": "tyron.js: SSI Protocol's JavaScript/TypeScipt library",
-  "files": [
-    "bundles"
-  ],
-  "unpkg": "bundles/tyron.min.js",
+  "main": "dist/index.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "typedoc": "typedoc --out typedocs",
-    "build:web": "webpack --config webpack.config.js",
-    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"zilliqa.min.js\" bundles && copyfiles \"LICENSE\" dist && npm run build:web"
+    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"LICENSE\" dist"
   },
   "repository": {
     "type": "git",
@@ -46,13 +42,10 @@
     "@types/websocket": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
-    "babel-minify-webpack-plugin": "^0.3.1",
     "copyfiles": "^2.3.0",
     "eslint": "^7.6.0",
     "ts-loader": "^8.0.4",
     "typedoc": "^0.17.8",
-    "typescript": "^3.9.7",
-    "webpack": "^4.0.0",
-    "webpack-command": "^0.1.1"
+    "typescript": "^3.9.7"
   }
 }
