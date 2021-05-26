@@ -1,6 +1,6 @@
 {
   "name": "tyron",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "tyron.js: SSI Protocol's JavaScript/TypeScipt library",
   "main": "dist/index.js",
   "scripts": {
