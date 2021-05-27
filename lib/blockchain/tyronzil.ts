@@ -29,33 +29,33 @@ export default class TyronZIL extends ZilliqaInit {
 	/** Address of the owner of the self-sovereign identity */
 	public readonly owner: string;
 	public readonly ownerZilSecretKey: string;
-	/** Address of the INIT.tyron smart contract */
-	public readonly initTyron: string;
 	public readonly gasPrice: Util.BN;
 	public readonly gasLimit: Util.Long;
+	/** Address of the INIT.tyron smart contract */
+	public readonly init_tyron: string;	
 
 	private constructor(
 		network: NetworkNamespace,
 		owner: string,
 		ownerZilSecretKey: string,
-		initTyron: string,
 		gasPrice: Util.BN,
 		gasLimit: Util.Long,
+		init_tyron: string
 	) {
 		super(network);
 		this.owner = owner;
-		this.ownerZilSecretKey = ownerZilSecretKey;
-		this.initTyron = initTyron;
+		this.ownerZilSecretKey = ownerZilSecretKey;		
 		this.gasPrice = gasPrice;
-		this.gasLimit = gasLimit
+		this.gasLimit = gasLimit;
+		this.init_tyron = init_tyron;
 	}
 	
 	/** Retrieves the minimum gas price & validates the account info */
 	public static async initialize(
 		network: NetworkNamespace,
-		initTyron: string,
 		ownerZilSecretKey: string,
-		gasLimit: number
+		gasLimit: number,
+		init_tyron: string
 	): Promise<TyronZIL> {
 		let owner = zcrypto.getAddressFromPrivateKey(ownerZilSecretKey);
 		let gas_limit: Util.Long.Long = new Util.Long(gasLimit);
@@ -68,9 +68,9 @@ export default class TyronZIL extends ZilliqaInit {
 				network,
 				owner,
 				ownerZilSecretKey,
-				initTyron,
 				gas_price,
-				gas_limit               
+				gas_limit,
+				init_tyron,            
 			);
 		})
 		.catch((err: any) => {throw err});
@@ -78,7 +78,7 @@ export default class TyronZIL extends ZilliqaInit {
 	}
 
 	public static async deploy(
-		input: TyronZIL,
+		tyronzil: TyronZIL,
 		contractCode: string
 	): Promise<DeployedContract> {
 		
@@ -91,30 +91,25 @@ export default class TyronZIL extends ZilliqaInit {
 			{
 				vname: 'initOwner',
 				type: 'ByStr20',
-				value: `${input.owner}`,
-			},
-			{
-				vname: 'initController',
-				type: 'ByStr20',
-				value: `${input.owner}`,
+				value: `${tyronzil.owner}`,
 			},
 			{
 				vname: 'initTyron',
 				type: 'ByStr20',
-				value: `${input.initTyron}`,
+				value: `${tyronzil.init_tyron}`,
 			}
 		];
-		const smart_contract = input.API.contracts.new(contractCode, contract_init);
+		const smart_contract = tyronzil.API.contracts.new(contractCode, contract_init);
 		
-		input.API.wallet.addByPrivateKey(input.ownerZilSecretKey);
+		tyronzil.API.wallet.addByPrivateKey(tyronzil.ownerZilSecretKey);
 		
-		const deployed_contract = await input.API.blockchain.getBalance(input.owner)
+		const deployed_contract = await tyronzil.API.blockchain.getBalance(tyronzil.owner)
 		.then( async user_balance => {
 			const [deployTx, contract] = await smart_contract.deploy(
 				{
-					version: input.zilVersion,
-					gasPrice: input.gasPrice,
-					gasLimit: input.gasLimit,
+					version: tyronzil.zilVersion,
+					gasPrice: tyronzil.gasPrice,
+					gasLimit: tyronzil.gasLimit,
 					nonce: Number(user_balance.result.nonce)+ 1,
 				},
 				33,
@@ -142,50 +137,50 @@ export default class TyronZIL extends ZilliqaInit {
 	/** Submits a tyronzil transaction */
 	public static async submit(
 		tag: TransitionTag,
-		input: TyronZIL,
+		tyronzil: TyronZIL,
 		ssiAddr: string,
 		amount: string,		
 		params: TransitionParams[]
 	): Promise<Transaction> {
 		
-		const SUBMIT = await input.API.blockchain.getSmartContractState(ssiAddr)
+		const SUBMIT = await tyronzil.API.blockchain.getSmartContractState(ssiAddr)
 		.then(async (smart_contract_state) => {
 			console.log(smart_contract_state);
 
 			const AMOUNT = new Util.BN(amount);
-			const USER_PUBKEY = zcrypto.getPubKeyFromPrivateKey(input.ownerZilSecretKey);
+			const USER_PUBKEY = zcrypto.getPubKeyFromPrivateKey(tyronzil.ownerZilSecretKey);
 			
-			const USER_BALANCE = await input.API.blockchain.getBalance(input.owner);
+			const USER_BALANCE = await tyronzil.API.blockchain.getBalance(tyronzil.owner);
 		
 			const TRANSITION: Transition = {
 				_tag: tag,
 				_amount: String(AMOUNT),
-				_sender: input.owner,
+				_sender: tyronzil.owner,
 				params: params
 			};
 
 			const TX_OBJECT: TxObject = {
-				version: input.zilVersion,
+				version: tyronzil.zilVersion,
 				amount: AMOUNT,
 				nonce: Number(USER_BALANCE.result.nonce)+ 1,
-				gasLimit: input.gasLimit,
-				gasPrice: input.gasPrice,
+				gasLimit: tyronzil.gasLimit,
+				gasPrice: tyronzil.gasPrice,
 				toAddr: ssiAddr,
 				pubKey: USER_PUBKEY,
 				data: JSON.stringify(TRANSITION),
 			};
 			
-			const RAW_TX = input.API.transactions.new(TX_OBJECT);
+			const RAW_TX = tyronzil.API.transactions.new(TX_OBJECT);
 			return RAW_TX;
 		})
 		.then(async (raw_tx: any)  => {
-			input.API.wallet.addByPrivateKey(input.ownerZilSecretKey);
-			const SIGNED_TX = await input.API.wallet.signWith(raw_tx, input.owner);
+			tyronzil.API.wallet.addByPrivateKey(tyronzil.ownerZilSecretKey);
+			const SIGNED_TX = await tyronzil.API.wallet.signWith(raw_tx, tyronzil.owner);
 			return SIGNED_TX;
 		})
 		.then(async (signed_tx: any) => {
 			/** Sends the tyronzil transaction to the Zilliqa blockchain platform */
-			const TX = await input.API.blockchain.createTransaction(signed_tx, 33, 1000);
+			const TX = await tyronzil.API.blockchain.createTransaction(signed_tx, 33, 1000);
 			return TX;
 		})
 		.then( async transaction => {
@@ -201,236 +196,117 @@ export default class TyronZIL extends ZilliqaInit {
 		return SUBMIT;
 	}
 
-	public static async create(
-		agent: string,
-		document: any[],
-		updateKey: string,
-		recoveryKey: string
+	public static async OptionParam(
+		option: Option,
+		type: any,
+		someValue?: any  
+	): Promise<any> {
+		let value: TransitionValue;
+		switch (option) {
+			case "Some":
+				value = {
+					argtypes: [ `${type}` ],
+					arguments: [ `${someValue}` ],
+					constructor: "Some"
+				}
+				return value;
+			case "None":
+				value = {
+					argtypes: [ `${type}` ],
+					arguments: [],
+					constructor: "None"
+				}
+				return value;
+		};
+	}
+
+	public static async CrudParams(
+		username: any,
+		document: any,
+		recoveryKey: any,
+		updateKey: any,
+		signature: any
 	): Promise<TransitionParams[]> {
 		
-		const PARAMS = [];
+		const params = [];
 
-		const AGENT: TransitionParams = {
-			vname: 'agent',
-			type: 'String',
-			value: agent,
+		const user: TransitionParams = {
+			vname: 'username',
+			type: 'Option String',
+			value: username,
 		};
-		PARAMS.push(AGENT);
+		params.push(user);
 
-		const DOCUMENT: TransitionParams = {
+		const doc: TransitionParams = {
 			vname: 'document',
-			type: 'List Document',
+			type: 'Option( List Document )',
 			value: document,
 		};
-		PARAMS.push(DOCUMENT);
+		params.push(doc);
 
-		const UPDATE_KEY: TransitionParams = {
-			vname: 'updateKey',
-			type: 'ByStr33',
-			value: updateKey,
-		};
-		PARAMS.push(UPDATE_KEY);
-
-		const RECOVERY_KEY: TransitionParams = {
+		const recovery_key: TransitionParams = {
 			vname: 'recoveryKey',
-			type: 'ByStr33',
+			type: 'Option ByStr33',
 			value: recoveryKey,
 		};
-		PARAMS.push(RECOVERY_KEY);
+		params.push(recovery_key);
 
-		return PARAMS;
-	}
-
-	public static async recover(
-		agent: string,
-		newDocument: any[],
-		docHash: string,
-		signature: string,
-		newUpdateKey: string,
-		newRecoveryKey: string
-	): Promise<TransitionParams[]> {
-
-		const PARAMS = [];
-
-		const AGENT: TransitionParams = {
-			vname: 'agent',
-			type: 'String',
-			value: agent,
+		const update_key: TransitionParams = {
+			vname: 'updateKey',
+			type: 'Option ByStr33',
+			value: updateKey,
 		};
-		PARAMS.push(AGENT);
+		params.push(update_key);
 
-		const DOCUMENT: TransitionParams = {
-			vname: 'newDocument',
-			type: 'List Document',
-			value: newDocument,
-		};
-		PARAMS.push(DOCUMENT);
-
-		const DOC_HASH: TransitionParams = {
-			vname: 'docHash',
-			type: 'ByStr20',
-			value: docHash,
-		};
-		PARAMS.push(DOC_HASH);
-
-		const SIGNATURE: TransitionParams = {
+		const sig: TransitionParams = {
 			vname: 'signature',
-			type: 'ByStr64',
+			type: 'Option ByStr64',
 			value: signature,
 		};
-		PARAMS.push(SIGNATURE);
+		params.push(sig);
 
-		const NEW_UPDATE_KEY: TransitionParams = {
-			vname: 'newUpdateKey',
-			type: 'ByStr33',
-			value: newUpdateKey,
-		};
-		PARAMS.push(NEW_UPDATE_KEY);
-
-		const NEW_RECOVERY_KEY: TransitionParams = {
-			vname: 'newRecoveryKey',
-			type: 'ByStr33',
-			value: newRecoveryKey,
-		};
-		PARAMS.push(NEW_RECOVERY_KEY);
-
-		return PARAMS;
+		return params;
 	}
 
-	public static async update(
-		agent: string,
-		newDocument: any[],
-		docHash: string,
-		signature: string,
-		newUpdateKey: string
-	): Promise<TransitionParams[]> {
-
-		const PARAMS = [];
-		
-		const AGENT: TransitionParams = {
-			vname: 'agent',
-			type: 'String',
-			value: agent,
-		};
-		PARAMS.push(AGENT);
-
-		const DOCUMENT: TransitionParams = {
-			vname: 'newDocument',
-			type: 'List Document',
-			value: newDocument,
-		};
-		PARAMS.push(DOCUMENT);
-
-		const DOC_HASH: TransitionParams = {
-			vname: 'docHash',
-			type: 'ByStr20',
-			value: docHash,
-		};
-		PARAMS.push(DOC_HASH);
-
-		const SIGNATURE: TransitionParams = {
-			vname: 'signature',
-			type: 'ByStr64',
-			value: signature,
-		};
-		PARAMS.push(SIGNATURE);
-
-		const NEW_UPDATE_KEY: TransitionParams = {
-			vname: 'newUpdateKey',
-			type: 'ByStr33',
-			value: newUpdateKey,
-		};
-		PARAMS.push(NEW_UPDATE_KEY);
-
-		return PARAMS;
-    }
-
-	public static async deactivate(
-		agent: string,
-		signature: string
-	): Promise<TransitionParams[]> {
-
-		const PARAMS = [];
-		
-		const AGENT: TransitionParams = {
-			vname: 'agent',
-			type: 'String',
-			value: agent,
-		};
-		PARAMS.push(AGENT);
-
-		const SIGNATURE: TransitionParams = {
-			vname: 'signature',
-			type: 'ByStr64',
-			value: signature,
-		};
-		PARAMS.push(SIGNATURE);
-
-		return PARAMS;
-	}
-
-	public static async dns(
-		domain: string,
-		avatar: string
-	): Promise<TransitionParams[]> {
-		
-		const PARAMS = [];
-
-		const DOMAIN: TransitionParams = {
-			vname: 'domain',
-			type: 'String',
-			value: domain,
-		};
-		PARAMS.push(DOMAIN);
-
-		const AVATAR: TransitionParams = {
-			vname: 'avatar',
-			type: 'String',
-			value: avatar,
-		};
-		PARAMS.push(AVATAR);
-		return PARAMS;
-	}
-	
-	/** Returns a DID-Document element transition value */
+	/** Returns a DID Document element transition value */
 	public static async documentElement(
 		element: DocumentElement,       
 		action: Action,
 		key?: PublicKeyModel,
 		service?: ServiceModel
 	): Promise<TransitionValue> {
-		let VALUE: TransitionValue;
-		let ADD: TransitionValue = {
+		let value: TransitionValue;
+		let add: TransitionValue = {
 			argtypes: [],
 			arguments: [],
 			constructor: Action.Adding
 		};
-		let REMOVE: TransitionValue = {
+		let remove: TransitionValue = {
 			argtypes: [],
 			arguments: [],
 			constructor: Action.Removing
 		};
 		switch (element) {
 			case DocumentElement.VerificationMethod:
-				VALUE = {
+				value = {
 					argtypes: [],
 					arguments: [],
 					constructor: "VerificationMethod"
 				};
 				switch (action) {
 					case Action.Adding:
-						Object.assign(VALUE, {
+						Object.assign(value, {
 							arguments: [
-								ADD,
+								add,
 								`${key!.id}`,
 								`${key!.key}`
 							]
 						});
 						break;
 					case Action.Removing:
-						Object.assign(VALUE, {
+						Object.assign(value, {
 							arguments: [
-								REMOVE,
+								remove,
 								`${key!.id}`,
 								"0x024caf04aa4f660db04adf65daf5b993b3383fcdb2ef0479ca8866b1336334b5b4"
 							]
@@ -439,12 +315,12 @@ export default class TyronZIL extends ZilliqaInit {
 				}
 				break;
 			case DocumentElement.Service:
-					VALUE = {
+					value = {
 						argtypes: [],
 						arguments: [],
 						constructor: "Service"
 					};
-					let DID_SERVICE = {
+					let did_service = {
 						argtypes: [],
 						arguments: [
 							`${service!.type}`,
@@ -465,20 +341,20 @@ export default class TyronZIL extends ZilliqaInit {
 					};
 					switch (action) {
 						case Action.Adding:
-							Object.assign(VALUE, {
+							Object.assign(value, {
 								arguments: [
-									ADD,
+									add,
 									`${service!.id}`,
-									DID_SERVICE
+									did_service
 								]
 							});
 							break;
 						case Action.Removing:
-							Object.assign(VALUE, {
+							Object.assign(value, {
 								arguments: [
-									REMOVE,
+									remove,
 									`${service!.id}`,
-									DID_SERVICE
+									did_service
 								]
 							});
 							break;
@@ -487,7 +363,7 @@ export default class TyronZIL extends ZilliqaInit {
 			default:
 				throw new ErrorCode("UnsupportedElement", "That is not a DID-Document supported element");
 		}
-		return VALUE;
+		return value;
 	}
 
 	public static async xTransfer(
@@ -499,123 +375,53 @@ export default class TyronZIL extends ZilliqaInit {
 		signature: string
 	): Promise<TransitionParams[]> {
 		
-		const PARAMS = [];
+		const params = [];
 
 		const DOMAIN: TransitionParams = {
 			vname: 'domain',
 			type: 'String',
 			value: domain
 		};
-		PARAMS.push(DOMAIN);
+		params.push(DOMAIN);
 
 		const TOKEN: TransitionParams = {
 			vname: 'token',
 			type: 'String',
 			value: token
 		};
-		PARAMS.push(TOKEN);
+		params.push(TOKEN);
 
 		const AGENT: TransitionParams = {
 			vname: 'agent',
 			type: 'String',
 			value: agent
 		};
-		PARAMS.push(AGENT);
+		params.push(AGENT);
 
 		const RECIPIENT: TransitionParams = {
 			vname: 'to',
 			type: 'ByStr20',
 			value: recipient
 		};
-		PARAMS.push(RECIPIENT);
+		params.push(RECIPIENT);
 
 		const AMOUNT: TransitionParams = {
 			vname: 'amount',
 			type: 'Uint128',
 			value: amount,
 		};
-		PARAMS.push(AMOUNT);
+		params.push(AMOUNT);
 
 		const SIGNATURE: TransitionParams = {
 			vname: 'signature',
 			type: 'ByStr64',
 			value: signature
 		};
-		PARAMS.push(SIGNATURE);
+		params.push(SIGNATURE);
 
-		return PARAMS;
-	}
-
-	public static async ssiToken(
-		token: string
-	): Promise<TransitionParams[]> {
-		
-		const PARAMS = [];
-
-		const TOKEN: TransitionParams = {
-			vname: 'token',
-			type: 'String',
-			value: token,
-		};
-		PARAMS.push(TOKEN);
-		return PARAMS;
-	}
-
-	public static async donate(
-		campaign: string
-	): Promise<TransitionParams[]> {
-		
-		const PARAMS = [];
-
-		const CAMPAIGN: TransitionParams = {
-			vname: 'campaign',
-			type: 'String',
-			value: campaign,
-		};
-		PARAMS.push(CAMPAIGN);
-		return PARAMS;
-	}
-
-	public static async xZIL(
-		amount: string,
-		signedData: string,
-		signature: string,
-		beneficiary: string
-	): Promise<TransitionParams[]> {
-		
-		const PARAMS = [];
-		const AMOUNT: TransitionParams = {
-			vname: 'amount',
-			type: 'Uint128',
-			value: amount,
-		};
-		PARAMS.push(AMOUNT);
-
-		const SIGNED_DATA: TransitionParams = {
-			vname: 'signedData',
-			type: 'ByStr',
-			value: signedData,
-		};
-		PARAMS.push(SIGNED_DATA);
-
-		const SIGNATURE: TransitionParams = {
-			vname: 'signature',
-			type: 'ByStr64',
-			value: signature,
-		};
-		PARAMS.push(SIGNATURE);
-
-		const BENEFICIARY:TransitionParams = {
-			vname: 'beneficiary',
-			type: 'String',
-			value: beneficiary,
-		};
-		PARAMS.push(BENEFICIARY);
-		return PARAMS;
+		return params;
 	}
 }
-
-/***            ** interfaces **            ***/
 
 /** The result of a contract deployment */
 export interface DeployedContract {
@@ -632,18 +438,14 @@ interface Transition {
 }
 
 export enum TransitionTag {
-	Create = 'DidCreate',
+	Create = "DidCreate",
 	Update = "DidUpdate",
 	Recover = "DidRecover",
 	Deactivate = "DidDeactivate",
-	Dns = "SetSsiDomain",
 	XTransfer = "XTransfer",
-	SsiToken = "SsiToken",
-	Donate = "Donate",
-	Xzil = "xZIL"
 }
 
-interface TransitionParams {
+export interface TransitionParams {
 	vname: string;
 	type: any;
 	value: unknown;
@@ -666,4 +468,9 @@ interface TxObject {
 	code?: string;
 	data?: string;
 	priority?: boolean;
+}
+
+export enum Option {
+	some = "Some",
+	none = "None"
 }
