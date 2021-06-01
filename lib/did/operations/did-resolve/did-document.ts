@@ -37,7 +37,6 @@ export default class DidDoc {
 	public readonly keyAgreement?: VerificationMethodModel;
 	public readonly capabilityInvocation?: VerificationMethodModel;
 	public readonly capabilityDelegation?: VerificationMethodModel;
-	public readonly xsgdKey?: VerificationMethodModel;
 	public readonly service?: DidServiceEndpointModel[];
 
 	private constructor (
@@ -49,7 +48,6 @@ export default class DidDoc {
 		this.assertionMethod = scheme.verificationMethods!.assertionMethod;
 		this.keyAgreement = scheme.verificationMethods!.keyAgreement;
 		this.capabilityInvocation = scheme.verificationMethods!.capabilityDelegation;
-		this.xsgdKey = scheme.verificationMethods!.xsgdKey;
 		this.service = scheme.service;
 	}
 
@@ -99,7 +97,6 @@ export default class DidDoc {
 			let KEY_AGREEMENT;
 			let CAPABILITY_INVOCATION;
 			let CAPABILITY_DELEGATION;
-			let XSGD_KEY;
 
 			// Every key MUST have a Public Key Purpose as its ID
 			for (let purpose of VERIFICATION_METHODS.keys()) {
@@ -128,10 +125,7 @@ export default class DidDoc {
 						break;
 					case PublicKeyPurpose.Delegation:
 						CAPABILITY_DELEGATION = VERIFICATION_METHOD;
-						break;
-					case PublicKeyPurpose.XSGD:
-						XSGD_KEY = VERIFICATION_METHOD;
-						break;                  
+						break;                
 					default:
 						throw new ErrorCode("InvalidPurpose", `The resolver detected an invalid Public Key Purpose`);
 				}
@@ -158,9 +152,6 @@ export default class DidDoc {
 				verificationMethods: {},
 				service: []
 			};
-			if(XSGD_KEY !== undefined) {
-				SCHEME.verificationMethods.xsgdKey = XSGD_KEY;
-			}
 			if(PUBLIC_KEY !== undefined) {
 				SCHEME.verificationMethods.publicKey = PUBLIC_KEY;
 			}
