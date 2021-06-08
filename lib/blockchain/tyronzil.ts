@@ -90,12 +90,12 @@ export default class TyronZIL extends ZilliqaInit {
 				vname: 'initAdmin',
 				type: 'ByStr20',
 				value: `${tyronzil.admin}`,
-			},
+			},/*
 			{
 				vname: 'init_tyron',
 				type: 'ByStr20 with contract field services_: Map String Endpoint, field dns: Map String ( Map String ByStr20 ), field psc_fee: Map String Uint128 end',
 				value: `${tyronzil.init_tyron}`,
-			}
+			}*/
 		];
 		const smart_contract = tyronzil.API.contracts.new(contractCode, contract_init);
 		
