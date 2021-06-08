@@ -88,7 +88,7 @@ export default class TyronZIL extends ZilliqaInit {
 			},
 			{
 				vname: 'initAdmin',
-				type: 'ByStr20 with contract field verification_methods_: Map String ByStr33 end',
+				type: 'ByStr20',
 				value: `${tyronzil.admin}`,
 			},
 			{

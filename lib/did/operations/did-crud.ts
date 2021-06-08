@@ -55,7 +55,7 @@ export default class DidCrud{
 		return [doc_elements, doc_parameters]
 	}
 
-	public static async create(input: InputModel): Promise<DidCrud> {
+	public static async Create(input: InputModel): Promise<DidCrud> {
 		const verification_methods: tyronzil.TransitionValue[] = [];
 		const private_keys: PrivateKeyModel[] = [];
 		
@@ -175,7 +175,7 @@ export default class DidCrud{
 		return new DidCrud(operation_output);
 	}
 
-	public static async update(input: UpdateInputModel): Promise<DidCrud> {
+	public static async Update(input: UpdateInputModel): Promise<DidCrud> {
 		const operation = await Sidetree.processPatches(input.patches)
 		.then( async update => {
 			const hash = await this.HashDocument(update.documentElements);
@@ -199,7 +199,7 @@ export default class DidCrud{
 		return operation;
 	}
 
-	public static async deactivate(input: DeactivateInputModel): Promise<DidCrud> {
+	public static async Deactivate(input: DeactivateInputModel): Promise<DidCrud> {
 		const previous_recovery_key = zcrypto.getPubKeyFromPrivateKey(input.recoveryPrivateKey);
 
 		const signature = zcrypto.sign(Buffer.from(input.state.did), input.recoveryPrivateKey, previous_recovery_key);
