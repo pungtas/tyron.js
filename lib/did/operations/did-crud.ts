@@ -74,7 +74,6 @@ export default class DidCrud{
 		const private_keys_ = await Cryptography.processKeys(private_keys);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			tyronzil.default.OptionParam(tyronzil.Option.some, "String", input.userDomain),
 			tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", document),
 			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64"),
 		);
@@ -161,7 +160,6 @@ export default class DidCrud{
 		const signature = zcrypto.sign(Buffer.from(hash_, 'hex'), input.recoveryPrivateKey!, previous_recovery_key);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			tyronzil.default.OptionParam(tyronzil.Option.none, "String"),
 			tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", document),
 			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64", "0x"+signature),
 		);
@@ -184,7 +182,6 @@ export default class DidCrud{
 			const private_keys = await Cryptography.processKeys(update.privateKeys);
 
 			const tx_params = await tyronzil.default.CrudParams(
-				tyronzil.default.OptionParam(tyronzil.Option.none, "String"),
 				tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", update.updateDocument),
 				tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64", "0x"+signature),
 			);
@@ -205,7 +202,6 @@ export default class DidCrud{
 		const signature = zcrypto.sign(Buffer.from(input.state.did), input.recoveryPrivateKey, previous_recovery_key);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			tyronzil.default.OptionParam(tyronzil.Option.none, "String"),
 			tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", document),
 			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64", "0x"+signature),
 		);
@@ -218,28 +214,27 @@ export default class DidCrud{
 }
 
 /** Defines output data for a DID CRUD operation */
-interface CrudOperationModel {
+interface CrudOperationModel{
 	txParams: tyronzil.TransitionParams[];
 	privateKeys?: DIDVerificationMethods;
 }
 
 // @TODO verify username
-export interface InputModel {
-	userDomain: string;
+export interface InputModel{
 	publicKeyInput: PublicKeyInput[];   //
 	services?: ServiceModel[];
 	recoveryPrivateKey?: string;
 }
 
 /** Defines input data for a `DID Update` operation */
-export interface UpdateInputModel {
+export interface UpdateInputModel{
 	state: DidState;
 	updatePrivateKey: string;
 	patches: PatchModel[];
 }
 
 /** Defines input data for a `DID Deactivate` operation */
-export interface DeactivateInputModel {
+export interface DeactivateInputModel{
 	state: DidState;
 	recoveryPrivateKey: string;
 }
