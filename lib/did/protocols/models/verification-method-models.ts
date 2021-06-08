@@ -30,13 +30,15 @@ export interface VerificationMethodModel extends PublicKeyModel {
 }
 
 export enum PublicKeyPurpose {
+	Update = 'update',
+	Recovery = 'recovery',
+	SocialRecovery = 'socialrecovery',
 	General = 'general',
 	Auth = 'authentication',
 	Assertion = 'assertion',
 	Agreement = 'agreement',
 	Invocation = 'invocation',
-	Delegation = 'delegation',
-	XSGD = 'xsgd'
+	Delegation = 'delegation'
 }
 
 export interface TyronVerificationMethods {
@@ -52,3 +54,5 @@ export interface TyronVerificationMethods {
 export interface PublicKeyInput {
 	id: PublicKeyPurpose;
 }
+
+//@TODO generate verification methods for all public key main purposes

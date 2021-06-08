@@ -15,8 +15,7 @@
 */
 
 export * as SmartUtil from './blockchain/smart-util';
-export * as SsiState from './blockchain/ssi-state';
-export * as TyronState from './blockchain/tyron-state';
+export * as State from './blockchain/state';
 export * as TyronZil from './blockchain/tyronzil';
 export * as ZilliqaInit from './blockchain/zilliqa-init';
 export * as DidCrud from './did/operations/did-crud';

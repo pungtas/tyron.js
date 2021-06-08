@@ -14,45 +14,46 @@
 	GNU General Public License for more details.
 */
 
-
 import * as zcrypto from '@zilliqa-js/crypto';
 import TyronZIL, { TransitionValue } from '../../blockchain/tyronzil';
-import { Action, DocumentElement } from '../protocols/models/document-model';
+import { Action, DocumentConstructor, DocumentElement } from '../protocols/models/document-model';
 import { PrivateKeyModel, PublicKeyModel, PublicKeyPurpose } from '../protocols/models/verification-method-models';
 import ErrorCode from './ErrorCode';
 
 /** Defines input data to generate a cryptographic key pair */
 export interface OperationKeyPairInput {
-	id: string        //the key purpose      
+	id: string   //the key purpose      
 }
 
 /** Generates cryptographic operations */
 export class Cryptography {
   	/** Asymmetric cryptography to generate the key pair using the KEY_ALGORITHM (secp256k1)
-    * @returns [publicKey, privateKey] */
-  	public static async operationKeyPair(input: OperationKeyPairInput): Promise<[TransitionValue, PrivateKeyModel]> {
+    * @returns [verification method as TransitionValue, privateKey] */
+  	public static async operationKeyPair(input: OperationKeyPairInput): Promise<[DocumentElement, TransitionValue, PrivateKeyModel]>{
 		const private_key = zcrypto.schnorr.generatePrivateKey();
 		const public_key = "0x"+ zcrypto.getPubKeyFromPrivateKey(private_key);
 		const verification_method: PublicKeyModel = {
 			id: input.id,
 			key: public_key
 		};
-		const doc_element = await TyronZIL.documentElement(
-			DocumentElement.VerificationMethod,
-			Action.Adding,
-			verification_method
-		);
+		const doc_element: DocumentElement = {
+			constructor: DocumentConstructor.VerificationMethod,
+			action: Action.Add,
+			key: verification_method
+
+		}
+		const doc_parameter = await TyronZIL.documentParameter(doc_element);
 		const private_key_model: PrivateKeyModel = {
 			id: input.id,
 			key: private_key
 		};
 
-		return [doc_element, private_key_model];
+		return [doc_element, doc_parameter, private_key_model];
 	}
 
 	/** Generates a secp256k1 key pair
 	 * @returns [publicKey, privateKey] */
-	public static async keyPair(id: string): Promise< [string, PrivateKeyModel] > {
+	public static async keyPair(id: string): Promise<[string, PrivateKeyModel]>{
 		const private_key = zcrypto.schnorr.generatePrivateKey();
 		const public_key = zcrypto.getPubKeyFromPrivateKey(private_key);
 		const private_key_model = {
@@ -62,7 +63,7 @@ export class Cryptography {
 		return [public_key, private_key_model];
 	}
 
-	public static async processKeys( input: PublicKeyModel[]|PrivateKeyModel[] ): Promise< TyronPublicKeys|TyronPrivateKeys > {
+	public static async processKeys(input: PublicKeyModel[]|PrivateKeyModel[]): Promise<DIDVerificationMethods>{
 		const key_id_set: Set<string> = new Set();
 		let keys = {};
 		let new_key;
@@ -110,24 +111,24 @@ export class Cryptography {
 					};
 					Object.assign(keys, new_key);
 					break;
-				case PublicKeyPurpose.XSGD:
-					new_key = {
-					xsgd: "0x"+ key.key
-					};
-					Object.assign(keys, new_key);
-					break;
-				case "update":
+				case PublicKeyPurpose.Update:
 					new_key = {
 					did_update: key.key
 					};
 					Object.assign(keys, new_key);
 					break;  
-				case "recovery":
+				case PublicKeyPurpose.Recovery:
 					new_key = {
 					did_recovery: key.key
 					};
 					Object.assign(keys, new_key);
-					break;               
+					break;
+				case PublicKeyPurpose.SocialRecovery:
+					new_key = {
+					did_social_recovery: key.key
+					};
+					Object.assign(keys, new_key);
+					break;                
 				default:
 					throw new ErrorCode("InvalidID", `The client detected an invalid key ID`);
 			}
@@ -136,17 +137,14 @@ export class Cryptography {
 	}
 }
 
-export interface TyronPublicKeys {
+export interface DIDVerificationMethods {
+	didUpdate?: string,
+	didRecovery?: string,
+	didSocialRecovery?: string,
 	general?: string;
 	authentication?: string;
 	assertion?: string;
 	agreement?: string;
 	invocation?: string;
-	delegation?: string;
-	xsgd?: string;
-}
-
-export interface TyronPrivateKeys extends TyronPublicKeys {
-	did_update?: string;
-	did_recovery?: string;
+	delegation?: string
 }

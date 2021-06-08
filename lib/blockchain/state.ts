@@ -23,30 +23,26 @@ import ErrorCode from '../did/util/ErrorCode';
 export default class TyronState {
     public readonly did: string;
     public readonly did_status: OperationType;
-    public readonly owner: string;
+    public readonly admin: string;
     public readonly verification_methods: Map<string, string>;
-    public readonly services: Map<string, [string, string]>
-    public readonly did_update_key: string;
-    public readonly did_recovery_key: string;
+    public readonly services: Map<string, [string, string]>;
 
     private constructor(
         state: TyronStateModel
     ) {
         this.did = state.did;
         this.did_status = state.did_status as OperationType;
-        this.owner = state.owner;
+        this.admin = state.admin;
         this.verification_methods = state.verification_methods;
         this.services = state.services;
-        this.did_update_key = state.did_update_key;
-        this.did_recovery_key = state.did_recovery_key;
     }
 
     /** Fetches the current state from the blockchain 
      * @params addr: the Zilliqa address of the user's smart-contract
     */
-    public static async fetch(network: NetworkNamespace, didcAddr: string): Promise<TyronState> {
+    public static async fetch(network: NetworkNamespace, addr: string): Promise<TyronState> {
         const ZIL_INIT = new ZilliqaInit(network);
-        const tyron_state = await ZIL_INIT.API.blockchain.getSmartContractState(didcAddr)
+        const tyron_state = await ZIL_INIT.API.blockchain.getSmartContractState(addr)
         .then(async didc_state => {
             const STATUS = await SmartUtil.getStatus(didc_state.result.did_status);
             switch (STATUS) {
@@ -54,13 +50,11 @@ export default class TyronState {
                     throw new ErrorCode("DidDeactivated", "The requested DID is deactivated");
                 default:
                     const STATE: TyronStateModel = {
-                        owner: String(didc_state.result.owner),
+                        admin: String(didc_state.result.admin),
                         did: String(didc_state.result.did),
                         did_status: STATUS,
                         verification_methods: await SmartUtil.intoMap(didc_state.result.verification_methods),
-                        services: await SmartUtil.fromServices(didc_state.result.services),
-                        did_update_key: await SmartUtil.getValue(didc_state.result.did_update_key),
-                        did_recovery_key: await SmartUtil.getValue(didc_state.result.did_recovery_key)
+                        services: await SmartUtil.fromServices(didc_state.result.services)
                     };
                     return new TyronState(STATE);
             }
@@ -74,9 +68,7 @@ export default class TyronState {
 export interface TyronStateModel {
     did: string;
     did_status: string;
-    owner: string;
+    admin: string;
     verification_methods: Map<string, string>;
     services: Map<string, [string, string]>;
-    did_update_key: string;
-    did_recovery_key: string;
 }

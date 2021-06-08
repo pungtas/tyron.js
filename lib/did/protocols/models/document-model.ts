@@ -14,44 +14,49 @@
     GNU General Public License for more details.
 */
 
-import { PublicKeyInput } from './verification-method-models';
-import { TransitionValue } from '../../../blockchain/tyronzil';
+import { PublicKeyInput, PublicKeyModel } from './verification-method-models';
 
-export enum DocumentElement {
-	VerificationMethod = "key",
-	Service = "service"
+export enum DocumentConstructor {
+	VerificationMethod = 'VerificationMethod',
+	Service = 'Service'
+}
+
+export interface DocumentElement {
+	constructor: DocumentConstructor,       
+	action: Action,
+	key?: PublicKeyModel,
+	service?: ServiceModel
+}
+
+export enum ServiceEndpoint {
+	Web2Endpoint = 'Endpoint',
+	Web3Endpoint = 'Address'
+}
+
+export enum TransferProtocol {
+	Https = "Https",
+	Git = "Git"
 }
 
 export interface ServiceModel {
-	id: string;
-	transferProtocol: DataTransferProtocol;
-	type: string;
-	uri: string
+	id: string,
+	type?: string,
+	transferProtocol?: TransferProtocol,
+	uri?: string,
+	network?: string,
+	address?: string	
 }
 
 export enum Action {
-	Adding = "Add",
-	Removing = "Remove"
-}
-
-export enum DataTransferProtocol {
-	Https = "Https",
-	Git = "Git",
-	Ssh = "Ssh"
-}
-
-/** Sidetreee Service Endpoint for the 'service' property of the DID-Document */
-export interface DidServiceEndpointModel {
-	id: string;
-	type: string;
-	endpoint: string;
+	Add = "Add",
+	Remove = "Remove"
 }
 
 export interface PatchModel {
 	action: PatchAction;
-	ids?: string[];        //the IDs of the DID-Document elements to remove
+	ids?: string[];    //the IDs of the DID Document elements to remove
 	keyInput?: PublicKeyInput[];
-	services?: TransitionValue[];
+	services?: ServiceModel[];
 }
 
 export enum PatchAction {

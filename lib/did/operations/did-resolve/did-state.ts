@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 */
 
-import TyronState from '../../../blockchain/tyron-state';
+import State from '../../../blockchain/state';
 import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
 import DidUrlScheme from '../../tyronzil-schemes/did-url-scheme';
 import { OperationType } from '../../protocols/sidetree';
@@ -23,41 +23,33 @@ import { OperationType } from '../../protocols/sidetree';
 export default class DidState {
 	public readonly did: string;
     public readonly did_status: OperationType;
-    public readonly owner: string;
+    public readonly admin: string;
 	public readonly verification_methods: Map<string, string>;
 	public readonly services: Map<string, [string, string]>;
-	public readonly did_update_key: string;
-	public readonly did_recovery_key: string;
 	
 	private constructor(
 		state: DidStateModel
 	) {
 		this.did = state.did;
         this.did_status = state.did_status as OperationType;
-        this.owner = state.owner;
+        this.admin = state.admin;
 		this.verification_methods = state.verification_methods;
 		this.services = state.services;
-		this.did_update_key = state.did_update_key;
-		this.did_recovery_key = state.did_recovery_key
 	}
 
-	/***            ****            ***/
-
-	/** Fetches the current DID-State for the given tyron_addr */
-	public static async fetch(network: NetworkNamespace, didcAddr: string): Promise<DidState> {
-		const did_state = await TyronState.fetch(network, didcAddr)
+	/** Fetches the current DID State for the given address */
+	public static async fetch(network: NetworkNamespace, addr: string): Promise<DidState> {
+		const did_state = await State.fetch(network, addr)
 		.then(async tyron_state => {
-			// Validates the Tyron DID-Scheme
+			// Validates the Tyron DID Scheme
 			await DidUrlScheme.validate(tyron_state.did);
 			
 			const this_state: DidStateModel = {
 				did: tyron_state.did,
 				did_status: tyron_state.did_status,
-				owner: tyron_state.owner,
+				admin: tyron_state.admin,
 				verification_methods: tyron_state.verification_methods,
 				services: tyron_state.services,
-				did_update_key: tyron_state.did_update_key,
-				did_recovery_key: tyron_state.did_recovery_key
 			};
 			return new DidState(this_state);
 		})
@@ -70,9 +62,7 @@ export default class DidState {
 export interface DidStateModel {
 	did: string;
 	did_status: OperationType;
-	owner: string;
+	admin: string;
 	verification_methods: Map<string, string>;
 	services: Map<string, [string, string]>;
-	did_update_key: string;
-	did_recovery_key: string;
 }

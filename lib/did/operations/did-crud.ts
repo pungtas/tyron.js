@@ -14,136 +14,178 @@
     GNU General Public License for more details.
 */
 
-import { Cryptography, OperationKeyPairInput, TyronPrivateKeys } from '../util/did-keys';
+import { Cryptography, OperationKeyPairInput, DIDVerificationMethods } from '../util/did-keys';
 import * as tyronzil from '../../blockchain/tyronzil';
-import { PrivateKeyModel, PublicKeyInput } from '../protocols/models/verification-method-models';
+import { PrivateKeyModel, PublicKeyInput, PublicKeyPurpose } from '../protocols/models/verification-method-models';
 import * as zcrypto from '@zilliqa-js/crypto';
 import { Sidetree } from '../protocols/sidetree';
-import { PatchModel } from '../protocols/models/document-model';
+import { Action, DocumentConstructor, DocumentElement, PatchModel, ServiceModel } from '../protocols/models/document-model';
 import DidState from './did-resolve/did-state';
+import hash from 'hash.js';
+import * as zutil from '@zilliqa-js/util';
 
-/** Generates a `DID Create` operation
+/** Generates a `DID CRUD` operation
  *  which produces the `DID Document` & metadata */
-export default class DidCrud {
+export default class DidCrud{
 	public readonly txParams: tyronzil.TransitionParams[];
-	public readonly privateKeys?: TyronPrivateKeys;
+	public readonly privateKeys?: DIDVerificationMethods;
 
-	private constructor (
+	private constructor(
 		operation: CrudOperationModel
-	) {
+	){
 		this.txParams = operation.txParams;
 		this.privateKeys = operation.privateKeys;
 	}
 
+	public static async GetServices(services: ServiceModel[]): Promise<[DocumentElement[], tyronzil.TransitionValue[]]> {
+		let doc_elements: DocumentElement[] = [];
+		let doc_parameters: tyronzil.TransitionValue[] = [];
+
+		for(const service of services){
+			const doc_element: DocumentElement = {
+				constructor: DocumentConstructor.Service,
+				action: Action.Add,
+				service: service
+			};
+			doc_elements.push(doc_element);
+			const doc_parameter = await tyronzil.default.documentParameter(doc_element);
+			doc_parameters.push(doc_parameter);
+		};
+
+		return [doc_elements, doc_parameters]
+	}
+
 	public static async create(input: InputModel): Promise<DidCrud> {
 		const verification_methods: tyronzil.TransitionValue[] = [];
-		const private_key_model: PrivateKeyModel[] = [];
-
+		const private_keys: PrivateKeyModel[] = [];
+		
+		input.publicKeyInput.push({id: PublicKeyPurpose.Update});
+		input.publicKeyInput.push({id: PublicKeyPurpose.Recovery})
 		for(const key_input of input.publicKeyInput) {
 			// Creates the cryptographic key pair
-			const key_pair_input: OperationKeyPairInput = {
-				id: key_input.id
-			}
-			const [verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);
-			verification_methods.push(verification_method);
-			private_key_model.push(private_key);
+			const key_pair_input: OperationKeyPairInput = { id: key_input.id };
+			const key_pair = await Cryptography.operationKeyPair(key_pair_input);
+			verification_methods.push(key_pair[1]);
+			private_keys.push(key_pair[2]);
 		}
 
-		const document = verification_methods.concat(input.services);
-			
-		// Creates the update key-pair (necessary for the next update operation)
-		const [update_key, update_private_key] = await Cryptography.keyPair("update");
-		private_key_model.push(update_private_key);
-
-		// Creates the recovery key-pair (necessary for next recovery or deactivate operation)
-		const [recovery_key, recovery_private_key] = await Cryptography.keyPair("recovery");
-		private_key_model.push(recovery_private_key);
-		const private_keys = await Cryptography.processKeys(private_key_model);
+		const services_ = await this.GetServices(input.services!);
+		const document = verification_methods.concat(services_[1]);
+		const private_keys_ = await Cryptography.processKeys(private_keys);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			tyronzil.default.OptionParam(tyronzil.Option.some, "String", input.username),
+			tyronzil.default.OptionParam(tyronzil.Option.some, "String", input.userDomain),
 			tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", document),
-			tyronzil.default.OptionParam(tyronzil.Option.some, "ByStr33", "0x"+recovery_key),
-			tyronzil.default.OptionParam(tyronzil.Option.some, "ByStr33", "0x"+update_key),
 			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64"),
 		);
 
 		const operation_output: CrudOperationModel = {
 			txParams: tx_params,
-			privateKeys: private_keys
+			privateKeys: private_keys_
 		};
 		return new DidCrud(operation_output);
 	}
 
-	public static async recover(input: InputModel): Promise<DidCrud> {
-		const verification_methods: tyronzil.TransitionValue[] = [];
-		const private_key_model: PrivateKeyModel[] = [];
+	public static async HashDocument(document: DocumentElement[]): Promise<String>{
+		let hash_ = "0000000000000000000000000000000000000000";
+		for(const element of document){
+			let action_;
+			switch (element.action) {
+				case Action.Add:
+					action_ = "add";
+					break;
+				case Action.Remove:
+					action_ = "remove";					
+					break;
+			}
+			const h1 = hash.sha256().update(action_).digest('hex');
+			let h2;
+			let h3;
+			let hash__;
+			switch (element.constructor) {
+				case DocumentConstructor.VerificationMethod:
+					h2 = hash.sha256().update(element.key?.id).digest('hex');
+					switch (element.action) {
+						case Action.Add:
+							h3 = hash.sha256().update(zutil.bytes.hexToByteArray(element.key?.key!)).digest('hex');	
+							hash__ = h1 + h2 + h3;			
+							break;
+						case Action.Remove:
+							hash__ = h1 + h2;				
+							break;
+					};
+					break;
+				case DocumentConstructor.Service:
+					h2 = hash.sha256().update(element.service?.id).digest('hex');
+					switch (element.action) {
+						case Action.Add:
+							h3 = hash.sha256().update(element.service?.uri!).digest('hex');	
+							hash__ = h1 + h2 + h3;			
+							break;
+						case Action.Remove:
+							hash__ = h1 + h2;				
+							break;
+					};
+					break;
+			};
+			hash_ = hash_ + hash__;
+		}
+		return hash_;
 
+	}
+
+	public static async Recover(input: InputModel): Promise<DidCrud> {
+		const verification_methods: tyronzil.TransitionValue[] = [];
+		const private_keys: PrivateKeyModel[] = [];
+		let doc_elements: DocumentElement[] = [];
+
+		input.publicKeyInput.push({id: PublicKeyPurpose.Recovery})
 		const public_key_input = input.publicKeyInput;
 		for(const key_input of public_key_input) {
 			// Creates the cryptographic key pair
 			const key_pair_input: OperationKeyPairInput = {
 				id: key_input.id
 			}
-			const [verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);
+			const [doc_element, verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);
+			doc_elements.push(doc_element);
 			verification_methods.push(verification_method);
-			private_key_model.push(private_key);
+			private_keys.push(private_key);
 		}
-		
-		const document = verification_methods.concat(input.services);
-		const doc_object = Object.assign({}, document);
-		const doc_buffer = Buffer.from(JSON.stringify(doc_object));
-		const doc_hash = require("crypto").createHash("sha256").update(doc_buffer).digest('hex');
+
+		const services_ = await this.GetServices(input.services!);
+		const document = doc_elements.concat(services_[0]);
+		const hash_ = await this.HashDocument(document);
+
 		
 		const previous_recovery_key = zcrypto.getPubKeyFromPrivateKey(input.recoveryPrivateKey!);
-		const signature = zcrypto.sign(Buffer.from(doc_hash, 'hex'), input.recoveryPrivateKey!, previous_recovery_key);
-		
-		/** Key-pair for the next DID Update operation */
-		const [update_key, update_private_key] = await Cryptography.keyPair("update");
-		private_key_model.push(update_private_key);
-
-		/** Key-pair for the next DID Recover or Deactivate operation */
-		const [recovery_key, recovery_private_key] = await Cryptography.keyPair("recovery");
-		private_key_model.push(recovery_private_key);
-
-		const private_keys = await Cryptography.processKeys(private_key_model);
+		const signature = zcrypto.sign(Buffer.from(hash_, 'hex'), input.recoveryPrivateKey!, previous_recovery_key);
 		
 		const tx_params = await tyronzil.default.CrudParams(
 			tyronzil.default.OptionParam(tyronzil.Option.none, "String"),
 			tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", document),
-			tyronzil.default.OptionParam(tyronzil.Option.some, "ByStr33", "0x"+recovery_key),
-			tyronzil.default.OptionParam(tyronzil.Option.some, "ByStr33", "0x"+update_key),
 			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64", "0x"+signature),
 		);
-
+		
+		const private_keys_ = await Cryptography.processKeys(private_keys);
+		
 		const operation_output: CrudOperationModel = {
 			txParams: tx_params,
-			privateKeys: private_keys
+			privateKeys: private_keys_
 		};
 		return new DidCrud(operation_output);
 	}
 
 	public static async update(input: UpdateInputModel): Promise<DidCrud> {
-		const operation = await Sidetree.processPatches( input.patches )
+		const operation = await Sidetree.processPatches(input.patches)
 		.then( async update => {
-			const doc_object = Object.assign({}, update.updateDocument);
-			const doc_buffer = Buffer.from(JSON.stringify(doc_object));
-			const doc_hash = require("crypto").createHash("sha256").update(doc_buffer).digest('hex');
-
+			const hash = await this.HashDocument(update.documentElements);
 			const previous_update_key = zcrypto.getPubKeyFromPrivateKey(input.updatePrivateKey);
-			const signature = zcrypto.sign(Buffer.from(doc_hash, 'hex'), input.updatePrivateKey, previous_update_key);
-			
-			// Generates key-pair for the next DID Update operation
-			const [new_update_key, new_update_private_key] = await Cryptography.keyPair("update");
-			update.privateKeys.push(new_update_private_key);
-
+			const signature = zcrypto.sign(Buffer.from(hash, 'hex'), input.updatePrivateKey, previous_update_key);
 			const private_keys = await Cryptography.processKeys(update.privateKeys);
 
 			const tx_params = await tyronzil.default.CrudParams(
 				tyronzil.default.OptionParam(tyronzil.Option.none, "String"),
-				tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", document),
-				tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr33"),
-				tyronzil.default.OptionParam(tyronzil.Option.some, "ByStr33", "0x"+new_update_key),
+				tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", update.updateDocument),
 				tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64", "0x"+signature),
 			);
 
@@ -165,8 +207,6 @@ export default class DidCrud {
 		const tx_params = await tyronzil.default.CrudParams(
 			tyronzil.default.OptionParam(tyronzil.Option.none, "String"),
 			tyronzil.default.OptionParam(tyronzil.Option.some, "List Document", document),
-			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr33"),
-			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr33"),
 			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64", "0x"+signature),
 		);
 
@@ -180,14 +220,14 @@ export default class DidCrud {
 /** Defines output data for a DID CRUD operation */
 interface CrudOperationModel {
 	txParams: tyronzil.TransitionParams[];
-	privateKeys?: TyronPrivateKeys;
+	privateKeys?: DIDVerificationMethods;
 }
 
 // @TODO verify username
 export interface InputModel {
-	username: string;
-	publicKeyInput: PublicKeyInput[];
-	services: tyronzil.TransitionValue[];
+	userDomain: string[];
+	publicKeyInput: PublicKeyInput[];   //
+	services?: ServiceModel[];
 	recoveryPrivateKey?: string;
 }
 

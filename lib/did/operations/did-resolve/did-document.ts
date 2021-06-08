@@ -16,7 +16,7 @@
 
 import * as zcrypto from '@zilliqa-js/crypto';
 import ZilliqaInit from '../../../blockchain/zilliqa-init';
-import { DidServiceEndpointModel } from '../../protocols/models/document-model';
+import { ServiceModel } from '../../protocols/models/document-model';
 import { PublicKeyPurpose, TyronVerificationMethods, VerificationMethodModel } from '../../protocols/models/verification-method-models';
 import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
 import DidUrlScheme from '../../tyronzil-schemes/did-url-scheme';
@@ -37,7 +37,7 @@ export default class DidDoc {
 	public readonly keyAgreement?: VerificationMethodModel;
 	public readonly capabilityInvocation?: VerificationMethodModel;
 	public readonly capabilityDelegation?: VerificationMethodModel;
-	public readonly service?: DidServiceEndpointModel[];
+	public readonly service?: ServiceModel[];
 
 	private constructor (
 		scheme: DidDocScheme
@@ -59,7 +59,7 @@ export default class DidDoc {
 		const BLOCKCHAIN_INFO = await ZIL_INIT.API.blockchain.getBlockChainInfo();
 		let RESOLUTION_RESULT;
 
-		const DID_RESOLVED = await DidState.fetch(network, input.didcAddr)
+		const DID_RESOLVED = await DidState.fetch(network, input.addr)
 		.then(async did_state => {
 			const DID_DOC = await DidDoc.read(did_state);
 			switch (ACCEPT) {
@@ -71,9 +71,7 @@ export default class DidDoc {
 						resolutionMetadata: BLOCKCHAIN_INFO,
 						document: DID_DOC,
 						metadata: {
-							contentType: "application/did+json",
-							updateKey: did_state.did_update_key,
-							recoveryKey: did_state.did_recovery_key,
+							contentType: "application/did+json"
 						}
 					};
 					return RESOLUTION_RESULT;
@@ -83,7 +81,7 @@ export default class DidDoc {
 		return DID_RESOLVED;
 	}
 
-	/** Generates a 'Tyron DID-Read' operation, resolving any `Tyron DID-state` into its DID-Document */
+	/** Generates a 'Tyron DID Read' operation, resolving any Tyron DID State into its DID Document */
 	public static async read(state: DidState): Promise<DidDoc> {
 		const DID_DOC = await DidUrlScheme.validate(state.did)
 		.then(async did_scheme => {
@@ -138,15 +136,15 @@ export default class DidDoc {
 				const TYPE_URI = services.get(id);
 				const TYPE = TYPE_URI![0];
 				const URI = TYPE_URI![1];
-				const SERVICE: DidServiceEndpointModel = {
+				const SERVICE: ServiceModel = {
 					id: ID + '#' + id,
 					type: TYPE,
-					endpoint: URI
+					uri: URI
 				};
 				SERVICES.push(SERVICE);
 			}
 
-			/** The `Tyron DID-Document` */
+			/** The `Tyron DID Document` */
 			const SCHEME: DidDocScheme = {
 				id: ID,
 				verificationMethods: {},
@@ -181,19 +179,17 @@ export default class DidDoc {
 	}
 }
 
-/***            ** interfaces **            ***/
-
-/** The scheme of a `Tyron DID-Document` */
+/** The scheme of a `Tyron DID Document` */
 interface DidDocScheme {
 	id: string;
 	verificationMethods: TyronVerificationMethods;
-	service: DidServiceEndpointModel[];
+	service: ServiceModel[];
 	created?: number; //MUST be a valid XML datetime value, as defined in section 3.3.7 of [W3C XML Schema Definition Language (XSD) 1.1 Part 2: Datatypes [XMLSCHEMA1.1-2]]. This datetime value MUST be normalized to UTC 00:00, as indicated by the trailing "Z"
 	updated?: number; //timestamp of the most recent change
 }
 
 export interface ResolutionInput {
-	didcAddr: string;
+	addr: string;
 	metadata: ResolutionInputMetadata;
 }
 

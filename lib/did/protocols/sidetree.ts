@@ -14,12 +14,12 @@
 	GNU General Public License for more details.
 */
 
-
-import { PatchModel, PatchAction, Action, DataTransferProtocol, DocumentElement, ServiceModel } from './models/document-model';
+import { PatchModel, PatchAction, Action, DocumentElement, ServiceModel, DocumentConstructor } from './models/document-model';
 import { PrivateKeyModel, PublicKeyInput, PublicKeyModel } from './models/verification-method-models';
 import { Cryptography, OperationKeyPairInput } from '../util/did-keys';
 import ErrorCode from '../util/ErrorCode';
-import TyronZIL from '../../blockchain/tyronzil';
+import TyronZIL, { TransitionValue } from '../../blockchain/tyronzil';
+import tyronzil from '../../blockchain/tyronzil';
 
 /** Operation types */
 export enum OperationType {
@@ -30,21 +30,25 @@ export enum OperationType {
 }
 
 export class Sidetree {
-	public static async processPatches( patches: PatchModel[] )
-	: Promise<{ updateDocument: any[], privateKeys: PrivateKeyModel[] }> {
-		let update_document: any[] = [];
+	public static async processPatches(patches: PatchModel[])
+	: Promise<{documentElements: DocumentElement[], updateDocument: TransitionValue[], privateKeys: PrivateKeyModel[]}>{
+		let doc_elements: DocumentElement[] = [];
+		let update_document: TransitionValue[] = [];
 		let private_keys: PrivateKeyModel[] = [];
 		
-		for( const patch of patches ) {
-			switch ( patch.action ) {
+		for(const patch of patches){
+			switch (patch.action) {
 				case PatchAction.AddKeys: 
-					if( patch.keyInput !== undefined ) {
-						await this.addKeys( patch.keyInput )
-						.then( async new_keys => {
-							for ( let key of new_keys.publicKeys ) {
-								update_document.push(key);
+					if(patch.keyInput !== undefined){
+						await this.addKeys(patch.keyInput)
+						.then(async new_keys => {
+							for(const doc_element of new_keys.docElements){
+								doc_elements.push(doc_element);
 							}
-							for ( let key of new_keys.privateKeys ) {
+							for(const did_method of new_keys.verificationMethods){
+								update_document.push(did_method);
+							}
+							for(const key of new_keys.privateKeys){
 								private_keys.push(key)
 							}
 						})
@@ -56,43 +60,48 @@ export class Sidetree {
 				case PatchAction.RemoveKeys:
 					if( patch.ids !== undefined ) {
 						for( const id of patch.ids ) {
-							const KEY: PublicKeyModel = {
+							const key_: PublicKeyModel = {
 								id: id
 							};
-							const doc_element = await TyronZIL.documentElement(
-								DocumentElement.VerificationMethod,
-								Action.Removing,
-								KEY
-							);
-							update_document.push(doc_element);
+							const doc_element: DocumentElement = {
+								constructor: DocumentConstructor.VerificationMethod,
+								action: Action.Remove,
+								key: key_
+							};
+							doc_elements.push(doc_element);
+							const doc_parameter = await TyronZIL.documentParameter(doc_element);
+							update_document.push(doc_parameter);
 						}
 					}
 					break;
 				case PatchAction.AddServices: 
-					if( patch.services !== undefined ) {
-						for (let service of patch.services) {
-							update_document.push(service)
+					if(patch.services !== undefined){
+						for(const service of patch.services){
+							const doc_element: DocumentElement = {
+								constructor: DocumentConstructor.Service,
+								action: Action.Add,
+								service: service
+							};
+							doc_elements.push(doc_element);
+							const doc_parameter = await tyronzil.documentParameter(doc_element);
+							update_document.push(doc_parameter);
 						}
 					} else {
 						throw new ErrorCode("Missing", "No services given to add")
 					}
 					break;
 				case PatchAction.RemoveServices:
-					if( patch.ids !== undefined ) {
-						for( const id of patch.ids ) {
-							const SERVICE: ServiceModel = {
-								id: id,
-								type: "",
-								transferProtocol: DataTransferProtocol.Https,
-								uri: ""
+					if(patch.ids !== undefined){
+						for(const id of patch.ids){
+							const service: ServiceModel = { id: id };
+							const doc_element: DocumentElement = {
+								constructor: DocumentConstructor.Service,
+								action: Action.Remove,
+								service
 							};
-							const doc_element = await TyronZIL.documentElement(
-								DocumentElement.Service,
-								Action.Removing,
-								undefined,
-								SERVICE
-							);
-							update_document.push(doc_element);
+							doc_elements.push(doc_element);
+							const doc_parameter = await TyronZIL.documentParameter(doc_element);
+							update_document.push(doc_parameter);
 						}
 					} else {
 						throw new ErrorCode("Missing", "No service ID given to remove")
@@ -103,39 +112,40 @@ export class Sidetree {
 			}
 		}
 		return {
+			documentElements: doc_elements,
 			updateDocument: update_document,
 			privateKeys: private_keys,
 		}
 	}
 
 	private static async addKeys(input: PublicKeyInput[]): Promise<NewKeys> {
+		const doc_elements = [];
 		const verification_methods = [];
 		const private_keys = [];
 		for(let i=0, t= input.length; i<t; ++i) {
 			const key_input = input[i];
 
 			/** To create the DID public key */
-			const key_pair_input: OperationKeyPairInput = {
-				id: key_input.id
-			}
+			const key_pair_input: OperationKeyPairInput = { id: key_input.id }
 			
 			// Creates the key pair:
-			const [verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);
+			const [doc_element, verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);
+			doc_elements.push(doc_element);
 			verification_methods.push(verification_method);
 			private_keys.push(private_key);
 		}
 		const new_keys: NewKeys = {
-			publicKeys: verification_methods,
+			docElements: doc_elements,
+			verificationMethods: verification_methods,
 			privateKeys: private_keys
 		}
 		return new_keys;
 		}
 }
 
-/***            ** interfaces **            ***/
-
 /** Keys generated by the `DID Update` operation */
 interface NewKeys {
-	publicKeys: any[];
+	docElements: DocumentElement[];
+	verificationMethods: TransitionValue[];
 	privateKeys: PrivateKeyModel[];
 }
