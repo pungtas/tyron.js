@@ -26,6 +26,8 @@ export default class DidState {
     public readonly admin: string;
 	public readonly verification_methods: Map<string, string>;
 	public readonly services: Map<string, [string, string]>;
+	public readonly did_recovery_key: string;
+	public readonly did_update_key: string;
 	
 	private constructor(
 		state: DidStateModel
@@ -35,6 +37,8 @@ export default class DidState {
         this.admin = state.admin;
 		this.verification_methods = state.verification_methods;
 		this.services = state.services;
+		this.did_recovery_key = state.did_recovery_key;
+		this.did_update_key = state.did_update_key;
 	}
 
 	/** Fetches the current DID State for the given address */
