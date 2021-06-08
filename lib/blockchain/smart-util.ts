@@ -29,7 +29,7 @@ export default class SmartUtil {
         return result![0];
     }
 
-    /** Gets the DID-Status out of field Option */
+    /** Gets the DID Status out of field Option */
     public static async getStatus(object: any): Promise<string> {
         const entries = Object.entries(object);
         let result: string;
@@ -38,7 +38,8 @@ export default class SmartUtil {
                 result = value[1] as string;
             }
         });
-        return result!;
+        const status = result!.split(".");
+        return status[1];
     }
 
     /** Gets the value out of a map key */
@@ -63,7 +64,7 @@ export default class SmartUtil {
         return map;
     }
 
-    /** Turns the DIDC `services` map field into a Map */
+    /** Turns the DID's services map field into a Map */
     public static async fromServices(input: any): Promise<Map<string, [string, string]>> {
         const prev_map = await this.intoMap(input);
         let map = new Map();

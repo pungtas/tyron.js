@@ -225,7 +225,7 @@ interface CrudOperationModel {
 
 // @TODO verify username
 export interface InputModel {
-	userDomain: string[];
+	userDomain: string;
 	publicKeyInput: PublicKeyInput[];   //
 	services?: ServiceModel[];
 	recoveryPrivateKey?: string;

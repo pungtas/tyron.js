@@ -14,10 +14,10 @@
     GNU General Public License for more details.
 */
 
-import State from '../../../blockchain/state';
 import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
 import DidUrlScheme from '../../tyronzil-schemes/did-url-scheme';
 import { OperationType } from '../../protocols/sidetree';
+import State from '../../../blockchain/state';
 
 /** The Tyron DID-State */
 export default class DidState {
@@ -40,20 +40,22 @@ export default class DidState {
 	/** Fetches the current DID State for the given address */
 	public static async fetch(network: NetworkNamespace, addr: string): Promise<DidState> {
 		const did_state = await State.fetch(network, addr)
-		.then(async tyron_state => {
+		.then(async (state: { did: string; did_status: any; admin: any; verification_methods: any; services: any; }) => {
 			// Validates the Tyron DID Scheme
-			await DidUrlScheme.validate(tyron_state.did);
+			await DidUrlScheme.validate(state.did);
 			
 			const this_state: DidStateModel = {
-				did: tyron_state.did,
-				did_status: tyron_state.did_status,
-				admin: tyron_state.admin,
-				verification_methods: tyron_state.verification_methods,
-				services: tyron_state.services,
+				did: state.did,
+				did_status: state.did_status,
+				admin: state.admin,
+				verification_methods: state.verification_methods,
+				services: state.services,
+				did_recovery_key: state.verification_methods.get("recovery"),
+				did_update_key: state.verification_methods.get("update")
 			};
 			return new DidState(this_state);
 		})
-		.catch(err => { throw err })
+		.catch((err: any) => { throw err })
 		return did_state;
 	}
 }
@@ -65,4 +67,6 @@ export interface DidStateModel {
 	admin: string;
 	verification_methods: Map<string, string>;
 	services: Map<string, [string, string]>;
+	did_recovery_key: string;
+	did_update_key: string;
 }
