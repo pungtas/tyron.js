@@ -293,30 +293,30 @@ export default class TyronZIL extends ZilliqaInit {
 	): Promise<any> {
 		let value: TransitionValue;
 		switch (option) {
-			case "Some":
+			case 'Some':
 				value = {
 					argtypes: [ `${type}` ],
 					arguments: [ `${someValue}` ],
-					constructor: "Some"
+					constructor: 'Some'
 				}
 				return value;
-			case "None":
+			case 'None':
 				value = {
 					argtypes: [ `${type}` ],
 					arguments: [],
-					constructor: "None"
+					constructor: 'None'
 				}
 				return value;
 		};
 	}
 
 	public static async CrudParams(
-		document: any,
-		signature: any
+		document: string,
+		signature: string
 	): Promise<TransitionParams[]> {
 		
 		const params = [];
-		
+
 		const doc: TransitionParams = {
 			vname: 'document',
 			type: 'Option( List Document )',
@@ -507,8 +507,8 @@ interface TxObject {
 }
 
 export enum Option {
-	some = "Some",
-	none = "None"
+	some = 'Some',
+	none = 'None'
 }
 
 export enum Recoverer {
