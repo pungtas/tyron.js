@@ -1,4 +1,4 @@
-This is an [open-source](./LICENSE) client for Node.js that implements the [Tyron Self-Sovereign Identity Protocol](https://www.ssiprotocol.com).
+You're welcome to use and contribute to the development of this [open-source](./LICENSE) JavaScript/TypeScript library.
 
 ## W3C DID Method
 
