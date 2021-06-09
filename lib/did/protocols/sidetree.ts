@@ -33,7 +33,7 @@ export class Sidetree {
 	public static async processPatches(addr: string, patches: PatchModel[])
 	: Promise<{documentElements: DocumentElement[], updateDocument: TransitionValue[], privateKeys: PrivateKeyModel[]}>{
 		let doc_elements: DocumentElement[] = [];
-		let update_document: TransitionValue[] = [];
+		let update_document = [];
 		let private_keys: PrivateKeyModel[] = [];
 		
 		for(const patch of patches){

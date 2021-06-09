@@ -1,12 +1,13 @@
 {
   "name": "tyron",
-  "version": "3.3.3",
+  "version": "3.3.6",
   "description": "tyron.js: SSI Protocol's JavaScript/TypeScipt library",
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "typedoc": "typedoc --out typedocs",
-    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"LICENSE\" dist"
+    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"LICENSE\" dist",
+    "publish tyron": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",

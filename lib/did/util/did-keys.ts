@@ -47,6 +47,7 @@ export class Cryptography {
 			id: input.id,
 			key: private_key
 		};
+
 		return [doc_element, doc_parameter, private_key_model];
 	}
 

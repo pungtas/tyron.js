@@ -74,8 +74,8 @@ export default class DidCrud{
 		const private_keys_ = await Cryptography.processKeys(private_keys);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, document),
-			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64"),
+			await tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, document),
+			await tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64"),
 		);
 
 		const operation_output: CrudOperationModel = {

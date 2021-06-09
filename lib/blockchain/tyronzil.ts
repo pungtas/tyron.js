@@ -310,7 +310,7 @@ export default class TyronZIL extends ZilliqaInit {
 			case Option.some:
 				value = {
 					argtypes: [ `${argtype}` ],
-					arguments: [ `${args}` ],
+					arguments: [ args ],
 					constructor: 'Some'
 				};
 				break;
