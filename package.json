@@ -7,7 +7,7 @@
     "lint": "eslint . --ext .ts",
     "typedoc": "typedoc --out typedocs",
     "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"LICENSE\" dist",
-    "publish tyron": "npm run build && npm publish"
+    "tyron": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",
