@@ -142,12 +142,11 @@ export default class TyronZIL extends ZilliqaInit {
 	): Promise<Transaction> {
 		
 		const submit = await tyronzil.API.blockchain.getSmartContractState(addr)
-		.then(async (smart_contract_state) => {
-			console.log(JSON.stringify(smart_contract_state));
+		.then(async (_smart_contract_state) => {
+			//@to-do throw error if status is Deactivated
 
 			const amount_ = new Util.BN(amount);
 			const pubkey = zcrypto.getPubKeyFromPrivateKey(tyronzil.adminZilSecretKey);
-			
 			const zil_account = await tyronzil.API.blockchain.getBalance(tyronzil.admin);
 		
 			const transition: Transition = {
@@ -305,24 +304,25 @@ export default class TyronZIL extends ZilliqaInit {
 		option: Option,
 		argtype: string,
 		args?: any  
-	): Promise<any> {
+	): Promise<TransitionValue> {
 		let value: TransitionValue;
 		switch (option) {
-			case 'Some':
+			case Option.some:
 				value = {
 					argtypes: [ `${argtype}` ],
 					arguments: [ `${args}` ],
 					constructor: 'Some'
-				}
-				return value;
-			case 'None':
+				};
+				break;
+			case Option.none:
 				value = {
 					argtypes: [ `${argtype}` ],
 					arguments: [],
 					constructor: 'None'
-				}
-				return value;
+				};
+				break;
 		};
+		return value;
 	}
 
 	public static async CrudParams(
