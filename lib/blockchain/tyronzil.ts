@@ -409,6 +409,30 @@ export default class TyronZIL extends ZilliqaInit {
 		return params;
 	}
 
+	public static async EnableSocialRecovery(
+		addr1: string,
+		addr2: string
+	): Promise<TransitionParams[]> {
+		
+		const params = [];
+
+		const addr1_: TransitionParams = {
+			vname: 'addr1',
+			type: 'ByStr20',
+			value: addr1,
+		};
+		params.push(addr1_);
+
+		const addr2_: TransitionParams = {
+			vname: 'addr2',
+			type: 'ByStr20',
+			value: addr2,
+		};
+		params.push(addr2_);
+
+		return params;
+	}
+
 	public static async GetRecoverer(addr: string, recoverer: Recoverer): Promise<TransitionValue> {
 		return {
 			argtypes: [],
@@ -473,7 +497,6 @@ export default class TyronZIL extends ZilliqaInit {
 
 		return params;
 	}
-	
 }
 
 /** The result of a contract deployment */
@@ -496,6 +519,7 @@ export enum TransitionTag {
 	Recover = "DidRecover",
 	Deactivate = "DidDeactivate",
 	Transfer = "Transfer",
+	EnableSocialRecovery = "EnableSocialRecovery"
 }
 
 export interface TransitionParams {
