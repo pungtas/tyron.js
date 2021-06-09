@@ -118,7 +118,14 @@ export default class DidCrud{
 					h2 = hash.sha256().update(element.service?.id).digest('hex');
 					switch (element.action) {
 						case Action.Add:
-							h3 = hash.sha256().update(element.service?.uri!).digest('hex');	
+							switch (element.service?.endpoint) {
+								case 'Uri':
+									h3 = hash.sha256().update(element.service?.uri!).digest('hex');
+									break;
+								case 'Address':
+									h3 = hash.sha256().update(zutil.bytes.hexToByteArray(element.service?.address!)).digest('hex');
+									break;
+							}
 							hash__ = h1 + h2 + h3;			
 							break;
 						case Action.Remove:

@@ -255,10 +255,7 @@ export default class TyronZIL extends ZilliqaInit {
 					case 'Address':
 						endpoint = {
 							argtypes: [],
-							arguments: [
-								`${element.service!.network}`,
-								`${element.service!.address}`,
-							],
+							arguments: [ `${element.service!.address}` ],
 							constructor: `${addr}.Address`
 						};
 						break;
@@ -437,7 +434,7 @@ export default class TyronZIL extends ZilliqaInit {
 
 		const addr_: TransitionParams = {
 			vname: 'addr',
-			type: 'ByStr20 with contract field verification_methods: Map String ByStr33 end',
+			type: 'ByStr20',
 			value: addr1,
 		};
 		params.push(addr_);
