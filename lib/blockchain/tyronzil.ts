@@ -326,8 +326,8 @@ export default class TyronZIL extends ZilliqaInit {
 	}
 
 	public static async CrudParams(
-		document: string,
-		signature: string
+		document: any,
+		signature: any
 	): Promise<TransitionParams[]> {
 		
 		const params = [];

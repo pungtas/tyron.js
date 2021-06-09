@@ -74,8 +74,8 @@ export default class DidCrud{
 		const private_keys_ = await Cryptography.processKeys(private_keys);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			JSON.stringify(tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, document)),
-			JSON.stringify(tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64")),
+			tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, document),
+			tyronzil.default.OptionParam(tyronzil.Option.none, "ByStr64"),
 		);
 
 		const operation_output: CrudOperationModel = {
@@ -114,7 +114,7 @@ export default class DidCrud{
 							break;
 					};
 					break;
-				case DocumentConstructor.Service:
+				default:
 					h2 = hash.sha256().update(element.service?.id).digest('hex');
 					switch (element.action) {
 						case Action.Add:
@@ -167,8 +167,8 @@ export default class DidCrud{
 		const signature = zcrypto.sign(Buffer.from(hash_, 'hex'), input.recoveryPrivateKey!, previous_recovery_key);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			JSON.stringify(tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, document)),
-			JSON.stringify(tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature)),
+			tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, document),
+			tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
 		);
 		
 		const private_keys_ = await Cryptography.processKeys(private_keys);
@@ -189,8 +189,8 @@ export default class DidCrud{
 			const private_keys = await Cryptography.processKeys(update.privateKeys);
 
 			const tx_params = await tyronzil.default.CrudParams(
-				JSON.stringify(tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, update.updateDocument)),
-				JSON.stringify(tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature)),
+				tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, update.updateDocument),
+				tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
 			);
 
 			const operation_output: CrudOperationModel = {
@@ -209,8 +209,8 @@ export default class DidCrud{
 		const signature = zcrypto.sign(Buffer.from(input.state.did), input.recoveryPrivateKey, previous_recovery_key);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			JSON.stringify(tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, document)),
-			JSON.stringify(tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature)),
+			tyronzil.default.OptionParam(tyronzil.Option.some, `List (${input.addr}.Document)`, document),
+			tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
 		);
 
 		const operation_output: CrudOperationModel = {
