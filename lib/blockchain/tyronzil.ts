@@ -21,7 +21,7 @@ import * as Util from '@zilliqa-js/util';
 import ZilliqaInit from './zilliqa-init';
 import { NetworkNamespace } from '../did/tyronzil-schemes/did-scheme';
 import ErrorCode from '../did/util/ErrorCode';
-import { Action, DocumentElement } from '../did/protocols/models/document-model';
+import { Action, DocumentElement, TransferProtocol } from '../did/protocols/models/document-model';
 
 /** tyronzil transaction class */
 export default class TyronZIL extends ZilliqaInit {
@@ -90,12 +90,12 @@ export default class TyronZIL extends ZilliqaInit {
 				vname: 'initAdmin',
 				type: 'ByStr20',
 				value: `${tyronzil.admin}`,
-			},/*
+			},
 			{
 				vname: 'init_tyron',
-				type: 'ByStr20 with contract field services_: Map String Endpoint, field dns: Map String ( Map String ByStr20 ), field psc_fee: Map String Uint128 end',
+				type: 'ByStr20',
 				value: `${tyronzil.init_tyron}`,
-			}*/
+			}
 		];
 		const smart_contract = tyronzil.API.contracts.new(contractCode, contract_init);
 		
@@ -143,7 +143,7 @@ export default class TyronZIL extends ZilliqaInit {
 		
 		const submit = await tyronzil.API.blockchain.getSmartContractState(addr)
 		.then(async (smart_contract_state) => {
-			console.log(smart_contract_state);
+			console.log(JSON.stringify(smart_contract_state));
 
 			const amount_ = new Util.BN(amount);
 			const pubkey = zcrypto.getPubKeyFromPrivateKey(tyronzil.adminZilSecretKey);
@@ -193,26 +193,26 @@ export default class TyronZIL extends ZilliqaInit {
 
 	/** Returns a DID Document element as transition parameter */
 	public static async documentParameter(
+		addr: string,
 		element: DocumentElement
 	): Promise<TransitionValue> {
-		let value: TransitionValue;
 		let add: TransitionValue = {
 			argtypes: [],
 			arguments: [],
-			constructor: Action.Add
+			constructor: `${addr}.${Action.Add}`
 		};
 		let remove: TransitionValue = {
 			argtypes: [],
 			arguments: [],
-			constructor: Action.Remove
+			constructor: `${addr}.${Action.Remove}`
+		};
+		let value: TransitionValue = {
+			argtypes: [],
+			arguments: [],
+			constructor: `${addr}.${element.constructor}`
 		};
 		switch (element.constructor) {
 			case 'VerificationMethod':
-				value = {
-					argtypes: [],
-					arguments: [],
-					constructor: 'VerificationMethod'
-				};
 				switch (element.action) {
 					case Action.Add:
 						Object.assign(value, {
@@ -235,51 +235,69 @@ export default class TyronZIL extends ZilliqaInit {
 				}
 				break;
 			case 'Service':
-					value = {
-						argtypes: [],
-						arguments: [],
-						constructor: 'Service'
-					};
-					let did_service = {
-						argtypes: [],
-						arguments: [
-							`${element.service!.type}`,
-							{
-								argtypes: [],
-								arguments: [
-									{
-										constructor: `${element.service!.transferProtocol}`,
-										argtypes: [],
-										arguments: []
-									},
-									`${element.service!.uri}`
-								],
-								constructor: "ServiceEndpoint"
-							}
-						],
-						constructor: "DidService"
-					};
-					switch (element.action) {
-						case Action.Add:
-							Object.assign(value, {
-								arguments: [
-									add,
-									`${element.service!.id}`,
-									did_service
-								]
-							});
-							break;
-						case Action.Remove:
-							Object.assign(value, {
-								arguments: [
-									remove,
-									`${element.service!.id}`,
-									did_service
-								]
-							});
-							break;
-					}
-					break;
+				let endpoint;
+				switch (element.service?.endpoint) {
+					case 'Uri':
+						endpoint = {
+							argtypes: [],
+							arguments: [
+								`${element.service!.type}`,
+								{
+									argtypes: [],
+									arguments: [],
+									constructor: `${addr}.${element.service!.transferProtocol}`
+								},
+								`${element.service!.uri}`
+							],
+							constructor: `${addr}.Uri`
+						};
+						break;
+					case 'Address':
+						endpoint = {
+							argtypes: [],
+							arguments: [
+								`${element.service!.network}`,
+								`${element.service!.address}`,
+							],
+							constructor: `${addr}.Address`
+						};
+						break;
+				}
+				
+				const remove_uri = {
+					argtypes: [],
+					arguments: [
+						`remove`,
+						{
+							argtypes: [],
+							arguments: [],
+							constructor: `${addr}.${TransferProtocol.Https}`
+						},
+						`remove`
+					],
+					constructor: `${addr}.Uri`
+				};
+				switch (element.action) {
+					case Action.Add:
+						Object.assign(value, {
+							arguments: [
+								add,
+								`${element.service!.id}`,
+								endpoint
+							]
+						});
+						break;
+					case Action.Remove:
+						Object.assign(value, {
+							arguments: [
+								remove,
+								`${element.service!.id}`,
+								remove_uri
+							]
+						});
+						break;
+				}
+				break;
 			default:
 				throw new ErrorCode("UnsupportedElement", "That is not a DID-Document supported element");
 		}
@@ -288,21 +306,21 @@ export default class TyronZIL extends ZilliqaInit {
 
 	public static async OptionParam(
 		option: Option,
-		type: any,
-		someValue?: any  
+		argtype: string,
+		args?: any  
 	): Promise<any> {
 		let value: TransitionValue;
 		switch (option) {
 			case 'Some':
 				value = {
-					argtypes: [ `${type}` ],
-					arguments: [ `${someValue}` ],
+					argtypes: [ `${argtype}` ],
+					arguments: [ `${args}` ],
 					constructor: 'Some'
 				}
 				return value;
 			case 'None':
 				value = {
-					argtypes: [ `${type}` ],
+					argtypes: [ `${argtype}` ],
 					arguments: [],
 					constructor: 'None'
 				}
@@ -334,11 +352,11 @@ export default class TyronZIL extends ZilliqaInit {
 		return params;
 	}
 
-	public static async GetBeneficiary(beneficiary: Beneficiary): Promise<TransitionValue> {
+	public static async GetBeneficiary(addr: string, beneficiary: Beneficiary): Promise<TransitionValue> {
 		let beneficiary_ = {
 			argtypes: [],
 			arguments: [],
-			constructor: beneficiary.constructor
+			constructor: `${addr}.${beneficiary.constructor}`
 		};
 
 		switch (beneficiary.constructor) {
@@ -362,6 +380,7 @@ export default class TyronZIL extends ZilliqaInit {
 	}
 
 	public static async Transfer(
+		addr: string,
 		addrName: string,
 		beneficiary: Beneficiary,
 		amount: string
@@ -379,7 +398,7 @@ export default class TyronZIL extends ZilliqaInit {
 		const beneficiary__: TransitionParams = {
 			vname: 'beneficiary',
 			type: 'Beneficiary',
-			value: await this.GetBeneficiary(beneficiary)
+			value: await this.GetBeneficiary(addr, beneficiary)
 		};
 		params.push(beneficiary__);
 
@@ -393,17 +412,18 @@ export default class TyronZIL extends ZilliqaInit {
 		return params;
 	}
 
-	public static async GetRecoverer(recoverer: Recoverer): Promise<TransitionValue> {
+	public static async GetRecoverer(addr: string, recoverer: Recoverer): Promise<TransitionValue> {
 		return {
 			argtypes: [],
 			arguments: [],
-			constructor: recoverer
+			constructor: `${addr}.${recoverer}`
 		};
 	}
 
 	public static async UpdateSocialRecoverer(
+		addr: string,
 		recoverer: Recoverer,
-		addr: string
+		addr1: string
 	): Promise<TransitionParams[]> {
 		
 		const params = [];
@@ -411,14 +431,14 @@ export default class TyronZIL extends ZilliqaInit {
 		const recoverer__: TransitionParams = {
 			vname: 'recoverer',
 			type: 'Recoverer',
-			value: await this.GetRecoverer(recoverer)
+			value: await this.GetRecoverer(addr, recoverer)
 		};
 		params.push(recoverer__);
 
 		const addr_: TransitionParams = {
 			vname: 'addr',
 			type: 'ByStr20 with contract field verification_methods: Map String ByStr33 end',
-			value: addr,
+			value: addr1,
 		};
 		params.push(addr_);
 
@@ -435,7 +455,7 @@ export default class TyronZIL extends ZilliqaInit {
 
 		const addr_: TransitionParams = {
 			vname: 'addr',
-			type: 'ByStr20 with contract field verification_methods: Map String ByStr33 end',
+			type: 'ByStr20',
 			value: addr,
 		};
 		params.push(addr_);
@@ -488,9 +508,9 @@ export interface TransitionParams {
 }
 
 export interface TransitionValue {
-	constructor: string;
 	argtypes: any[];
-	arguments: any[]
+	arguments: any[];
+	constructor: string;
 }
 
 interface TxObject {

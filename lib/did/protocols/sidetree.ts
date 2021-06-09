@@ -30,7 +30,7 @@ export enum OperationType {
 }
 
 export class Sidetree {
-	public static async processPatches(patches: PatchModel[])
+	public static async processPatches(addr: string, patches: PatchModel[])
 	: Promise<{documentElements: DocumentElement[], updateDocument: TransitionValue[], privateKeys: PrivateKeyModel[]}>{
 		let doc_elements: DocumentElement[] = [];
 		let update_document: TransitionValue[] = [];
@@ -40,7 +40,7 @@ export class Sidetree {
 			switch (patch.action) {
 				case PatchAction.AddKeys: 
 					if(patch.keyInput !== undefined){
-						await this.addKeys(patch.keyInput)
+						await this.addKeys(addr, patch.keyInput)
 						.then(async new_keys => {
 							for(const doc_element of new_keys.docElements){
 								doc_elements.push(doc_element);
@@ -69,7 +69,7 @@ export class Sidetree {
 								key: key_
 							};
 							doc_elements.push(doc_element);
-							const doc_parameter = await TyronZIL.documentParameter(doc_element);
+							const doc_parameter = await TyronZIL.documentParameter(addr, doc_element);
 							update_document.push(doc_parameter);
 						}
 					}
@@ -83,7 +83,7 @@ export class Sidetree {
 								service: service
 							};
 							doc_elements.push(doc_element);
-							const doc_parameter = await tyronzil.documentParameter(doc_element);
+							const doc_parameter = await tyronzil.documentParameter(addr, doc_element);
 							update_document.push(doc_parameter);
 						}
 					} else {
@@ -100,7 +100,7 @@ export class Sidetree {
 								service
 							};
 							doc_elements.push(doc_element);
-							const doc_parameter = await TyronZIL.documentParameter(doc_element);
+							const doc_parameter = await TyronZIL.documentParameter(addr, doc_element);
 							update_document.push(doc_parameter);
 						}
 					} else {
@@ -118,7 +118,7 @@ export class Sidetree {
 		}
 	}
 
-	private static async addKeys(input: PublicKeyInput[]): Promise<NewKeys> {
+	private static async addKeys(addr: string, input: PublicKeyInput[]): Promise<NewKeys> {
 		const doc_elements = [];
 		const verification_methods = [];
 		const private_keys = [];
@@ -126,7 +126,7 @@ export class Sidetree {
 			const key_input = input[i];
 
 			/** To create the DID public key */
-			const key_pair_input: OperationKeyPairInput = { id: key_input.id }
+			const key_pair_input: OperationKeyPairInput = { id: key_input.id, addr: addr }
 			
 			// Creates the key pair:
 			const [doc_element, verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);

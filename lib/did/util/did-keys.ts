@@ -22,7 +22,8 @@ import ErrorCode from './ErrorCode';
 
 /** Defines input data to generate a cryptographic key pair */
 export interface OperationKeyPairInput {
-	id: string   //the key purpose      
+	id: string   //the key purpose
+	addr: string   
 }
 
 /** Generates cryptographic operations */
@@ -40,14 +41,12 @@ export class Cryptography {
 			constructor: DocumentConstructor.VerificationMethod,
 			action: Action.Add,
 			key: verification_method
-
-		}
-		const doc_parameter = await TyronZIL.documentParameter(doc_element);
+		};
+		const doc_parameter = await TyronZIL.documentParameter(input.addr, doc_element);
 		const private_key_model: PrivateKeyModel = {
 			id: input.id,
 			key: private_key
 		};
-
 		return [doc_element, doc_parameter, private_key_model];
 	}
 

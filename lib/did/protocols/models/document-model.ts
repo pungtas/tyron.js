@@ -16,30 +16,31 @@
 
 import { PublicKeyInput, PublicKeyModel } from './verification-method-models';
 
-export enum DocumentConstructor {
+export enum DocumentConstructor{
 	VerificationMethod = 'VerificationMethod',
 	Service = 'Service'
 }
 
-export interface DocumentElement {
+export interface DocumentElement{
 	constructor: DocumentConstructor,       
 	action: Action,
 	key?: PublicKeyModel,
 	service?: ServiceModel
 }
 
-export enum ServiceEndpoint {
-	Web2Endpoint = 'Endpoint',
+export enum ServiceEndpoint{
+	Web2Endpoint = 'Uri',
 	Web3Endpoint = 'Address'
 }
 
-export enum TransferProtocol {
+export enum TransferProtocol{
 	Https = "Https",
 	Git = "Git"
 }
 
-export interface ServiceModel {
+export interface ServiceModel{
 	id: string,
+	endpoint?: ServiceEndpoint,
 	type?: string,
 	transferProtocol?: TransferProtocol,
 	uri?: string,
@@ -47,19 +48,19 @@ export interface ServiceModel {
 	address?: string	
 }
 
-export enum Action {
+export enum Action{
 	Add = "Add",
 	Remove = "Remove"
 }
 
-export interface PatchModel {
+export interface PatchModel{
 	action: PatchAction;
 	ids?: string[];    //the IDs of the DID Document elements to remove
 	keyInput?: PublicKeyInput[];
 	services?: ServiceModel[];
 }
 
-export enum PatchAction {
+export enum PatchAction{
 	AddKeys = 'add-public-keys',
 	RemoveKeys = 'remove-public-keys',
 	AddServices = 'add-service-endpoints',
