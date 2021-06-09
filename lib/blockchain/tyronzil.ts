@@ -326,7 +326,7 @@ export default class TyronZIL extends ZilliqaInit {
 	}
 
 	public static async CrudParams(
-		document: any,
+		document: TransitionValue[],
 		signature: any
 	): Promise<TransitionParams[]> {
 		
@@ -334,7 +334,7 @@ export default class TyronZIL extends ZilliqaInit {
 
 		const doc: TransitionParams = {
 			vname: 'document',
-			type: 'Option( List Document )',
+			type: 'List Document',
 			value: document,
 		};
 		params.push(doc);

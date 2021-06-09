@@ -74,7 +74,7 @@ export default class DidCrud{
 		const private_keys_ = await Cryptography.processKeys(private_keys);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			await tyronzil.default.OptionParam(tyronzil.Option.some, `List ${input.addr}.Document`, document),
+			document,
 			await tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64'),
 		);
 
@@ -114,7 +114,7 @@ export default class DidCrud{
 							break;
 					};
 					break;
-				default:
+				case DocumentConstructor.Service:
 					h2 = hash.sha256().update(element.service?.id).digest('hex');
 					switch (element.action) {
 						case Action.Add:
@@ -159,15 +159,15 @@ export default class DidCrud{
 		}
 
 		const services_ = await this.GetServices(input.addr, input.services!);
-		const document = doc_elements.concat(services_[0]);
-		const hash_ = await this.HashDocument(document);
-
-		
+		const doc_elements_ = doc_elements.concat(services_[0]);
+		const hash_ = await this.HashDocument(doc_elements_);
+		const document = verification_methods.concat(services_[1]);
+				
 		const previous_recovery_key = zcrypto.getPubKeyFromPrivateKey(input.recoveryPrivateKey!);
 		const signature = zcrypto.sign(Buffer.from(hash_, 'hex'), input.recoveryPrivateKey!, previous_recovery_key);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			tyronzil.default.OptionParam(tyronzil.Option.some, `List ${input.addr}.Document`, document),
+			document,
 			tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
 		);
 		
@@ -189,7 +189,7 @@ export default class DidCrud{
 			const private_keys = await Cryptography.processKeys(update.privateKeys);
 
 			const tx_params = await tyronzil.default.CrudParams(
-				tyronzil.default.OptionParam(tyronzil.Option.some, `List ${input.addr}.Document`, update.updateDocument),
+				update.updateDocument,
 				tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
 			);
 
@@ -204,12 +204,19 @@ export default class DidCrud{
 	}
 
 	public static async Deactivate(input: DeactivateInputModel): Promise<DidCrud> {
-		const previous_recovery_key = zcrypto.getPubKeyFromPrivateKey(input.recoveryPrivateKey);
+		const deactivate_element: DocumentElement = {
+			constructor: DocumentConstructor.Service,       
+			action: Action.Remove,
+			service: { id: 'deactivate'}
+		};
+		const hash_ = await this.HashDocument([deactivate_element]);
+		const document = await tyronzil.default.documentParameter(input.addr, deactivate_element) ;
 
-		const signature = zcrypto.sign(Buffer.from(input.state.did), input.recoveryPrivateKey, previous_recovery_key);
+		const previous_recovery_key = zcrypto.getPubKeyFromPrivateKey(input.recoveryPrivateKey);
+		const signature = zcrypto.sign(Buffer.from(hash_, 'hex'), input.recoveryPrivateKey!, previous_recovery_key);
 		
 		const tx_params = await tyronzil.default.CrudParams(
-			tyronzil.default.OptionParam(tyronzil.Option.some, `List ${input.addr}.Document`, document),
+			[document],
 			tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
 		);
 
