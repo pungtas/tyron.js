@@ -1,18 +1,17 @@
 /*
-	tyron.js: SSI Protocol's JavaScript/TypeScipt library
-	Self-Sovereign Identity Protocol.
-	Copyright (C) Tyron Pungtas and its affiliates.
+tyron.js: SSI Protocol's JavaScript/TypeScipt library
+Self-Sovereign Identity Protocol.
+Copyright (C) Tyron Pungtas and its affiliates.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-*/
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.*/
 
 import { Transaction } from '@zilliqa-js/account';
 import { Contract} from '@zilliqa-js/contract';
@@ -138,7 +137,7 @@ export default class TyronZIL extends ZilliqaInit {
 		tyronzil: TyronZIL,
 		addr: string,
 		amount: string,		
-		params: TransitionParams[]
+		params?: TransitionParams[]
 	): Promise<Transaction> {
 		
 		const submit = await tyronzil.API.blockchain.getSmartContractState(addr)
@@ -350,18 +349,35 @@ export default class TyronZIL extends ZilliqaInit {
 		return params;
 	}
 
-	public static async BuyDomainNameNFT(
-		username: string
-	): Promise<TransitionParams[]> {
-		
+	public static async BuyDomainNameNFT(username: string): Promise<TransitionParams[]> {
 		const params = [];
-
 		const username_: TransitionParams = {
 			vname: 'username',
 			type: 'String',
 			value: username,
 		};
 		params.push(username_);
+		return params;
+	}
+	
+	public static async TransferDomainNameNFT(
+		username: string,
+		addr: string,
+	): Promise<TransitionParams[]> {
+		const params = [];
+		const username_: TransitionParams = {
+			vname: 'username',
+			type: 'String',
+			value: username,
+		};
+		params.push(username_);
+
+		const addr_: TransitionParams = {
+			vname: 'addr',
+			type: 'ByStr20',
+			value: addr,
+		};
+		params.push(addr_);
 		return params;
 	}
 
@@ -410,7 +426,56 @@ export default class TyronZIL extends ZilliqaInit {
 
 		const beneficiary__: TransitionParams = {
 			vname: 'beneficiary',
-			type: 'Beneficiary',
+			type: `${addr.toLowerCase()}.Beneficiary`,
+			value: await this.GetBeneficiary(addr, beneficiary)
+		};
+		params.push(beneficiary__);
+
+		const amount_: TransitionParams = {
+			vname: 'amount',
+			type: 'Uint128',
+			value: amount,
+		};
+		params.push(amount_);
+
+		return params;
+	}
+
+	public static async SendFunds(
+		addr: string,
+		tag: string,
+		beneficiary: Beneficiary
+	): Promise<TransitionParams[]> {
+		
+		const params = [];
+		const tag_: TransitionParams = {
+			vname: 'tag',
+			type: 'String',
+			value: tag,
+		};
+		params.push(tag_);
+
+		const beneficiary__: TransitionParams = {
+			vname: 'beneficiary',
+			type: `${addr.toLowerCase()}.Beneficiary`,
+			value: await this.GetBeneficiary(addr, beneficiary)
+		};
+		params.push(beneficiary__);
+
+		return params;
+	}
+
+	public static async NFTTransfer(
+		addr: string,
+		beneficiary: Beneficiary,
+		amount: string
+	): Promise<TransitionParams[]> {
+		
+		const params = [];
+
+		const beneficiary__: TransitionParams = {
+			vname: 'beneficiary',
+			type: `${addr.toLowerCase()}.Beneficiary`,
 			value: await this.GetBeneficiary(addr, beneficiary)
 		};
 		params.push(beneficiary__);
@@ -514,8 +579,7 @@ export default class TyronZIL extends ZilliqaInit {
 		return params;
 	}
 
-	public static async UpdateAddr(addr: string): Promise<TransitionParams[]> {
-
+	public static async TxAddr(addr: string): Promise<TransitionParams[]> {
 		const params = [];
 		const addr_: TransitionParams = {
 			vname: 'addr',
@@ -523,6 +587,90 @@ export default class TyronZIL extends ZilliqaInit {
 			value: addr,
 		};
 		params.push(addr_);
+		return params;
+	}
+
+	public static async TxAmount(amount: string): Promise<TransitionParams[]> {
+
+		const params = [];
+		const amount_: TransitionParams = {
+			vname: 'amount',
+			type: 'Uint128',
+			value: amount,
+		};
+		params.push(amount_);
+		return params;
+	}
+
+	public static async AddWork(
+		addr: string,
+		transferProtocol: TransferProtocol,
+		uri: string,
+		amount: string
+		): Promise<TransitionParams[]> {
+
+		const params = [];
+
+		const tprotocol = {
+			argtypes: [],
+			arguments: [],
+			constructor: `${addr.toLowerCase()}.${transferProtocol}`
+		};
+		const transfer_protocol = {
+			vname: 'transferProtocol',
+			type: `${addr.toLowerCase()}.TransferProtocol`,
+			value: tprotocol
+		};
+		params.push(transfer_protocol);
+
+		const uri_: TransitionParams = {
+			vname: 'uri',
+			type: 'String',
+			value: uri,
+		};
+		params.push(uri_);
+
+		const amount_: TransitionParams = {
+			vname: 'amount',
+			type: 'Uint128',
+			value: amount,
+		};
+		params.push(amount_);
+		return params;
+	}
+
+	public static async AssessPerformance(
+		commit: string,
+		amount: string
+		): Promise<TransitionParams[]> {
+
+		const params = [];
+
+		const commit_: TransitionParams = {
+			vname: 'commit',
+			type: 'ByStr32',
+			value: commit,
+		};
+		params.push(commit_);
+
+		const amount_: TransitionParams = {
+			vname: 'amount',
+			type: 'Uint128',
+			value: amount,
+		};
+		params.push(amount_);
+		return params;
+	}
+	
+	public static async RemoveService(commit: string): Promise<TransitionParams[]> {
+
+		const params = [];
+		const commit_: TransitionParams = {
+			vname: 'commit',
+			type: 'ByStr32',
+			value: commit,
+		};
+		params.push(commit_);
 		return params;
 	}
 }
@@ -535,23 +683,33 @@ export interface DeployedContract {
 }
 
 interface Transition {
-	_tag: string;               // transition to be invoked
-	_amount: string; 	        // number of QA to be transferred
-	_sender: string;	        // address of the invoker
-	params: TransitionParams[] 	// an array of parameter objects
+	_tag: string;   // transition to be invoked
+	_amount: string;   // number of QA to be transferred
+	_sender: string;   // address of the invoker
+	params?: TransitionParams[]   // an array of parameter objects
 }
 
 export enum TransitionTag {
 	Create = "DidCreate",
-	Update = "DidUpdate",
 	Recover = "DidRecover",
+	Update = "DidUpdate",
 	Deactivate = "DidDeactivate",
 	Transfer = "Transfer",
+	AddFunds = 'AddFunds',
+	SendFunds = 'SendFunds',
 	EnableSocialRecovery = "EnableSocialRecovery",
 	UpdateSocialRecoverer = "UpdateSocialRecoverer",
 	BuyDomainNameNFT = 'BuyDomainNameNFT',
+	TransferDomainNameNFT = 'TransferDomainNameNFT',
 	UpdateInit = 'UpdateInit',
-	UpdateAdmin = 'UpdateAdmin'
+	UpdateAdmin = 'UpdateAdmin',
+	AddMember = 'AddMember',
+	NFTTransfer = 'NFTTransfer',
+	UpdateHourlyWage = 'UpdateHourlyWage',
+	AddWork = 'AddWork',
+	AssessPerformance = 'AssessPerformance',
+	RemoveService = 'RemoveService',
+	WithdrawEarnings = 'WithdrawEarnings'
 }
 
 export interface TransitionParams {
