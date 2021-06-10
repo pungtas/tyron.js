@@ -36,6 +36,6 @@ export default class Resolver {
 			return await SmartUtil.getValuefromMap(records, username);
 		})
 		.catch((err: any) => { throw err });
-		return zcrypto.normaliseAddress(addr);
+		return zcrypto.toChecksumAddress(addr)
 	}
 }
