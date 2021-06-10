@@ -198,17 +198,17 @@ export default class TyronZIL extends ZilliqaInit {
 		let add: TransitionValue = {
 			argtypes: [],
 			arguments: [],
-			constructor: `${addr}.${Action.Add}`
+			constructor: `${addr.toLowerCase()}.${Action.Add}`
 		};
 		let remove: TransitionValue = {
 			argtypes: [],
 			arguments: [],
-			constructor: `${addr}.${Action.Remove}`
+			constructor: `${addr.toLowerCase()}.${Action.Remove}`
 		};
 		let value: TransitionValue = {
 			argtypes: [],
 			arguments: [],
-			constructor: `${addr}.${element.constructor}`
+			constructor: `${addr.toLowerCase()}.${element.constructor}`
 		};
 		switch (element.constructor) {
 			case 'VerificationMethod':
@@ -244,18 +244,18 @@ export default class TyronZIL extends ZilliqaInit {
 								{
 									argtypes: [],
 									arguments: [],
-									constructor: `${addr}.${element.service!.transferProtocol}`
+									constructor: `${addr.toLowerCase()}.${element.service!.transferProtocol}`
 								},
 								`${element.service!.uri}`
 							],
-							constructor: `${addr}.Uri`
+							constructor: `${addr.toLowerCase()}.Uri`
 						};
 						break;
 					case 'Address':
 						endpoint = {
 							argtypes: [],
 							arguments: [ `${element.service!.address}` ],
-							constructor: `${addr}.Address`
+							constructor: `${addr.toLowerCase()}.Address`
 						};
 						break;
 				}
@@ -267,11 +267,11 @@ export default class TyronZIL extends ZilliqaInit {
 						{
 							argtypes: [],
 							arguments: [],
-							constructor: `${addr}.${TransferProtocol.Https}`
+							constructor: `${addr.toLowerCase()}.${TransferProtocol.Https}`
 						},
 						`remove`
 					],
-					constructor: `${addr}.Uri`
+					constructor: `${addr.toLowerCase()}.Uri`
 				};
 				switch (element.action) {
 					case Action.Add:
@@ -369,7 +369,7 @@ export default class TyronZIL extends ZilliqaInit {
 		let beneficiary_ = {
 			argtypes: [],
 			arguments: [],
-			constructor: `${addr}.${beneficiary.constructor}`
+			constructor: `${addr.toLowerCase()}.${beneficiary.constructor}`
 		};
 
 		switch (beneficiary.constructor) {
@@ -453,7 +453,7 @@ export default class TyronZIL extends ZilliqaInit {
 		return {
 			argtypes: [],
 			arguments: [],
-			constructor: `${addr}.${recoverer}`
+			constructor: `${addr.toLowerCase()}.${recoverer}`
 		};
 	}
 
