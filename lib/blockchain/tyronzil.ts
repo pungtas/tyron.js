@@ -512,6 +512,18 @@ export default class TyronZIL extends ZilliqaInit {
 
 		return params;
 	}
+
+	public static async UpdateAddr(addr: string): Promise<TransitionParams[]> {
+
+		const params = [];
+		const addr_: TransitionParams = {
+			vname: 'addr',
+			type: 'ByStr20',
+			value: addr,
+		};
+		params.push(addr_);
+		return params;
+	}
 }
 
 /** The result of a contract deployment */
@@ -536,7 +548,8 @@ export enum TransitionTag {
 	Transfer = "Transfer",
 	EnableSocialRecovery = "EnableSocialRecovery",
 	UpdateSocialRecoverer = "UpdateSocialRecoverer",
-	BuyDomainNameNFT = 'BuyDomainNameNFT'
+	BuyDomainNameNFT = 'BuyDomainNameNFT',
+	UpdateInit = 'UpdateInit'
 }
 
 export interface TransitionParams {
