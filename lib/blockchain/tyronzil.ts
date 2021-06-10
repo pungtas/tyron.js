@@ -550,7 +550,8 @@ export enum TransitionTag {
 	EnableSocialRecovery = "EnableSocialRecovery",
 	UpdateSocialRecoverer = "UpdateSocialRecoverer",
 	BuyDomainNameNFT = 'BuyDomainNameNFT',
-	UpdateInit = 'UpdateInit'
+	UpdateInit = 'UpdateInit',
+	UpdateAdmin = 'UpdateAdmin'
 }
 
 export interface TransitionParams {
