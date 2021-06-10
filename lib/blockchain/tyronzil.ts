@@ -519,7 +519,8 @@ export enum TransitionTag {
 	Recover = "DidRecover",
 	Deactivate = "DidDeactivate",
 	Transfer = "Transfer",
-	EnableSocialRecovery = "EnableSocialRecovery"
+	EnableSocialRecovery = "EnableSocialRecovery",
+	UpdateSocialRecoverer = "UpdateSocialRecoverer"
 }
 
 export interface TransitionParams {
