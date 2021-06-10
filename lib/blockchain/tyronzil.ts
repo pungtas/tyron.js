@@ -326,6 +326,7 @@ export default class TyronZIL extends ZilliqaInit {
 	}
 
 	public static async CrudParams(
+		addr: string,
 		document: TransitionValue[],
 		signature: any
 	): Promise<TransitionParams[]> {
@@ -334,7 +335,7 @@ export default class TyronZIL extends ZilliqaInit {
 
 		const doc: TransitionParams = {
 			vname: 'document',
-			type: 'List Document',
+			type: `List ${addr.toLowerCase()}.Document`,
 			value: document,
 		};
 		params.push(doc);
@@ -466,7 +467,7 @@ export default class TyronZIL extends ZilliqaInit {
 
 		const recoverer__: TransitionParams = {
 			vname: 'recoverer',
-			type: 'Recoverer',
+			type: `${addr.toLowerCase()}.Recoverer`,
 			value: await this.GetRecoverer(addr, recoverer)
 		};
 		params.push(recoverer__);
