@@ -53,8 +53,8 @@ export default class State {
                         admin: String(did_state.result.admin),
                         did: String(did_state.result.did),
                         did_status: STATUS,
-                        verification_methods: await SmartUtil.intoMap(did_state.result.verification_methods),
-                        services: await SmartUtil.fromServices(did_state.result.services)
+                        verification_methods: await SmartUtil.intoMap(did_state.result.verification_methods_),
+                        services: await SmartUtil.fromServices(did_state.result.services__)
                     };
                     return new State(STATE);
             }
