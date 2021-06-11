@@ -95,6 +95,8 @@ export default class DidDoc {
 			let KEY_AGREEMENT;
 			let CAPABILITY_INVOCATION;
 			let CAPABILITY_DELEGATION;
+			let DID_UPDATE;
+			let DID_RECOVERY;
 
 			// Every key MUST have a Public Key Purpose as its ID
 			for (let purpose of VERIFICATION_METHODS.keys()) {
@@ -123,7 +125,13 @@ export default class DidDoc {
 						break;
 					case PublicKeyPurpose.Delegation:
 						CAPABILITY_DELEGATION = VERIFICATION_METHOD;
-						break;                
+						break;
+					case PublicKeyPurpose.Update:
+						DID_UPDATE = VERIFICATION_METHOD;
+						break;
+					case PublicKeyPurpose.Recovery:
+						DID_RECOVERY = VERIFICATION_METHOD;
+						break;            
 					default:
 						throw new ErrorCode("InvalidPurpose", `The resolver detected an invalid Public Key Purpose`);
 				}
