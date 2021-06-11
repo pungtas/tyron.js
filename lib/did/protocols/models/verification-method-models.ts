@@ -48,7 +48,8 @@ export interface TyronVerificationMethods {
 	keyAgreement?: VerificationMethodModel;
 	capabilityInvocation?: VerificationMethodModel;
 	capabilityDelegation?: VerificationMethodModel;
-	xsgdKey?: VerificationMethodModel;
+	didUpdate?: VerificationMethodModel;
+	didRecovery?: VerificationMethodModel
 }
 
 export interface PublicKeyInput {

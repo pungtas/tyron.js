@@ -176,6 +176,12 @@ export default class DidDoc {
 			if(CAPABILITY_DELEGATION!== undefined) {
 				SCHEME.verificationMethods.capabilityDelegation = CAPABILITY_DELEGATION;
 			}
+			if(DID_UPDATE!== undefined) {
+				SCHEME.verificationMethods.didUpdate = DID_UPDATE;
+			}
+			if(DID_RECOVERY!== undefined) {
+				SCHEME.verificationMethods.didRecovery = DID_RECOVERY;
+			}
 
 			if(SERVICES.length !== 0) {
 				SCHEME.service = SERVICES;
