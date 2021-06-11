@@ -75,9 +75,9 @@ export default class SmartUtil {
             
             entries.forEach((value: [string, unknown]) => {
                 if (value[0] === "arguments") {
-                    const result = value[1] as [string, string];
+                    const result = value[1] as [string, unknown, string];
                     const type = result[0];
-                    const uri = result[1];
+                    const uri = result[2];
                     map.set(id, [type, uri]);
                 }
             });

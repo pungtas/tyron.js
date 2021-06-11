@@ -44,14 +44,14 @@ export default class State {
         const ZIL_INIT = new ZilliqaInit(network);
         const tyron_state = await ZIL_INIT.API.blockchain.getSmartContractState(addr)
         .then(async did_state => {
-            const STATUS = await SmartUtil.getStatus(did_state.result.did_status);
+            const STATUS = await SmartUtil.getStatus(did_state.result.did_status_);
             switch (STATUS) {
                 case OperationType.Deactivate:
                     throw new ErrorCode("DidDeactivated", "The requested DID is deactivated");
                 default:
                     const STATE: StateModel = {
-                        admin: String(did_state.result.admin),
-                        did: String(did_state.result.did),
+                        admin: String(did_state.result.admin_),
+                        did: String(did_state.result.did_),
                         did_status: STATUS,
                         verification_methods: await SmartUtil.intoMap(did_state.result.verification_methods_),
                         services: await SmartUtil.fromServices(did_state.result.services__)
