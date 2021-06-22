@@ -106,7 +106,7 @@ export default class DidCrud{
 					h2 = hash.sha256().update(element.key?.id).digest('hex');
 					switch (element.action) {
 						case Action.Add:
-							h3 = hash.sha256().update(zutil.bytes.hexToByteArray(element.key?.key!)).digest('hex');	
+							h3 = hash.sha256().update(zutil.bytes.hexToByteArray(element.key!.key!.substring(2))).digest('hex');	
 							hash__ = h1 + h2 + h3;			
 							break;
 						case Action.Remove:
@@ -134,7 +134,10 @@ export default class DidCrud{
 					};
 					break;
 			};
+			console.log(hash_);
 			hash_ = hash_ + hash__;
+			console.log(hash_);
+			console.log(hash__);
 		}
 		return hash_;
 	}
@@ -144,14 +147,15 @@ export default class DidCrud{
 		const private_keys: PrivateKeyModel[] = [];
 		let doc_elements: DocumentElement[] = [];
 
-		input.publicKeyInput.push({id: PublicKeyPurpose.Recovery})
+		input.publicKeyInput.push({id: PublicKeyPurpose.Update});
+		input.publicKeyInput.push({id: PublicKeyPurpose.Recovery});
 		const public_key_input = input.publicKeyInput;
 		for(const key_input of public_key_input) {
 			// Creates the cryptographic key pair
 			const key_pair_input: OperationKeyPairInput = {
 				id: key_input.id,
 				addr: input.addr
-			}
+			};
 			const [doc_element, verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);
 			doc_elements.push(doc_element);
 			verification_methods.push(verification_method);

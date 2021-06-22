@@ -15,7 +15,7 @@
 */
 
 import { PatchModel, PatchAction, Action, DocumentElement, ServiceModel, DocumentConstructor } from './models/document-model';
-import { PrivateKeyModel, PublicKeyInput, PublicKeyModel } from './models/verification-method-models';
+import { PrivateKeyModel, PublicKeyInput, PublicKeyModel, PublicKeyPurpose } from './models/verification-method-models';
 import { Cryptography, OperationKeyPairInput } from '../util/did-keys';
 import ErrorCode from '../util/ErrorCode';
 import TyronZIL, { TransitionValue } from '../../blockchain/tyronzil';
@@ -122,9 +122,8 @@ export class Sidetree {
 		const doc_elements = [];
 		const verification_methods = [];
 		const private_keys = [];
-		for(let i=0, t= input.length; i<t; ++i) {
-			const key_input = input[i];
-
+		input.push({id: PublicKeyPurpose.Update});
+		for(const key_input of input) {
 			/** To create the DID public key */
 			const key_pair_input: OperationKeyPairInput = { id: key_input.id, addr: addr }
 			
