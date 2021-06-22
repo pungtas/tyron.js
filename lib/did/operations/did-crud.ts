@@ -169,7 +169,7 @@ export default class DidCrud{
 		const tx_params = await tyronzil.default.CrudParams(
 			input.addr,
 			document,
-			tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
+			await tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
 		);
 		
 		const private_keys_ = await Cryptography.processKeys(private_keys);
@@ -192,7 +192,7 @@ export default class DidCrud{
 			const tx_params = await tyronzil.default.CrudParams(
 				input.addr,
 				update.updateDocument,
-				tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
+				await tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
 			);
 
 			const operation_output: CrudOperationModel = {
@@ -220,7 +220,7 @@ export default class DidCrud{
 		const tx_params = await tyronzil.default.CrudParams(
 			input.addr,
 			[document],
-			tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
+			await tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
 		);
 
 		const operation_output: CrudOperationModel = {
