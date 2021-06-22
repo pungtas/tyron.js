@@ -234,7 +234,7 @@ export default class TyronZIL extends ZilliqaInit {
 				break;
 			case 'Service':
 				let endpoint;
-				switch (element.service?.endpoint) {
+				switch (element.service!.endpoint) {
 					case 'Uri':
 						endpoint = {
 							argtypes: [],

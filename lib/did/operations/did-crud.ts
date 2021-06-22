@@ -1,18 +1,17 @@
 /*
-	tyron.js: SSI Protocol's JavaScript/TypeScipt library
-	Self-Sovereign Identity Protocol.
-	Copyright (C) Tyron Pungtas and its affiliates.
+tyron.js: SSI Protocol's JavaScript/TypeScipt library
+Self-Sovereign Identity Protocol.
+Copyright (C) Tyron Pungtas and its affiliates.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-*/
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.*/
 
 import { Cryptography, OperationKeyPairInput, DIDVerificationMethods } from '../util/did-keys';
 import * as tyronzil from '../../blockchain/tyronzil';
@@ -170,7 +169,7 @@ export default class DidCrud{
 		const tx_params = await tyronzil.default.CrudParams(
 			input.addr,
 			document,
-			tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
+			tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
 		);
 		
 		const private_keys_ = await Cryptography.processKeys(private_keys);
@@ -193,7 +192,7 @@ export default class DidCrud{
 			const tx_params = await tyronzil.default.CrudParams(
 				input.addr,
 				update.updateDocument,
-				tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
+				tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
 			);
 
 			const operation_output: CrudOperationModel = {
@@ -221,7 +220,7 @@ export default class DidCrud{
 		const tx_params = await tyronzil.default.CrudParams(
 			input.addr,
 			[document],
-			tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64', '0x'+signature),
+			tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+signature),
 		);
 
 		const operation_output: CrudOperationModel = {
