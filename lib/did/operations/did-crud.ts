@@ -134,10 +134,7 @@ export default class DidCrud{
 					};
 					break;
 			};
-			console.log(hash_);
 			hash_ = hash_ + hash__;
-			console.log(hash_);
-			console.log(hash__);
 		}
 		return hash_;
 	}
