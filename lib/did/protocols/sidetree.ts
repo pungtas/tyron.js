@@ -1,18 +1,17 @@
 /*
-	tyron.js: SSI Protocol's JavaScript/TypeScipt library
-	Self-Sovereign Identity Protocol.
-	Copyright (C) Tyron Pungtas and its affiliates.
+tyron.js: SSI Protocol's JavaScript/TypeScipt library
+Self-Sovereign Identity Protocol.
+Copyright (C) Tyron Pungtas and its affiliates.
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-*/
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.*/
 
 import { PatchModel, PatchAction, Action, DocumentElement, ServiceModel, DocumentConstructor } from './models/document-model';
 import { PrivateKeyModel, PublicKeyInput, PublicKeyModel, PublicKeyPurpose } from './models/verification-method-models';
@@ -23,10 +22,11 @@ import tyronzil from '../../blockchain/tyronzil';
 
 /** Operation types */
 export enum OperationType {
-	Create = "Created",
-	Recover = "Recovered",
-	Update = "Updated",
-	Deactivate = "Deactivated"
+	Create = 'Created',
+	Recover = 'Recovered',
+	Update = 'Updated',
+	Deactivate = 'Deactivated',
+	Lock = 'Locked'
 }
 
 export class Sidetree {
@@ -35,6 +35,13 @@ export class Sidetree {
 		let doc_elements: DocumentElement[] = [];
 		let update_document = [];
 		let private_keys: PrivateKeyModel[] = [];
+	
+		// Generate new DID Update key pair:
+		const key_pair_input: OperationKeyPairInput = { id: PublicKeyPurpose.Update, addr: addr };
+		const [doc_element, verification_method, private_key] = await Cryptography.operationKeyPair(key_pair_input);
+		doc_elements.push(doc_element);
+		update_document.push(verification_method);
+		private_keys.push(private_key);
 		
 		for(const patch of patches){
 			switch (patch.action) {
@@ -54,7 +61,7 @@ export class Sidetree {
 						})
 						.catch(err => { throw err })
 					} else {
-						throw new ErrorCode("Missing", "No key in AddKeys patch")
+						throw new ErrorCode('Missing', 'No key in AddKeys patch')
 					}
 					break;
 				case PatchAction.RemoveKeys:
@@ -87,7 +94,7 @@ export class Sidetree {
 							update_document.push(doc_parameter);
 						}
 					} else {
-						throw new ErrorCode("Missing", "No services given to add")
+						throw new ErrorCode('Missing', 'No services given to add')
 					}
 					break;
 				case PatchAction.RemoveServices:
@@ -104,11 +111,11 @@ export class Sidetree {
 							update_document.push(doc_parameter);
 						}
 					} else {
-						throw new ErrorCode("Missing", "No service ID given to remove")
+						throw new ErrorCode('Missing', 'No service ID given to remove')
 					}
 					break;
 				default:
-					throw new ErrorCode("CodeIncorrectPatchAction", "The chosen action is not valid");
+					throw new ErrorCode('CodeIncorrectPatchAction', 'The chosen action is not valid');
 			}
 		}
 		return {
@@ -122,7 +129,7 @@ export class Sidetree {
 		const doc_elements = [];
 		const verification_methods = [];
 		const private_keys = [];
-		input.push({id: PublicKeyPurpose.Update});
+
 		for(const key_input of input) {
 			/** To create the DID public key */
 			const key_pair_input: OperationKeyPairInput = { id: key_input.id, addr: addr }
