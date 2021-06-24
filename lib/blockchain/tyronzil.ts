@@ -137,7 +137,7 @@ export default class TyronZIL extends ZilliqaInit {
 		tyronzil: TyronZIL,
 		addr: string,
 		amount: string,		
-		params?: TransitionParams[]
+		params: TransitionParams[] | []
 	): Promise<Transaction> {
 		
 		const submit = await tyronzil.API.blockchain.getSmartContractState(addr)
@@ -147,7 +147,7 @@ export default class TyronZIL extends ZilliqaInit {
 			const amount_ = new Util.BN(amount);
 			const pubkey = zcrypto.getPubKeyFromPrivateKey(tyronzil.adminZilSecretKey);
 			const zil_account = await tyronzil.API.blockchain.getBalance(tyronzil.admin);
-		
+			
 			const transition: Transition = {
 				_tag: tag,
 				_amount: String(amount_),
