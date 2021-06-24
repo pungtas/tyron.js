@@ -362,7 +362,7 @@ export default class TyronZIL extends ZilliqaInit {
 	
 	public static async TransferDomainNameNFT(
 		username: string,
-		addr: string,
+		newAddr: string,
 	): Promise<TransitionParams[]> {
 		const params = [];
 		const username_: TransitionParams = {
@@ -373,9 +373,9 @@ export default class TyronZIL extends ZilliqaInit {
 		params.push(username_);
 
 		const addr_: TransitionParams = {
-			vname: 'addr',
+			vname: 'newAddr',
 			type: 'ByStr20',
-			value: addr,
+			value: newAddr,
 		};
 		params.push(addr_);
 		return params;
