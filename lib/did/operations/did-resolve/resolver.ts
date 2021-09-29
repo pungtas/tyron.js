@@ -1,5 +1,5 @@
 /*
-tyron.js: SSI Protocol's JavaScript/TypeScipt library
+tyron.js: SSI Protocol's JavaScript/TypeScript library
 Self-Sovereign Identity Protocol.
 Copyright (C) Tyron Pungtas and its affiliates.
 
@@ -19,7 +19,7 @@ import ZilliqaInit from '../../../blockchain/zilliqa-init';
 import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
 
 export enum InitTyron {
-    Testnet = "0x91e0a9Bd1af55E75a43b7F7608B9B8CB1b175F76",
+    Testnet = "",
     Mainnet = "",
     Isolated = ""
 }

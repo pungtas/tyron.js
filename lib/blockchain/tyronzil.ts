@@ -1,6 +1,6 @@
 /*
-tyron.js: SSI Protocol's JavaScript/TypeScipt library
-Self-Sovereign Identity Protocol.
+tyron.js: SSI Protocol's JavaScript/TypeScript library
+Tyron Self-Sovereign Identity Protocol
 Copyright (C) Tyron Pungtas and its affiliates.
 
 This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@ GNU General Public License for more details.*/
 import { Transaction } from '@zilliqa-js/account';
 import { Contract} from '@zilliqa-js/contract';
 import * as zcrypto from '@zilliqa-js/crypto';
-import * as Util from '@zilliqa-js/util';
+import * as zutil from '@zilliqa-js/util';
 import ZilliqaInit from './zilliqa-init';
 import { NetworkNamespace } from '../did/tyronzil-schemes/did-scheme';
 import ErrorCode from '../did/util/ErrorCode';
@@ -26,17 +26,18 @@ import { Action, DocumentElement, TransferProtocol } from '../did/protocols/mode
 export default class TyronZIL extends ZilliqaInit {
 	public readonly admin: string;
 	public readonly adminZilSecretKey: string;
-	public readonly gasPrice: Util.BN;
-	public readonly gasLimit: Util.Long;
+	public readonly gasPrice: zutil.BN;
+	public readonly gasLimit: zutil.Long;
 	/** Address of the INIT.tyron smart contract */
 	public readonly init_tyron: string;	
 
 	private constructor(
 		network: NetworkNamespace,
+		// Zilliqa address of the Admin
 		admin: string,
 		adminZilSecretKey: string,
-		gasPrice: Util.BN,
-		gasLimit: Util.Long,
+		gasPrice: zutil.BN,
+		gasLimit: zutil.Long,
 		init_tyron: string
 	){
 		super(network);
@@ -55,12 +56,12 @@ export default class TyronZIL extends ZilliqaInit {
 		init_tyron: string
 	): Promise<TyronZIL> {
 		let admin = zcrypto.getAddressFromPrivateKey(adminZilSecretKey);
-		let gas_limit: Util.Long.Long = new Util.Long(gasLimit);
+		let gas_limit: zutil.Long.Long = new zutil.Long(gasLimit);
 		const zil_init = new ZilliqaInit(network);
 		
 		const transaction_init = await zil_init.API.blockchain.getMinimumGasPrice()
 		.then((min_gas_price: { result: any; }) => {
-			const gas_price = new Util.BN(min_gas_price.result!);
+			const gas_price = new zutil.BN(min_gas_price.result!);
 			return new TyronZIL(
 				network,
 				admin,
@@ -144,7 +145,7 @@ export default class TyronZIL extends ZilliqaInit {
 		.then(async (_smart_contract_state) => {
 			//@to-do throw error if status is Deactivated
 
-			const amount_ = new Util.BN(amount);
+			const amount_ = new zutil.BN(amount);
 			const pubkey = zcrypto.getPubKeyFromPrivateKey(tyronzil.adminZilSecretKey);
 			const zil_account = await tyronzil.API.blockchain.getBalance(tyronzil.admin);
 			
@@ -717,10 +718,10 @@ export interface TransitionValue {
 
 interface TxObject {
 	version: number;
-	amount: Util.BN;
+	amount: zutil.BN;
 	nonce: number;
-	gasLimit: Util.Long;
-	gasPrice: Util.BN;
+	gasLimit: zutil.Long;
+	gasPrice: zutil.BN;
 	toAddr: string;
 	pubKey: string;
 	code?: string;

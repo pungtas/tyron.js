@@ -115,15 +115,15 @@ export default class DidCrud{
 					};
 					break;
 				case DocumentConstructor.Service:
-					h2 = hash.sha256().update(element.service?.id).digest('hex');
+					h2 = hash.sha256().update(element.service!.id).digest('hex');
 					switch (element.action) {
 						case Action.Add:
-							switch (element.service?.endpoint) {
+							switch (element.service!.endpoint) {
 								case 'Uri':
-									h3 = hash.sha256().update(element.service?.uri!).digest('hex');
+									h3 = hash.sha256().update(element.service!.uri!).digest('hex');
 									break;
 								case 'Address':
-									h3 = hash.sha256().update(zutil.bytes.hexToByteArray(element.service?.address!)).digest('hex');
+									h3 = hash.sha256().update(zutil.bytes.hexToByteArray(element.service!.address!)).digest('hex');
 									break;
 							}
 							hash__ = h1 + h2 + h3;			
@@ -146,8 +146,7 @@ export default class DidCrud{
 
 		input.publicKeyInput.push({id: PublicKeyPurpose.Update});
 		input.publicKeyInput.push({id: PublicKeyPurpose.Recovery});
-		const public_key_input = input.publicKeyInput;
-		for(const key_input of public_key_input) {
+		for(const key_input of input.publicKeyInput) {
 			// Creates the cryptographic key pair
 			const key_pair_input: OperationKeyPairInput = {
 				id: key_input.id,

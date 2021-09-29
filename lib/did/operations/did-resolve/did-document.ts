@@ -1,5 +1,5 @@
 /*
-	tyron.js: SSI Protocol's JavaScript/TypeScipt library
+	tyron.js: SSI Protocol's JavaScript/TypeScript library
 	Self-Sovereign Identity Protocol.
 	Copyright (C) Tyron Pungtas and its affiliates.
 
@@ -51,7 +51,7 @@ export default class DidDoc {
 		this.service = scheme.service;
 	}
 
-	/** The `Tyron DID-Resolution` method */
+	/** The `Tyron DID Resolution` method */
 	public static async resolution(network: NetworkNamespace, input: ResolutionInput): Promise<DidDoc|ResolutionResult> {
 		const ACCEPT = input.metadata.accept;
 		const ZIL_INIT = new ZilliqaInit(network);
