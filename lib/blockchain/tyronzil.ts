@@ -91,11 +91,6 @@ export default class TyronZIL extends ZilliqaInit {
 				type: 'ByStr20',
 				value: `${tyronzil.admin}`,
 			},
-			{
-				vname: 'init_tyron',
-				type: 'ByStr20',
-				value: `${tyronzil.init_tyron}`,
-			}
 		];
 		const smart_contract = tyronzil.API.contracts.new(contractCode, contract_init);
 		
@@ -350,7 +345,7 @@ export default class TyronZIL extends ZilliqaInit {
 		return params;
 	}
 
-	public static async BuyDomainNameNFT(username: string): Promise<TransitionParams[]> {
+	public static async BuyNFTUsername(username: string, tyron: any): Promise<TransitionParams[]> {
 		const params = [];
 		const username_: TransitionParams = {
 			vname: 'username',
@@ -358,10 +353,16 @@ export default class TyronZIL extends ZilliqaInit {
 			value: username,
 		};
 		params.push(username_);
+		const tyron_: TransitionParams = {
+			vname: 'tyron',
+			type: 'Option Uint128',
+			value: tyron,
+		};
+		params.push(tyron_);
 		return params;
 	}
 	
-	public static async TransferDomainNameNFT(
+	public static async TransferNFTUsername(
 		username: string,
 		newAddr: string,
 	): Promise<TransitionParams[]> {
@@ -691,8 +692,8 @@ export enum TransitionTag {
 	SendFunds = 'SendFunds',
 	EnableSocialRecovery = "EnableSocialRecovery",
 	UpdateSocialRecoverer = "UpdateSocialRecoverer",
-	BuyDomainNameNFT = 'BuyDomainNameNFT',
-	TransferDomainNameNFT = 'TransferDomainNameNFT',
+	BuyNFTUsername = 'BuyNFTUsername',
+	TransferNFTUsername = 'TransferNFTUsername',
 	UpdateInit = 'UpdateInit',
 	UpdateAdmin = 'UpdateAdmin',
 	AddMember = 'AddMember',
