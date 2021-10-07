@@ -18,7 +18,7 @@ import SmartUtil from "../../../blockchain/smart-util";
 import ZilliqaInit from '../../../blockchain/zilliqa-init';
 import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
 
-export enum InitTyron {
+export enum InitTyron { //@todo decide whether this is necessary
     Testnet = "",
     Mainnet = "",
     Isolated = ""
