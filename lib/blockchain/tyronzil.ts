@@ -87,7 +87,7 @@ export default class TyronZIL extends ZilliqaInit {
 				value: '0',
 			},
 			{
-				vname: 'initAdmin',
+				vname: 'init_admin',
 				type: 'ByStr20',
 				value: `${tyronzil.admin}`,
 			},
