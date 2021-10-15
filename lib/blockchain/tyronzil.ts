@@ -76,28 +76,11 @@ export default class TyronZIL extends ZilliqaInit {
 	}
 
 	public static async deploy(
+		contractInit: any[],
 		tyronzil: TyronZIL,
 		contractCode: string
 	): Promise<DeployedContract> {
-		
-		const contract_init = [
-			{
-				vname: '_scilla_version',
-				type: 'Uint32',
-				value: '0',
-			},
-			{
-				vname: 'init_admin',
-				type: 'ByStr20',
-				value: `${tyronzil.admin}`,
-			},
-			{
-				vname: 'init_tyron',
-				type: 'ByStr20',
-				value: `${tyronzil.init_tyron}`,
-			}
-		];
-		const smart_contract = tyronzil.API.contracts.new(contractCode, contract_init);
+		const smart_contract = tyronzil.API.contracts.new(contractCode, contractInit);
 		
 		tyronzil.API.wallet.addByPrivateKey(tyronzil.adminZilSecretKey);
 		
