@@ -58,8 +58,7 @@ export default class DidCrud{
 		const verification_methods: tyronzil.TransitionValue[] = [];
 		const private_keys: PrivateKeyModel[] = [];
 		
-		input.publicKeyInput.push({id: PublicKeyPurpose.Update});
-		input.publicKeyInput.push({id: PublicKeyPurpose.Recovery})
+		input.publicKeyInput.push({id: PublicKeyPurpose.Update}, {id: PublicKeyPurpose.Recovery});
 		for(const key_input of input.publicKeyInput) {
 			// Creates the cryptographic key pair
 			const key_pair_input: OperationKeyPairInput = { id: key_input.id, addr: input.addr};

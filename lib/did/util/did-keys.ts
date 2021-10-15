@@ -35,12 +35,13 @@ export class Cryptography {
 		const public_key = "0x"+ zcrypto.getPubKeyFromPrivateKey(private_key);
 		const verification_method: PublicKeyModel = {
 			id: input.id,
-			key: public_key
+			key: public_key,
+			encrypted: private_key
 		};
 		const doc_element: DocumentElement = {
 			constructor: DocumentConstructor.VerificationMethod,
 			action: Action.Add,
-			key: verification_method
+			key: verification_method,
 		};
 		const doc_parameter = await TyronZIL.documentParameter(input.addr, doc_element);
 		const private_key_model: PrivateKeyModel = {
@@ -70,9 +71,9 @@ export class Cryptography {
 		for(const key of input) {
 			// IDs must be unique
 			if( !key_id_set.has(key.id) ) {
-			key_id_set.add(key.id);
+				key_id_set.add(key.id);
 			} else {
-			throw new ErrorCode("KeyDuplicated", "The key ID must be unique");
+				throw new ErrorCode("KeyDuplicated", "The key ID must be unique");
 			}
 			switch (key.id) {
 				case PublicKeyPurpose.General:
@@ -130,7 +131,7 @@ export class Cryptography {
 					Object.assign(keys, new_key);
 					break;                
 				default:
-					throw new ErrorCode("InvalidID", `The client detected an invalid key ID`);
+					throw new ErrorCode("InvalidID", `The client detected an invalid key ID.`);
 			}
 		}
 		return keys;      

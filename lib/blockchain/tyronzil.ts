@@ -24,8 +24,8 @@ import { Action, DocumentElement, TransferProtocol } from '../did/protocols/mode
 
 /** tyronzil transaction class */
 export default class TyronZIL extends ZilliqaInit {
-	public readonly admin: string;
-	public readonly adminZilSecretKey: string;
+	public readonly controller: string;
+	public readonly controllerSecretKey: string;
 	public readonly gasPrice: zutil.BN;
 	public readonly gasLimit: zutil.Long;
 	/** Address of the INIT.tyron smart contract */
@@ -33,16 +33,15 @@ export default class TyronZIL extends ZilliqaInit {
 
 	private constructor(
 		network: NetworkNamespace,
-		// Zilliqa address of the Admin
-		admin: string,
-		adminZilSecretKey: string,
+		controller: string,
+		controllerSecretKey: string,
 		gasPrice: zutil.BN,
 		gasLimit: zutil.Long,
 		init_tyron: string
 	){
 		super(network);
-		this.admin = admin;
-		this.adminZilSecretKey = adminZilSecretKey;		
+		this.controller = controller;
+		this.controllerSecretKey = controllerSecretKey;		
 		this.gasPrice = gasPrice;
 		this.gasLimit = gasLimit;
 		this.init_tyron = init_tyron;
@@ -51,11 +50,11 @@ export default class TyronZIL extends ZilliqaInit {
 	/** Retrieves the minimum gas price & validates the account info */
 	public static async initialize(
 		network: NetworkNamespace,
-		adminZilSecretKey: string,
+		controllerSecretKey: string,
 		gasLimit: number,
 		init_tyron: string
 	): Promise<TyronZIL> {
-		let admin = zcrypto.getAddressFromPrivateKey(adminZilSecretKey);
+		let controller = zcrypto.getAddressFromPrivateKey(controllerSecretKey);
 		let gas_limit: zutil.Long.Long = new zutil.Long(gasLimit);
 		const zil_init = new ZilliqaInit(network);
 		
@@ -64,8 +63,8 @@ export default class TyronZIL extends ZilliqaInit {
 			const gas_price = new zutil.BN(min_gas_price.result!);
 			return new TyronZIL(
 				network,
-				admin,
-				adminZilSecretKey,
+				controller,
+				controllerSecretKey,
 				gas_price,
 				gas_limit,
 				init_tyron,            
@@ -82,9 +81,9 @@ export default class TyronZIL extends ZilliqaInit {
 	): Promise<DeployedContract> {
 		const smart_contract = tyronzil.API.contracts.new(contractCode, contractInit);
 		
-		tyronzil.API.wallet.addByPrivateKey(tyronzil.adminZilSecretKey);
+		tyronzil.API.wallet.addByPrivateKey(tyronzil.controllerSecretKey);
 		
-		const deployed_contract = await tyronzil.API.blockchain.getBalance(tyronzil.admin)
+		const deployed_contract = await tyronzil.API.blockchain.getBalance(tyronzil.controller)
 		.then( async account => {
 			const [deployTx, contract] = await smart_contract.deploy(
 				{
@@ -129,13 +128,13 @@ export default class TyronZIL extends ZilliqaInit {
 			//@to-do throw error if status is Deactivated
 
 			const amount_ = new zutil.BN(amount);
-			const pubkey = zcrypto.getPubKeyFromPrivateKey(tyronzil.adminZilSecretKey);
-			const zil_account = await tyronzil.API.blockchain.getBalance(tyronzil.admin);
+			const pubkey = zcrypto.getPubKeyFromPrivateKey(tyronzil.controllerSecretKey);
+			const zil_account = await tyronzil.API.blockchain.getBalance(tyronzil.controller);
 			
 			const transition: Transition = {
 				_tag: tag,
 				_amount: String(amount_),
-				_sender: tyronzil.admin,
+				_sender: tyronzil.controller,
 				params: params
 			};
 
@@ -153,8 +152,8 @@ export default class TyronZIL extends ZilliqaInit {
 			return tyronzil.API.transactions.new(tx_object);
 		})
 		.then(async (raw_tx: any)  => {
-			tyronzil.API.wallet.addByPrivateKey(tyronzil.adminZilSecretKey);
-			return await tyronzil.API.wallet.signWith(raw_tx, tyronzil.admin);
+			tyronzil.API.wallet.addByPrivateKey(tyronzil.controllerSecretKey);
+			return await tyronzil.API.wallet.signWith(raw_tx, tyronzil.controller);
 		})
 		.then(async signed_tx => {
 			/** Sends the tyronzil transaction to the Zilliqa blockchain platform */
@@ -201,7 +200,8 @@ export default class TyronZIL extends ZilliqaInit {
 							arguments: [
 								add,
 								`${element.key!.id}`,
-								`${element.key!.key}`
+								`${element.key!.key}`,
+								`${element.key!.encrypted}`,
 							]
 						});
 						break;
@@ -210,7 +210,8 @@ export default class TyronZIL extends ZilliqaInit {
 							arguments: [
 								remove,
 								`${element.key!.id}`,
-								"0x024caf04aa4f660db04adf65daf5b993b3383fcdb2ef0479ca8866b1336334b5b4"
+								"0x024caf04aa4f660db04adf65daf5b993b3383fcdb2ef0479ca8866b1336334b5b4",
+								"none"
 							]
 						});
 						break;
@@ -683,7 +684,7 @@ export enum TransitionTag {
 	BuyNFTUsername = 'BuyNFTUsername',
 	TransferNFTUsername = 'TransferNFTUsername',
 	UpdateInit = 'UpdateInit',
-	UpdateAdmin = 'UpdateAdmin',
+	UpdateController = 'UpdateController',
 	AddMember = 'AddMember',
 	NFTTransfer = 'NFTTransfer',
 	UpdateHourlyWage = 'UpdateHourlyWage',

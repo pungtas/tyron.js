@@ -21,12 +21,13 @@ import TyronZIL, { TransitionValue } from '../../blockchain/tyronzil';
 import tyronzil from '../../blockchain/tyronzil';
 
 /** Operation types */
-export enum OperationType {
-	Create = 'Created',
-	Recover = 'Recovered',
-	Update = 'Updated',
-	Deactivate = 'Deactivated',
-	Lock = 'Locked'
+export enum DIDStatus {
+	Deployed = 'Deployed',
+	Created = 'Created',
+	Recovered = 'Recovered',
+	Updated = 'Updated',
+	Deactivated = 'Deactivated',
+	Locked = 'Locked'
 }
 
 export class Sidetree {

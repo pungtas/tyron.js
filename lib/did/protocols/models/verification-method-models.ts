@@ -17,6 +17,7 @@
 export interface PublicKeyModel {
 	id: string;
 	key?: string;
+	encrypted?: string;
 }
 
 export interface PrivateKeyModel {

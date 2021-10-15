@@ -15,16 +15,18 @@ GNU General Public License for more details.*/
 
 import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
 import DidUrlScheme from '../../tyronzil-schemes/did-url-scheme';
-import { OperationType } from '../../protocols/sidetree';
+import { DIDStatus } from '../../protocols/sidetree';
 import State from '../../../blockchain/state';
 
 /** The Tyron DID-State */
 export default class DidState {
 	public readonly did: string;
-    public readonly did_status: OperationType;
-    public readonly admin: string;
-	public readonly verification_methods: Map<string, string>;
-	public readonly services: Map<string, [string, string]>;
+    public readonly controller: string;
+	public readonly did_status: DIDStatus;
+    public readonly verification_methods: Map<string, string>;
+	public readonly dkms: Map<string, string>;
+	public readonly services: Map<string, string>;
+	public readonly services_: Map<string, [string, string]>;
 	public readonly did_recovery_key: string;
 	public readonly did_update_key: string;
 	
@@ -32,10 +34,12 @@ export default class DidState {
 		state: DidStateModel
 	) {
 		this.did = state.did;
-        this.did_status = state.did_status as OperationType;
-        this.admin = state.admin;
-		this.verification_methods = state.verification_methods;
+        this.controller = state.controller;
+		this.did_status = state.did_status as DIDStatus;
+        this.verification_methods = state.verification_methods;
+		this.dkms = state.dkms;
 		this.services = state.services;
+		this.services_ = state.services_;
 		this.did_recovery_key = state.did_recovery_key;
 		this.did_update_key = state.did_update_key;
 	}
@@ -43,18 +47,20 @@ export default class DidState {
 	/** Fetches the current DID State for the given address */
 	public static async fetch(network: NetworkNamespace, addr: string): Promise<DidState> {
 		const did_state = await State.fetch(network, addr)
-		.then(async (state: { did: string; did_status: any; admin: any; verification_methods: any; services: any; }) => {
+		.then(async state => {
 			// Validates the Tyron DID Scheme
 			await DidUrlScheme.validate(state.did);
 			
 			const this_state: DidStateModel = {
 				did: state.did,
+				controller: state.controller,
 				did_status: state.did_status,
-				admin: state.admin,
 				verification_methods: state.verification_methods,
+				dkms: state.dkms,
 				services: state.services,
-				did_recovery_key: state.verification_methods.get("recovery"),
-				did_update_key: state.verification_methods.get("update")
+				services_: state.services_,
+				did_recovery_key: state.verification_methods.get("recovery")!,
+				did_update_key: state.verification_methods.get("update")!
 			};
 			return new DidState(this_state);
 		})
@@ -66,10 +72,12 @@ export default class DidState {
 /** The state model of a Tyron Decentralized Identifier */
 export interface DidStateModel {
 	did: string;
-	did_status: OperationType;
-	admin: string;
+	controller: string;
+	did_status: DIDStatus;
 	verification_methods: Map<string, string>;
-	services: Map<string, [string, string]>;
+	dkms: Map<string, string>;
+	services: Map<string, string>;
+	services_: Map<string, [string, string]>;
 	did_recovery_key: string;
 	did_update_key: string;
 }
