@@ -97,7 +97,7 @@ export default class DidDoc {
 			for (let purpose of VERIFICATION_METHODS.keys()) {
 				const DID_URL: string = ID + '#' + purpose;
 				const KEY = VERIFICATION_METHODS.get(purpose);
-				const encrypted = state.dkms.get(purpose)
+				const encrypted = state.dkms?.get(purpose)
 				const VERIFICATION_METHOD: VerificationMethodModel = {
 					id: DID_URL,
 					type: 'SchnorrSecp256k1VerificationKey2019',
