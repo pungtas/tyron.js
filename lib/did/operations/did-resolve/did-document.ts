@@ -97,7 +97,12 @@ export default class DidDoc {
 			for (let purpose of VERIFICATION_METHODS.keys()) {
 				const DID_URL: string = ID + '#' + purpose;
 				const KEY = VERIFICATION_METHODS.get(purpose);
-				const encrypted = state.dkms?.get(purpose)
+				let encrypted;
+				if( state.dkms === undefined ){
+					encrypted = "undefined"
+				} else {
+					encrypted = state.dkms?.get(purpose)
+				}
 				const VERIFICATION_METHOD: VerificationMethodModel = {
 					id: DID_URL,
 					type: 'SchnorrSecp256k1VerificationKey2019',
@@ -168,7 +173,7 @@ export default class DidDoc {
 			};
 			if(PUBLIC_KEY !== []) {
 				SCHEME.verificationMethods.publicKey = PUBLIC_KEY[0];
-				SCHEME.dkms.publicKey = PUBLIC_KEY[1];
+				SCHEME.dkms!.publicKey = PUBLIC_KEY[1];
 			}
 			if(AUTHENTICATION !== []) {
 				SCHEME.verificationMethods.authentication = AUTHENTICATION[0];
