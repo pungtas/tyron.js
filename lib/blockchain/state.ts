@@ -52,16 +52,12 @@ export default class State {
                 case DIDStatus.Deactivated:
                     throw new ErrorCode("DidDeactivated", "The requested DID is deactivated");
                 default:
-                    const dkms = await SmartUtil.intoMap(did_state.result.dkms)
-                    .then( dkms => { return dkms })
-                    .catch( () => { return undefined });
-
                     const STATE: StateModel = {
                         controller: String(did_state.result.controller),
                         did: String(did_state.result.did),
                         did_status: STATUS,
                         verification_methods: await SmartUtil.intoMap(did_state.result.verification_methods),
-                        dkms: dkms,
+                        dkms: undefined,//await SmartUtil.intoMap(did_state.result.dkms)
                         services: await SmartUtil.intoMap(did_state.result.services),
                         services_: await SmartUtil.fromServices(did_state.result.services_)
                     };
