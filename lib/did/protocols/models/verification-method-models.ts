@@ -50,7 +50,20 @@ export interface TyronVerificationMethods {
 	capabilityInvocation?: VerificationMethodModel;
 	capabilityDelegation?: VerificationMethodModel;
 	didUpdate?: VerificationMethodModel;
-	didRecovery?: VerificationMethodModel
+	didRecovery?: VerificationMethodModel;
+	socialRecovery?: VerificationMethodModel
+}
+
+export interface DKMS {
+	publicKey?: PrivateKeyModel;
+	authentication?: PrivateKeyModel;
+	assertionMethod?: PrivateKeyModel;
+	keyAgreement?: PrivateKeyModel;
+	capabilityInvocation?: PrivateKeyModel;
+	capabilityDelegation?: PrivateKeyModel;
+	didUpdate?: PrivateKeyModel;
+	didRecovery?: PrivateKeyModel;
+	socialRecovery?: PrivateKeyModel
 }
 
 export interface PublicKeyInput {
