@@ -24,7 +24,7 @@ export default class DidState {
     public readonly controller: string;
 	public readonly did_status: DIDStatus;
     public readonly verification_methods: {} | Map<string, string>;
-	public readonly dkms: {} | Map<string, string>;
+	public readonly dkms?: {} | Map<string, string>;
 	public readonly services: {} | Map<string, string>;
 	public readonly services_: {} | Map<string, [string, string]>;
 	public readonly did_recovery_key?: string;
@@ -78,7 +78,7 @@ export interface DidStateModel {
 	controller: string;
 	did_status: DIDStatus;
 	verification_methods: {} | Map<string, string>;
-	dkms: {} | Map<string, string>;
+	dkms?: {} | Map<string, string>;
 	services: {} | Map<string, string>;
 	services_: {} | Map<string, [string, string]>;
 	did_recovery_key?: string;

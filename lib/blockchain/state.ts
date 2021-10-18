@@ -24,7 +24,7 @@ export default class State {
     public readonly controller: string;
     public readonly did_status: DIDStatus;
     public readonly verification_methods: {} | Map<string, string>;
-    public readonly dkms: {} | Map<string, string>;
+    public readonly dkms?: {} | Map<string, string>;
     public readonly services: {} | Map<string, string>;
     public readonly services_: {} | Map<string, [string, string]>;
 
@@ -52,12 +52,16 @@ export default class State {
                 case DIDStatus.Deactivated:
                     throw new ErrorCode("DidDeactivated", "The requested DID is deactivated");
                 default:
+                    let dkms = undefined;
+                    if( state_.result.dkms !== undefined ){
+                        dkms = await SmartUtil.intoMap(state_.result.dkms)
+                    }
                     const STATE: StateModel = {
                         did: String(state_.result.did),
                         controller: String(state_.result.controller),
                         did_status: STATUS,
                         verification_methods: await SmartUtil.intoMap(state_.result.verification_methods),
-                        dkms: await SmartUtil.intoMap(state_.result.dkms),
+                        dkms: dkms,
                         services: await SmartUtil.intoMap(state_.result.services),
                         services_: await SmartUtil.fromServices(state_.result.services_)
                     };
@@ -75,7 +79,7 @@ export interface StateModel{
     controller: string;
     did_status: string;
     verification_methods: {} | Map<string, string>;
-    dkms: {} | Map<string, string>;
+    dkms?: {} | Map<string, string>;
     services: {} | Map<string, string>;
     services_: {} | Map<string, [string, string]>;
 }
