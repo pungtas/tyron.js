@@ -49,8 +49,9 @@ export default class DidState {
 		const did_state = await State.fetch(network, addr)
 		.then(async state => {
 			// Validates the Tyron DID Scheme
-			await DidUrlScheme.validate(state.did);
-			
+			if( state.did !== ''){
+				await DidUrlScheme.validate(state.did);
+			}
 			const this_state: DidStateModel = {
 				did: state.did,
 				controller: state.controller,
