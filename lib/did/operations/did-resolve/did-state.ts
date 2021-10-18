@@ -23,10 +23,10 @@ export default class DidState {
 	public readonly did: string;
     public readonly controller: string;
 	public readonly did_status: DIDStatus;
-    public readonly verification_methods: {} | Map<string, string>;
-	public readonly dkms?: {} | Map<string, string>;
-	public readonly services: {} | Map<string, string>;
-	public readonly services_: {} | Map<string, [string, string]>;
+    public readonly verification_methods?: Map<string, string>;
+	public readonly dkms?: Map<string, string>;
+	public readonly services?: Map<string, string>;
+	public readonly services_?: Map<string, [string, string]>;
 	public readonly did_recovery_key?: string;
 	public readonly did_update_key?: string;
 	
@@ -48,8 +48,8 @@ export default class DidState {
 	public static async fetch(network: NetworkNamespace, addr: string): Promise<DidState> {
 		const did_state = await State.fetch(network, addr)
 		.then(async state => {
-			// Validates the Tyron DID Scheme
 			if( state.did !== ''){
+				// Validates the Tyron DID Scheme
 				await DidUrlScheme.validate(state.did);
 			}
 			const this_state: DidStateModel = {
@@ -78,10 +78,10 @@ export interface DidStateModel {
 	did: string;
 	controller: string;
 	did_status: DIDStatus;
-	verification_methods: {} | Map<string, string>;
-	dkms?: {} | Map<string, string>;
-	services: {} | Map<string, string>;
-	services_: {} | Map<string, [string, string]>;
+	verification_methods?: Map<string, string>;
+	dkms?: Map<string, string>;
+	services?: Map<string, string>;
+	services_?: Map<string, [string, string]>;
 	did_recovery_key?: string;
 	did_update_key?: string;
 }

@@ -32,8 +32,8 @@ export enum Accept {
 export default class DidDoc {
 	public readonly id: string;
 	public readonly controller: string;
-	public readonly verificationMethods: TyronVerificationMethods;
-	public readonly dkms: DKMS;
+	public readonly verificationMethods?: TyronVerificationMethods;
+	public readonly dkms?: DKMS;
 	public readonly services?: ServiceModel[];
 
 	private constructor (
@@ -160,19 +160,16 @@ export default class DidDoc {
 			}
 
 			const services_ = state.services_;
-			if( typeof services_ == typeof Map ){
-				const services_map_ = services_ as Map<string, string>;
-				for (let id of services_map_.keys()) {
-					const TYPE_URI = services_map_.get(id);
-					const TYPE = TYPE_URI![0];
-					const URI = TYPE_URI![1];
-					const SERVICE: ServiceModel = {
-						id: ID + '#' + id,
-						type: TYPE,
-						uri: URI
-					};
-					SERVICES.push(SERVICE);
-				}
+			for (let id of services_!.keys()) {
+				const TYPE_URI = services_!.get(id);
+				const TYPE = TYPE_URI![0];
+				const URI = TYPE_URI![1];
+				const SERVICE: ServiceModel = {
+					id: ID + '#' + id,
+					type: TYPE,
+					uri: URI
+				};
+				SERVICES.push(SERVICE);
 			}
 
 			/** The DID Document */

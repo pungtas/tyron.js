@@ -23,10 +23,10 @@ export default class State {
     public readonly did: string;
     public readonly controller: string;
     public readonly did_status: DIDStatus;
-    public readonly verification_methods: {} | Map<string, string>;
-    public readonly dkms?: {} | Map<string, string>;
-    public readonly services: {} | Map<string, string>;
-    public readonly services_: {} | Map<string, [string, string]>;
+    public readonly verification_methods?: Map<string, string>;
+    public readonly dkms?: Map<string, string>;
+    public readonly services?: Map<string, string>;
+    public readonly services_?: Map<string, [string, string]>;
 
     private constructor(
         state: StateModel
@@ -78,8 +78,8 @@ export interface StateModel{
     did: string;
     controller: string;
     did_status: string;
-    verification_methods: {} | Map<string, string>;
-    dkms?: {} | Map<string, string>;
-    services: {} | Map<string, string>;
-    services_: {} | Map<string, [string, string]>;
+    verification_methods?: Map<string, string>;
+    dkms?: Map<string, string>;
+    services?: Map<string, string>;
+    services_?: Map<string, [string, string]>;
 }
