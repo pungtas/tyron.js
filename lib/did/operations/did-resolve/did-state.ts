@@ -23,12 +23,12 @@ export default class DidState {
 	public readonly did: string;
     public readonly controller: string;
 	public readonly did_status: DIDStatus;
-    public readonly verification_methods: Map<string, string>;
-	public readonly dkms?: Map<string, string>;
-	public readonly services: Map<string, string>;
-	public readonly services_: Map<string, [string, string]>;
-	public readonly did_recovery_key: string;
-	public readonly did_update_key: string;
+    public readonly verification_methods: {} | Map<string, string>;
+	public readonly dkms: {} | Map<string, string>;
+	public readonly services: {} | Map<string, string>;
+	public readonly services_: {} | Map<string, [string, string]>;
+	public readonly did_recovery_key?: string;
+	public readonly did_update_key?: string;
 	
 	private constructor(
 		state: DidStateModel
@@ -59,9 +59,12 @@ export default class DidState {
 				dkms: state.dkms,
 				services: state.services,
 				services_: state.services_,
-				did_recovery_key: state.verification_methods.get("recovery")!,
-				did_update_key: state.verification_methods.get("update")!
 			};
+			if( typeof state.verification_methods === typeof Map ){
+				const methods = state.verification_methods as Map<string, string>;
+				this_state.did_recovery_key = methods.get("recovery");
+				this_state.did_update_key = methods.get("update");
+			}
 			return new DidState(this_state);
 		})
 		.catch((err: any) => { throw err })
@@ -74,10 +77,10 @@ export interface DidStateModel {
 	did: string;
 	controller: string;
 	did_status: DIDStatus;
-	verification_methods: Map<string, string>;
-	dkms?: Map<string, string>;
-	services: Map<string, string>;
-	services_: Map<string, [string, string]>;
-	did_recovery_key: string;
-	did_update_key: string;
+	verification_methods: {} | Map<string, string>;
+	dkms: {} | Map<string, string>;
+	services: {} | Map<string, string>;
+	services_: {} | Map<string, [string, string]>;
+	did_recovery_key?: string;
+	did_update_key?: string;
 }

@@ -23,10 +23,10 @@ export default class State {
     public readonly did: string;
     public readonly controller: string;
     public readonly did_status: DIDStatus;
-    public readonly verification_methods: Map<string, string>;
-    public readonly dkms?: Map<string, string>;
-    public readonly services: Map<string, string>;
-    public readonly services_: Map<string, [string, string]>;
+    public readonly verification_methods: {} | Map<string, string>;
+    public readonly dkms: {} | Map<string, string>;
+    public readonly services: {} | Map<string, string>;
+    public readonly services_: {} | Map<string, [string, string]>;
 
     private constructor(
         state: StateModel
@@ -45,27 +45,27 @@ export default class State {
     */
     public static async fetch(network: NetworkNamespace, addr: string): Promise<State> {
         const ZIL_INIT = new ZilliqaInit(network);
-        const tyron_state = await ZIL_INIT.API.blockchain.getSmartContractState(addr)
-        .then(async did_state => {
-            const STATUS = await SmartUtil.getStatus(did_state.result.did_status);
+        const state = await ZIL_INIT.API.blockchain.getSmartContractState(addr)
+        .then(async state_ => {
+            const STATUS = await SmartUtil.getStatus(state_.result.did_status);
             switch (STATUS) {
                 case DIDStatus.Deactivated:
                     throw new ErrorCode("DidDeactivated", "The requested DID is deactivated");
                 default:
                     const STATE: StateModel = {
-                        controller: String(did_state.result.controller),
-                        did: String(did_state.result.did),
+                        did: String(state_.result.did),
+                        controller: String(state_.result.controller),
                         did_status: STATUS,
-                        verification_methods: await SmartUtil.intoMap(did_state.result.verification_methods),
-                        dkms: undefined,//await SmartUtil.intoMap(did_state.result.dkms)
-                        services: await SmartUtil.intoMap(did_state.result.services),
-                        services_: await SmartUtil.fromServices(did_state.result.services_)
+                        verification_methods: await SmartUtil.intoMap(state_.result.verification_methods),
+                        dkms: await SmartUtil.intoMap(state_.result.dkms),
+                        services: await SmartUtil.intoMap(state_.result.services),
+                        services_: await SmartUtil.fromServices(state_.result.services_)
                     };
                     return new State(STATE);
             }
         })
         .catch((err: any) => { throw err });
-        return tyron_state;
+        return state;
     }
 }
 
@@ -74,8 +74,8 @@ export interface StateModel{
     did: string;
     controller: string;
     did_status: string;
-    verification_methods: Map<string, string>;
-    dkms?: Map<string, string>;
-    services: Map<string, string>;
-    services_: Map<string, [string, string]>;
+    verification_methods: {} | Map<string, string>;
+    dkms: {} | Map<string, string>;
+    services: {} | Map<string, string>;
+    services_: {} | Map<string, [string, string]>;
 }

@@ -82,7 +82,7 @@ export default class DidDoc {
 		.then(async did_scheme => {
 			const ID = did_scheme.did;
 			
-			const VERIFICATION_METHODS = state.verification_methods!;
+			const VERIFICATION_METHODS = state.verification_methods;
 			let PUBLIC_KEY: any[] = [];
 			let AUTHENTICATION: any[] = [];
 			let ASSERTION_METHOD: any[] = [];
@@ -93,74 +93,80 @@ export default class DidDoc {
 			let DID_RECOVERY: any[] = [];
 			let SOCIAL_RECOVERY: any[] = [];
 
-			// Every key MUST have a Public Key Purpose as its ID
-			for (let purpose of VERIFICATION_METHODS.keys()) {
-				const DID_URL: string = ID + '#' + purpose;
-				const KEY = VERIFICATION_METHODS.get(purpose);
-				let encrypted;
-				if( state.dkms === undefined ){
-					encrypted = "undefined"
-				} else {
-					encrypted = state.dkms?.get(purpose)
-				}
-				const VERIFICATION_METHOD: VerificationMethodModel = {
-					id: DID_URL,
-					type: 'SchnorrSecp256k1VerificationKey2019',
-					publicKeyBase58: zcrypto.encodeBase58(KEY!),
+			if( typeof VERIFICATION_METHODS == typeof Map ){
+				const METHODS = VERIFICATION_METHODS as Map<string, string>;
+				// Every key MUST have a Public Key Purpose as its ID
+				for (let purpose of METHODS.keys()) {
+					const DID_URL: string = ID + '#' + purpose;
+					const KEY = METHODS.get(purpose);
+					const encrypted = ( state.dkms as Map<string, string> ).get(purpose);
+					const VERIFICATION_METHOD: VerificationMethodModel = {
+						id: DID_URL,
+						type: 'SchnorrSecp256k1VerificationKey2019',
+						publicKeyBase58: zcrypto.encodeBase58(KEY!),
+					};
+					switch (purpose) {
+						case PublicKeyPurpose.General:
+							PUBLIC_KEY = [VERIFICATION_METHOD, encrypted];                            
+							break;
+						case PublicKeyPurpose.Auth:
+							AUTHENTICATION = [VERIFICATION_METHOD, encrypted];
+							break;
+						case PublicKeyPurpose.Assertion:
+							ASSERTION_METHOD = [VERIFICATION_METHOD, encrypted];
+							break;
+						case PublicKeyPurpose.Agreement:
+							KEY_AGREEMENT = [VERIFICATION_METHOD, encrypted];
+							break;
+						case PublicKeyPurpose.Invocation:
+							CAPABILITY_INVOCATION = [VERIFICATION_METHOD, encrypted];
+							break;
+						case PublicKeyPurpose.Delegation:
+							CAPABILITY_DELEGATION = [VERIFICATION_METHOD, encrypted];
+							break;
+						case PublicKeyPurpose.Update:
+							DID_UPDATE = [VERIFICATION_METHOD, encrypted];
+							break;
+						case PublicKeyPurpose.Recovery:
+							DID_RECOVERY = [VERIFICATION_METHOD, encrypted];
+							break;
+						case PublicKeyPurpose.SocialRecovery:
+							SOCIAL_RECOVERY = [VERIFICATION_METHOD, encrypted];
+							break;            
+						default:
+							throw new ErrorCode("InvalidPurpose", `The resolver detected an invalid Public Key Purpose`);
+					}
 				};
-				switch (purpose) {
-					case PublicKeyPurpose.General:
-						PUBLIC_KEY = [VERIFICATION_METHOD, encrypted];                            
-						break;
-					case PublicKeyPurpose.Auth:
-						AUTHENTICATION = [VERIFICATION_METHOD, encrypted];
-						break;
-					case PublicKeyPurpose.Assertion:
-						ASSERTION_METHOD = [VERIFICATION_METHOD, encrypted];
-						break;
-					case PublicKeyPurpose.Agreement:
-						KEY_AGREEMENT = [VERIFICATION_METHOD, encrypted];
-						break;
-					case PublicKeyPurpose.Invocation:
-						CAPABILITY_INVOCATION = [VERIFICATION_METHOD, encrypted];
-						break;
-					case PublicKeyPurpose.Delegation:
-						CAPABILITY_DELEGATION = [VERIFICATION_METHOD, encrypted];
-						break;
-					case PublicKeyPurpose.Update:
-						DID_UPDATE = [VERIFICATION_METHOD, encrypted];
-						break;
-					case PublicKeyPurpose.Recovery:
-						DID_RECOVERY = [VERIFICATION_METHOD, encrypted];
-						break;
-					case PublicKeyPurpose.SocialRecovery:
-						SOCIAL_RECOVERY = [VERIFICATION_METHOD, encrypted];
-						break;            
-					default:
-						throw new ErrorCode("InvalidPurpose", `The resolver detected an invalid Public Key Purpose`);
-				}
-			};
+			}
+				
 			
 			const SERVICES = [];
 			const services = state.services;
-			for (let id of services.keys()) {
-				const SERVICE: ServiceModel = {
-					id: ID + '#' + id,
-					address: services.get(id)
-				};
-				SERVICES.push(SERVICE);
+			if( typeof services == typeof Map ){
+				const services_map = services as Map<string, string>;
+				for (let id of services_map.keys()) {
+					const SERVICE: ServiceModel = {
+						id: ID + '#' + id,
+						address: services_map.get(id)
+					};
+					SERVICES.push(SERVICE);
+				}
 			}
+
 			const services_ = state.services_;
-			for (let id of services_.keys()) {
-				const TYPE_URI = services_.get(id);
-				const TYPE = TYPE_URI![0];
-				const URI = TYPE_URI![1];
-				const SERVICE: ServiceModel = {
-					id: ID + '#' + id,
-					type: TYPE,
-					uri: URI
-				};
-				SERVICES.push(SERVICE);
+			if( typeof services_ == typeof Map ){
+				const services_map_ = services_ as Map<string, string>;
+				for (let id of services_map_.keys()) {
+					const TYPE_URI = services_map_.get(id);
+					const TYPE = TYPE_URI![0];
+					const URI = TYPE_URI![1];
+					const SERVICE: ServiceModel = {
+						id: ID + '#' + id,
+						type: TYPE,
+						uri: URI
+					};
+					SERVICES.push(SERVICE);
+				}
 			}
 
 			/** The DID Document */
