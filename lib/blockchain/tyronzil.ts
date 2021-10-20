@@ -312,7 +312,8 @@ export default class TyronZIL extends ZilliqaInit {
 	public static async CrudParams(
 		addr: string,
 		document: TransitionValue[],
-		signature: any
+		signature: any,
+		tyron: TransitionValue
 	): Promise<TransitionParams[]> {
 		
 		const params = [];
@@ -331,10 +332,17 @@ export default class TyronZIL extends ZilliqaInit {
 		};
 		params.push(sig);
 
+		const tyron_: TransitionParams = {
+			vname: 'tyron',
+			type: 'Option Uint128',
+			value: tyron,
+		};
+		params.push(tyron_);
+
 		return params;
 	}
 
-	public static async BuyNFTUsername(username: string, tyron: any): Promise<TransitionParams[]> {
+	public static async BuyNFTUsername(username: string, tyron: TransitionValue): Promise<TransitionParams[]> {
 		const params = [];
 		const username_: TransitionParams = {
 			vname: 'username',

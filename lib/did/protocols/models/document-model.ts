@@ -43,7 +43,7 @@ export interface ServiceModel{
 	type?: string,
 	transferProtocol?: TransferProtocol,
 	uri?: string,
-	network?: string,
+	//network?: string,
 	address?: string	
 }
 
