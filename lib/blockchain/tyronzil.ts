@@ -388,15 +388,14 @@ export default class TyronZIL extends ZilliqaInit {
 		};
 
 		switch (beneficiary.constructor) {
-			case 'UserDomain':
+			case 'NFTUsername':
 				Object.assign(beneficiary_, {
 					arguments: [
-						beneficiary.username,
-						beneficiary.domain
+						beneficiary.username
 					]
 				});
 				break;
-			case 'BeneficiaryAddr':
+			case 'Recipient':
 				Object.assign(beneficiary_, {
 					arguments: [
 						beneficiary.addr
@@ -738,13 +737,12 @@ export enum Recoverer {
 }
 
 export enum BeneficiaryConstructor {
-	domain = 'UserDomain',
-	addr = 'BeneficiaryAddr'
+	NFTUsername = 'NFTUsername',
+	Recipient = 'Recipient'
 }
 
 export interface Beneficiary {
 	constructor: BeneficiaryConstructor,
 	username?: string,
-	domain?: string,
 	addr?: string
 }
