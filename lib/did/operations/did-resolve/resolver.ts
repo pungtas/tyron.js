@@ -18,12 +18,6 @@ import SmartUtil from "../../../blockchain/smart-util";
 import ZilliqaInit from '../../../blockchain/zilliqa-init';
 import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
 
-export enum InitTyron {
-    Testnet = "0x25a7bb9d8b2a82ba073a3ceb3b24b04fb0a39260",
-    Mainnet = "",
-    Isolated = ""
-}
-
 export default class Resolver {
 	public static async resolveDns(network: NetworkNamespace, initTyron: string, username: string, domain: string): Promise<string> {
 		const zil_init = new ZilliqaInit(network);
