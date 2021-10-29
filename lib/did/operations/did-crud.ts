@@ -14,9 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
 import * as tyronzil from '../../blockchain/tyronzil';
-import { Sidetree } from '../protocols/sidetree';
-import { Action, DocumentConstructor, DocumentElement, PatchModel, ServiceModel } from '../protocols/models/document-model';
-import DidState from './did-resolve/did-state';
+import { Action, DocumentConstructor, DocumentElement, ServiceModel } from '../protocols/models/document-model';
 import hash from 'hash.js';
 import * as zutil from '@zilliqa-js/util';
 
@@ -88,7 +86,8 @@ export default class DidCrud{
 					switch (element.action) {
 						case Action.Add:
 							h3 = hash.sha256().update(zutil.bytes.hexToByteArray(element.key!.key!.substring(2))).digest('hex');	
-							hash__ = h1 + h2 + h3;			
+							const h4 = hash.sha256().update(element.key?.encrypted).digest('hex');
+							hash__ = h1 + h2 + h3 + h4;			
 							break;
 						case Action.Remove:
 							hash__ = h1 + h2;				
@@ -137,26 +136,6 @@ export default class DidCrud{
 		return new DidCrud(operation_output);
 	}
 
-	public static async Update(input: UpdateInputModel): Promise<DidCrud> {
-		const operation = await Sidetree.processPatches(input.addr, input.patches)
-		.then( async update => {
-			
-			const tx_params = await tyronzil.default.CrudParams(
-				input.addr,
-				update.updateDocument,
-				await tyronzil.default.OptionParam(tyronzil.Option.some, 'ByStr64', '0x'+input.signature),
-				input.tyron_
-			);
-
-			const operation_output: CrudOperationModel = {
-				txParams: tx_params
-			};
-			return new DidCrud(operation_output);
-		})
-		.catch(err => { throw err })
-		return operation;
-	}
-
 	public static async Deactivate(input: DeactivateInputModel): Promise<DidCrud> {
 		const deactivate_element: DocumentElement = {
 			constructor: DocumentConstructor.Service,       
@@ -190,15 +169,6 @@ export interface InputModel{
 	verificationMethods: tyronzil.TransitionValue[];
 	services?: ServiceModel[];
 	signature?: string;
-	tyron_: tyronzil.TransitionValue
-}
-
-/** Defines input data for a `DID Update` operation */
-export interface UpdateInputModel{
-	addr: string;
-	state: DidState;
-	patches: PatchModel[];
-	signature: string;
 	tyron_: tyronzil.TransitionValue
 }
 

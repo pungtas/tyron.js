@@ -662,6 +662,47 @@ export default class TyronZIL extends ZilliqaInit {
 		params.push(commit_);
 		return params;
 	}
+
+	public static async Dns(
+		addr: string,
+		domain: string,
+		didKey: string,
+		encrypted: string,
+		tyron: TransitionValue
+	): Promise<TransitionParams[]> {
+		const params = [];
+		const addr_: TransitionParams = {
+			vname: 'addr',
+			type: 'ByStr20',
+			value: addr,
+		};
+		params.push(addr_);
+		const did_key: TransitionParams = {
+			vname: 'didKey',
+			type: 'ByStr33',
+			value: didKey,
+		};
+		params.push(did_key);
+		const encrypted_: TransitionParams = {
+			vname: 'encrypted',
+			type: 'String',
+			value: encrypted,
+		};
+		params.push(encrypted_);
+		const domain_: TransitionParams = {
+			vname: 'domain',
+			type: 'String',
+			value: domain,
+		};
+		params.push(domain_);
+		const tyron_: TransitionParams = {
+			vname: 'tyron',
+			type: 'Option Uint128',
+			value: tyron,
+		};
+		params.push(tyron_);
+		return params;
+	}
 }
 
 /** The result of a contract deployment */

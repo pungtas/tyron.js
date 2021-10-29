@@ -49,18 +49,7 @@ export class Sidetree {
 				case PatchAction.AddKeys: 
 					if(patch.keyInput !== undefined){
 						await this.addKeys(addr, patch.keyInput)
-						.then(async new_keys => {
-							for(const doc_element of new_keys.docElements){
-								doc_elements.push(doc_element);
-							}
-							for(const did_method of new_keys.verificationMethods){
-								update_document.push(did_method);
-							}
-							for(const key of new_keys.privateKeys){
-								private_keys.push(key)
-							}
-						})
-						.catch(err => { throw err })
+						
 					} else {
 						throw new ErrorCode('Missing', 'No key in AddKeys patch')
 					}
