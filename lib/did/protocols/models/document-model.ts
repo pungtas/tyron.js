@@ -60,7 +60,7 @@ export interface PatchModel{
 }
 
 export enum PatchAction{
-	AddKeys = 'add-public-keys',
+	//AddKeys = 'add-public-keys',
 	RemoveKeys = 'remove-public-keys',
 	AddServices = 'add-service-endpoints',
 	RemoveServices = 'remove-service-endpoints',
