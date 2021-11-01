@@ -28,8 +28,7 @@ export default class TyronZIL extends ZilliqaInit {
 	public readonly controllerSecretKey: string;
 	public readonly gasPrice: zutil.BN;
 	public readonly gasLimit: zutil.Long;
-	/** Address of the INIT.tyron smart contract */
-	public readonly init_tyron: string;	
+	public readonly tyron: string;	
 
 	private constructor(
 		network: NetworkNamespace,
@@ -44,7 +43,7 @@ export default class TyronZIL extends ZilliqaInit {
 		this.controllerSecretKey = controllerSecretKey;		
 		this.gasPrice = gasPrice;
 		this.gasLimit = gasLimit;
-		this.init_tyron = init_tyron;
+		this.tyron = init_tyron;
 	}
 	
 	/** Retrieves the minimum gas price & validates the account info */
@@ -52,10 +51,11 @@ export default class TyronZIL extends ZilliqaInit {
 		network: NetworkNamespace,
 		controllerSecretKey: string,
 		gasLimit: number,
-		init_tyron: string
+		tyron: string
 	): Promise<TyronZIL> {
+
 		let controller = zcrypto.getAddressFromPrivateKey(controllerSecretKey);
-		let gas_limit: zutil.Long.Long = new zutil.Long(gasLimit);
+		const gas_limit: zutil.Long.Long = new zutil.Long(gasLimit);
 		const zil_init = new ZilliqaInit(network);
 		
 		const transaction_init = await zil_init.API.blockchain.getMinimumGasPrice()
@@ -67,7 +67,7 @@ export default class TyronZIL extends ZilliqaInit {
 				controllerSecretKey,
 				gas_price,
 				gas_limit,
-				init_tyron,            
+				tyron,            
 			);
 		})
 		.catch((err: any) => {throw err});
@@ -342,7 +342,12 @@ export default class TyronZIL extends ZilliqaInit {
 		return params;
 	}
 
-	public static async BuyNFTUsername(username: string, tyron: TransitionValue): Promise<TransitionParams[]> {
+	public static async BuyNFTUsername(
+		username: string,
+		guardianship: TransitionValue,
+		id: string,
+		tyron: TransitionValue
+		): Promise<TransitionParams[]> {
 		const params = [];
 		const username_: TransitionParams = {
 			vname: 'username',
@@ -350,6 +355,18 @@ export default class TyronZIL extends ZilliqaInit {
 			value: username,
 		};
 		params.push(username_);
+		const guardianship_: TransitionParams = {
+			vname: 'guardianship',
+			type: 'Option ByStr20',
+			value: guardianship,
+		};
+		params.push(guardianship_);
+		const id_: TransitionParams = {
+			vname: 'id',
+			type: 'String',
+			value: id,
+		};
+		params.push(id_);
 		const tyron_: TransitionParams = {
 			vname: 'tyron',
 			type: 'Option Uint128',
@@ -362,6 +379,9 @@ export default class TyronZIL extends ZilliqaInit {
 	public static async TransferNFTUsername(
 		username: string,
 		newAddr: string,
+		guardianship: TransitionValue,
+		id: string,
+		tyron: TransitionValue
 	): Promise<TransitionParams[]> {
 		const params = [];
 		const username_: TransitionParams = {
@@ -377,6 +397,24 @@ export default class TyronZIL extends ZilliqaInit {
 			value: newAddr,
 		};
 		params.push(addr_);
+		const guardianship_: TransitionParams = {
+			vname: 'guardianship',
+			type: 'Option ByStr20',
+			value: guardianship,
+		};
+		params.push(guardianship_);
+		const id_: TransitionParams = {
+			vname: 'id',
+			type: 'String',
+			value: id,
+		};
+		params.push(id_);
+		const tyron_: TransitionParams = {
+			vname: 'tyron',
+			type: 'Option Uint128',
+			value: tyron,
+		};
+		params.push(tyron_);
 		return params;
 	}
 
