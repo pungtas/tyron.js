@@ -1,22 +1,22 @@
 /*
-    tyron.js: SSI Protocol's JavaScript/TypeScipt library
-    Self-Sovereign Identity Protocol.
-    Copyright (C) Tyron Pungtas and its affiliates.
+tyron.js: SSI Protocol's JavaScript/TypeScipt library
+Self-Sovereign Identity Protocol.
+Copyright (C) Tyron Pungtas and its affiliates.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-*/
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.*/
 
 export * as SmartUtil from './blockchain/smart-util';
 export * as State from './blockchain/state';
 export * as TyronZil from './blockchain/tyronzil';
+export * as TyronDex from './blockchain/dex';
 export * as ZilliqaInit from './blockchain/zilliqa-init';
 export * as DidCrud from './did/operations/did-crud';
 export * as DidDocument from './did/operations/did-resolve/did-document';
