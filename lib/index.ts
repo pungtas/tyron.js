@@ -16,7 +16,6 @@ GNU General Public License for more details.*/
 export * as SmartUtil from './blockchain/smart-util';
 export * as State from './blockchain/state';
 export * as TyronZil from './blockchain/tyronzil';
-export * as TyronDex from './blockchain/dex';
 export * as ZilliqaInit from './blockchain/zilliqa-init';
 export * as DidCrud from './did/operations/did-crud';
 export * as DidDocument from './did/operations/did-resolve/did-document';
