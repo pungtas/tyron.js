@@ -488,7 +488,8 @@ export default class TyronZIL extends ZilliqaInit {
 	public static async SendFunds(
 		addr: string,
 		tag: string,
-		beneficiary: Beneficiary
+		beneficiary: Beneficiary,
+		tyron: TransitionValue
 	): Promise<TransitionParams[]> {
 		
 		const params = [];
@@ -506,6 +507,13 @@ export default class TyronZIL extends ZilliqaInit {
 		};
 		params.push(beneficiary__);
 
+		const tyron_: TransitionParams = {
+			vname: 'tyron',
+			type: 'Option Uint128',
+			value: tyron,
+		};
+		params.push(tyron_);
+
 		return params;
 	}
 
@@ -522,6 +530,30 @@ export default class TyronZIL extends ZilliqaInit {
 			value: await this.GetBeneficiary(addr, beneficiary)
 		};
 		params.push(beneficiary__);
+		return params;
+	}
+
+	public static async ConfigureSocialRecovery(
+		guardians: string[],
+		tyron: TransitionValue
+	): Promise<TransitionParams[]> {
+		
+		const params = [];
+
+		const guardians_: TransitionParams = {
+			vname: 'guardians',
+			type: 'List ByStr32',
+			value: guardians,
+		};
+		params.push(guardians_);
+
+		const tyron_: TransitionParams = {
+			vname: 'tyron',
+			type: 'Option Uint128',
+			value: tyron,
+		};
+		params.push(tyron_);
+
 		return params;
 	}
 
