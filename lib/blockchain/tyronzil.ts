@@ -381,6 +381,7 @@ export default class TyronZIL extends ZilliqaInit {
 		newAddr: string,
 		guardianship: TransitionValue,
 		id: string,
+		amount: string,
 		tyron: TransitionValue
 	): Promise<TransitionParams[]> {
 		const params = [];
@@ -409,6 +410,12 @@ export default class TyronZIL extends ZilliqaInit {
 			value: id,
 		};
 		params.push(id_);
+		const amount_: TransitionParams = {
+			vname: 'amount',
+			type: 'Uint128',
+			value: amount,
+		};
+		params.push(amount_);
 		const tyron_: TransitionParams = {
 			vname: 'tyron',
 			type: 'Option Uint128',
