@@ -28,3 +28,5 @@ export * as DidScheme from './did/tyronzil-schemes/did-scheme';
 export * as DidUrlScheme from './did/tyronzil-schemes/did-url-scheme';
 export * as ErrorCode from './did/util/ErrorCode';
 export * as DidKeys from './did/util/did-keys';
+export * as CheckPath from './interface/check-path';
+export * as CheckDomain from './interface/check-domain';
