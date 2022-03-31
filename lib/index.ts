@@ -30,3 +30,4 @@ export * as ErrorCode from './did/util/ErrorCode';
 export * as DidKeys from './did/util/did-keys';
 export * as CheckPath from './interface/check-path';
 export * as CheckDomain from './interface/check-domain';
+export * as Donation from './transaction/donation';
