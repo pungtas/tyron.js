@@ -16,7 +16,7 @@ GNU General Public License for more details.*/
 import CheckDomain from "./check-domain";
 import CheckPath from "./check-path";
 
-export default class SetUsername {
+export default class SetDomain {
   constructor(path: String) {
     const checkPath = new CheckPath(path);
     const checkDomain = new CheckDomain(path);
