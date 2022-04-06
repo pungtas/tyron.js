@@ -1,5 +1,5 @@
 /*
-tyron.js: SSI Protocol's JavaScript/TypeScipt library
+tyron.js: SSI Protocol's JavaScript/TypeScript library
 Self-Sovereign Identity Protocol.
 Copyright (C) Tyron Pungtas and its affiliates.
 
@@ -12,6 +12,7 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
+
 import * as tyronzil from '../blockchain/tyronzil';
 
 export default class Donation {
