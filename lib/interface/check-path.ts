@@ -14,27 +14,25 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
 export default class CheckPath {
-	constructor(
-		path: String
-	) {
-		if (path === "") {
-            return false;
-          } else if (path === "XPoints") {
-            return false;
-          } else if (
-            path.split("/")[1] === "did" ||
-            path.split("/")[1] === "xwallet" ||
-            path.split("/")[1] === "recovery" ||
-            path.split("/")[1] === "funds" ||
-            path.split("/")[1] === "buy" ||
-            path.split(".")[1] === "did" ||
-            path.split(".")[1] === "ssi" ||
-            path.split(".")[1] === "vc" ||
-            path.split(".")[1] === "treasury"
-          ) {
-            return false;
-          } else {
-            return true;
-          }
-	}
+  constructor(path: String) {
+    if (path === "") {
+      return false;
+    } else if (path === "XPoints") {
+      return false;
+    } else if (
+      path.split("/")[1] === "did" ||
+      path.split("/")[1] === "xwallet" ||
+      path.split("/")[1] === "recovery" ||
+      path.split("/")[1] === "funds" ||
+      path.split("/")[1] === "buy" ||
+      path.split(".")[1] === "did" ||
+      path.split(".")[1] === "ssi" ||
+      path.split(".")[1] === "vc" ||
+      path.split(".")[1] === "treasury"
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }

@@ -17,22 +17,25 @@ import CheckDomain from "./check-domain";
 import CheckPath from "./check-path";
 
 export default class SetUsername {
-	constructor(
-		path: String
-	) {
-    const checkPath = new CheckPath(path)
-    const checkDomain = new CheckDomain(path)
+  constructor(path: String) {
+    const checkPath = new CheckPath(path);
+    const checkDomain = new CheckDomain(path);
 
-		if (checkPath) {
+    if (checkPath) {
       return path;
     } else if (checkDomain) {
-      return path.split('.')[0];
-    } else if (path.includes('.did') && path.includes('/')) {
-      return path.split('/')[0].split('.')[0]
-    } else if (path.split('/')[1] === 'did' || path.split('/')[1] === 'funds' || path.split('/')[1] === 'recovery' || path.split('/')[1] === 'buy') {
-      return path.split('/')[0]
+      return path.split(".")[0];
+    } else if (path.includes(".did") && path.includes("/")) {
+      return path.split("/")[0].split(".")[0];
+    } else if (
+      path.split("/")[1] === "did" ||
+      path.split("/")[1] === "funds" ||
+      path.split("/")[1] === "recovery" ||
+      path.split("/")[1] === "buy"
+    ) {
+      return path.split("/")[0];
     } else {
-      return ""
+      return "";
     }
-	}
+  }
 }

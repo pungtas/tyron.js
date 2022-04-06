@@ -15,72 +15,73 @@ GNU General Public License for more details.*/
 
 /** Tools to manage smart contracts */
 export default class SmartUtil {
+  /** Gets the value out of a field Option */
+  public static async getValue(object: any): Promise<string> {
+    const entries = Object.entries(object);
+    let result: string;
+    entries.forEach((value: [string, unknown]) => {
+      if (value[0] === "arguments") {
+        result = value[1] as string;
+      }
+    });
+    return result![0];
+  }
 
-    /** Gets the value out of a field Option */
-    public static async getValue(object: any): Promise<string> {
-        const entries = Object.entries(object);
-        let result: string;
-        entries.forEach((value: [string, unknown]) => {
-            if (value[0] === "arguments") {
-                result = value[1] as string;
-            }
-        });
-        return result![0];
-    }
+  /** Gets the DID Status out of field Option */
+  public static async getStatus(object: any): Promise<string> {
+    const entries = Object.entries(object);
+    let result: string;
+    entries.forEach((value: [string, unknown]) => {
+      if (value[0] === "constructor") {
+        result = value[1] as string;
+      }
+    });
+    const status = result!.split(".");
+    return status[1];
+  }
 
-    /** Gets the DID Status out of field Option */
-    public static async getStatus(object: any): Promise<string> {
-        const entries = Object.entries(object);
-        let result: string;
-        entries.forEach((value: [string, unknown]) => {
-            if (value[0] === "constructor") {
-                result = value[1] as string;
-            }
-        });
-        const status = result!.split(".");
-        return status[1];
-    }
+  /** Gets the value out of a map key */
+  public static async getValuefromMap(object: any, key: string): Promise<any> {
+    const entries = Object.entries(object);
+    let result: unknown;
+    entries.forEach((value: [string, unknown]) => {
+      if (value[0] === key) {
+        result = value[1];
+      }
+    });
+    return result;
+  }
 
-    /** Gets the value out of a map key */
-    public static async getValuefromMap(object: any, key: string): Promise<any> {
-        const entries = Object.entries(object);
-        let result: unknown;
-        entries.forEach((value: [string, unknown]) => {
-            if (value[0] === key) {
-                result = value[1]
-            }
-        });
-        return result;
-    }
+  /** Turns the smart contract's map into a Map */
+  public static async intoMap(object: any): Promise<Map<string, any>> {
+    const entries = Object.entries(object);
+    let map = new Map();
+    entries.forEach((value: [string, unknown]) => {
+      map.set(value[0], value[1]);
+    });
+    return map;
+  }
 
-    /** Turns the smart contract's map into a Map */
-    public static async intoMap(object: any): Promise<Map<string, any>> {
-        const entries = Object.entries(object);
-        let map = new Map();
-        entries.forEach((value: [string, unknown]) => {
-            map.set(value[0], value[1])
-        });
-        return map;
-    }
+  /** Turns the DID's services map field into a Map */
+  public static async fromServices(
+    input: any
+  ): Promise<Map<string, [string, string]>> {
+    const prev_map = await this.intoMap(input);
+    let map = new Map();
 
-    /** Turns the DID's services map field into a Map */
-    public static async fromServices(input: any): Promise<Map<string, [string, string]>> {
-        const prev_map = await this.intoMap(input);
-        let map = new Map();
-        
-        for (let id of prev_map.keys()) {
-            const object = prev_map.get(id);
-            const entries = Object.entries(object);
-            
-            entries.forEach((value: [string, unknown]) => {
-                if (value[0] === "arguments") {
-                    const result = value[1] as [string, unknown, string];
-                    const type = result[0];
-                    const uri = result[2];
-                    map.set(id, [type, uri]);
-                }
-            });
-        };
-        return map;
+    for (let id of prev_map.keys()) {
+      const object = prev_map.get(id);
+      const entries = Object.entries(object);
+
+      entries.forEach((value: [string, unknown]) => {
+        if (value[0] === "arguments") {
+          const result = value[1] as [string, unknown, string];
+          const type = result[0];
+          const uri = result[2];
+          map.set(id, [type, uri]);
+        }
+      });
     }
+    return map;
+  }
 }

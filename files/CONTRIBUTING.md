@@ -9,7 +9,7 @@ No matter your background or technical expertise, **your feedback is valuable**,
 ## Open-source software & license
 
 Open-source software means you have the freedom to use, study, copy, modify and distribute the source code.  
-These permissions are enforced through a [GNU General Public License v3.0](../LICENSE) that protects your contributor rights with two steps: (1) asserts copyright on the software, and (2) offers you legal permission to copy, distribute and/or modify the software.  
+These permissions are enforced through a [GNU General Public License v3.0](../LICENSE) that protects your contributor rights with two steps: (1) asserts copyright on the software, and (2) offers you legal permission to copy, distribute and/or modify the software.
 
 ## How to contribute :high_brightness:
 

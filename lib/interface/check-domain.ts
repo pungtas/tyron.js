@@ -14,13 +14,16 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
 export default class CheckDomain {
-	constructor(
-		path: String
-	) {
-		if (path.split('.')[1] === 'did' || path.split('.')[1] === 'ssi' || path.split('.')[1] === 'vc' || path.split('.')[1] === 'treasury') {
-      return true
+  constructor(path: String) {
+    if (
+      path.split(".")[1] === "did" ||
+      path.split(".")[1] === "ssi" ||
+      path.split(".")[1] === "vc" ||
+      path.split(".")[1] === "treasury"
+    ) {
+      return true;
     } else {
-      return false
+      return false;
     }
-	}
+  }
 }
