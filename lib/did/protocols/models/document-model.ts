@@ -1,5 +1,5 @@
 /*
-tyron.js: SSI Protocol's JavaScript/TypeScipt library
+tyron.js: SSI Protocol's JavaScript/TypeScript library
 Self-Sovereign Identity Protocol.
 Copyright (C) Tyron Pungtas and its affiliates.
 
@@ -13,57 +13,57 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
-import { PublicKeyInput, PublicKeyModel } from './verification-method-models';
+import { PublicKeyInput, PublicKeyModel } from "./verification-method-models";
 
-export enum DocumentConstructor{
-	VerificationMethod = 'VerificationMethod',
-	Service = 'Service'
+export enum DocumentConstructor {
+  VerificationMethod = "VerificationMethod",
+  Service = "Service",
 }
 
-export interface DocumentElement{
-	constructor: DocumentConstructor,       
-	action: Action,
-	key?: PublicKeyModel,
-	service?: ServiceModel
+export interface DocumentElement {
+  constructor: DocumentConstructor;
+  action: Action;
+  key?: PublicKeyModel;
+  service?: ServiceModel;
 }
 
-export enum ServiceEndpoint{
-	Web2Endpoint = 'Uri',
-	Web3Endpoint = 'Address'
+export enum ServiceEndpoint {
+  Web2Endpoint = "Uri",
+  Web3Endpoint = "Address",
 }
 
-export enum TransferProtocol{
-	Https = "Https",
-	Git = "Git"
+export enum TransferProtocol {
+  Https = "Https",
+  Git = "Git",
 }
 
-export interface ServiceModel{
-	id: string,
-	endpoint?: ServiceEndpoint,
-	type?: string,
-	transferProtocol?: TransferProtocol,
-	uri?: string,
-	//network?: string,
-	address?: string	
+export interface ServiceModel {
+  id: string;
+  endpoint?: ServiceEndpoint;
+  type?: string;
+  transferProtocol?: TransferProtocol;
+  uri?: string;
+  //network?: string,
+  address?: string;
 }
 
-export enum Action{
-	Add = "Add",
-	Remove = "Remove"
+export enum Action {
+  Add = "Add",
+  Remove = "Remove",
 }
 
-export interface PatchModel{
-	action: PatchAction;
-	ids?: string[];    //the IDs of the DID Document elements to remove
-	keyInput?: PublicKeyInput[];
-	services?: ServiceModel[];
+export interface PatchModel {
+  action: PatchAction;
+  ids?: string[]; //the IDs of the DID Document elements to remove
+  keyInput?: PublicKeyInput[];
+  services?: ServiceModel[];
 }
 
-export enum PatchAction{
-	//AddKeys = 'add-public-keys',
-	RemoveKeys = 'remove-public-keys',
-	AddServices = 'add-service-endpoints',
-	RemoveServices = 'remove-service-endpoints',
-	// Format of an additional custom action
-	CustomAction = '-custom-action',
+export enum PatchAction {
+  //AddKeys = 'add-public-keys',
+  RemoveKeys = "remove-public-keys",
+  AddServices = "add-service-endpoints",
+  RemoveServices = "remove-service-endpoints",
+  // Format of an additional custom action
+  CustomAction = "-custom-action",
 }

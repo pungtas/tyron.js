@@ -1,5 +1,5 @@
 /*
-tyron.js: SSI Protocol's JavaScript/TypeScipt library
+tyron.js: SSI Protocol's JavaScript/TypeScript library
 Self-Sovereign Identity Protocol.
 Copyright (C) Tyron Pungtas and its affiliates.
 
@@ -13,75 +13,78 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
-import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme';
-import DidUrlScheme from '../../tyronzil-schemes/did-url-scheme';
-import { DIDStatus } from '../../protocols/sidetree';
-import State from '../../../blockchain/state';
+import { NetworkNamespace } from "../../tyronzil-schemes/did-scheme";
+import DidUrlScheme from "../../tyronzil-schemes/did-url-scheme";
+import { DIDStatus } from "../../protocols/sidetree";
+import State from "../../../blockchain/state";
 
 /** The Tyron DID-State */
 export default class DidState {
-	public readonly did: string;
-    public readonly controller: string;
-	public readonly did_status: DIDStatus;
-    public readonly verification_methods?: Map<string, string>;
-	public readonly dkms?: Map<string, string>;
-	public readonly services?: Map<string, string>;
-	public readonly services_?: Map<string, [string, string]>;
-	public readonly did_recovery_key?: string;
-	public readonly did_update_key?: string;
-	
-	private constructor(
-		state: DidStateModel
-	) {
-		this.did = state.did;
-        this.controller = state.controller;
-		this.did_status = state.did_status as DIDStatus;
-        this.verification_methods = state.verification_methods;
-		this.dkms = state.dkms;
-		this.services = state.services;
-		this.services_ = state.services_;
-		this.did_recovery_key = state.did_recovery_key;
-		this.did_update_key = state.did_update_key;
-	}
+  public readonly did: string;
+  public readonly controller: string;
+  public readonly did_status: DIDStatus;
+  public readonly verification_methods?: Map<string, string>;
+  public readonly dkms?: Map<string, string>;
+  public readonly services?: Map<string, string>;
+  public readonly services_?: Map<string, [string, string]>;
+  public readonly did_recovery_key?: string;
+  public readonly did_update_key?: string;
 
-	/** Fetches the current DID State for the given address */
-	public static async fetch(network: NetworkNamespace, addr: string): Promise<DidState> {
-		const did_state = await State.fetch(network, addr)
-		.then(async state => {
-			if( state.did !== ''){
-				// Validates the Tyron DID Scheme
-				await DidUrlScheme.validate(state.did);
-			}
-			const this_state: DidStateModel = {
-				did: state.did,
-				controller: state.controller,
-				did_status: state.did_status,
-				verification_methods: state.verification_methods,
-				dkms: state.dkms,
-				services: state.services,
-				services_: state.services_,
-			};
-			if( typeof state.verification_methods === typeof Map ){
-				const methods = state.verification_methods as Map<string, string>;
-				this_state.did_recovery_key = methods.get("recovery");
-				this_state.did_update_key = methods.get("update");
-			}
-			return new DidState(this_state);
-		})
-		.catch((err: any) => { throw err })
-		return did_state;
-	}
+  private constructor(state: DidStateModel) {
+    this.did = state.did;
+    this.controller = state.controller;
+    this.did_status = state.did_status as DIDStatus;
+    this.verification_methods = state.verification_methods;
+    this.dkms = state.dkms;
+    this.services = state.services;
+    this.services_ = state.services_;
+    this.did_recovery_key = state.did_recovery_key;
+    this.did_update_key = state.did_update_key;
+  }
+
+  /** Fetches the current DID State for the given address */
+  public static async fetch(
+    network: NetworkNamespace,
+    addr: string
+  ): Promise<DidState> {
+    const did_state = await State.fetch(network, addr)
+      .then(async (state) => {
+        if (state.did !== "") {
+          // Validates the Tyron DID Scheme
+          await DidUrlScheme.validate(state.did);
+        }
+        const this_state: DidStateModel = {
+          did: state.did,
+          controller: state.controller,
+          did_status: state.did_status,
+          verification_methods: state.verification_methods,
+          dkms: state.dkms,
+          services: state.services,
+          services_: state.services_,
+        };
+        if (typeof state.verification_methods === typeof Map) {
+          const methods = state.verification_methods as Map<string, string>;
+          this_state.did_recovery_key = methods.get("recovery");
+          this_state.did_update_key = methods.get("update");
+        }
+        return new DidState(this_state);
+      })
+      .catch((err: any) => {
+        throw err;
+      });
+    return did_state;
+  }
 }
 
 /** The state model of a Tyron Decentralized Identifier */
 export interface DidStateModel {
-	did: string;
-	controller: string;
-	did_status: DIDStatus;
-	verification_methods?: Map<string, string>;
-	dkms?: Map<string, string>;
-	services?: Map<string, string>;
-	services_?: Map<string, [string, string]>;
-	did_recovery_key?: string;
-	did_update_key?: string;
+  did: string;
+  controller: string;
+  did_status: DIDStatus;
+  verification_methods?: Map<string, string>;
+  dkms?: Map<string, string>;
+  services?: Map<string, string>;
+  services_?: Map<string, [string, string]>;
+  did_recovery_key?: string;
+  did_update_key?: string;
 }

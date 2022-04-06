@@ -13,12 +13,17 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
-// Cloned from SidetreeError:
-export default class CodeError extends Error {
-  constructor(public code: string, message?: string) {
-    super(message ? `${code}: ${message}` : code);
-    // NOTE: Extending 'Error' breaks prototype chain since TypeScript 2.1.
-    // The following line restores prototype chain.
-    Object.setPrototypeOf(this, new.target.prototype);
+export default class CheckDomain {
+  constructor(path: String) {
+    if (
+      path.split(".")[1] === "did" ||
+      path.split(".")[1] === "ssi" ||
+      path.split(".")[1] === "vc" ||
+      path.split(".")[1] === "treasury"
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
