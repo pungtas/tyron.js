@@ -28,7 +28,6 @@ export * as DidScheme from "./did/tyronzil-schemes/did-scheme";
 export * as DidUrlScheme from "./did/tyronzil-schemes/did-url-scheme";
 export * as ErrorCode from "./did/util/ErrorCode";
 export * as DidKeys from "./did/util/did-keys";
-export * as SetUsername from "./interface/set-username";
-export * as SetDomain from "./interface/set-domain";
+export * as SearchBar from "./interface/search-bar";
 export * as Donation from "./transaction/donation";
 export * as Currency from "./transaction/currency";
