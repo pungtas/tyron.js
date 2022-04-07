@@ -16,8 +16,31 @@ GNU General Public License for more details.*/
 import CheckDomain from "./check-domain";
 import CheckPath from "./check-path";
 
-export default class SetUsername {
-  constructor(path: String) {
+export default class SearchBar {
+  
+  public static SetDomain(path: String) {
+    const checkPath = new CheckPath(path);
+    const checkDomain = new CheckDomain(path);
+
+    if (path.includes(".ssi")) {
+      return "did";
+    } else if (checkPath) {
+      return "did";
+    } else if (checkDomain) {
+      return path.split(".")[1];
+    } else if (
+      path.split("/")[1] === "did" ||
+      path.split("/")[1] === "funds" ||
+      path.split("/")[1] === "recovery" ||
+      path.split("/")[1] === "buy"
+    ) {
+      return "did";
+    } else {
+      return "";
+    }
+  }
+
+  public static SetUsername(path: String) {
     const checkPath = new CheckPath(path);
     const checkDomain = new CheckDomain(path);
 
