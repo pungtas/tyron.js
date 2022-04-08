@@ -18,7 +18,7 @@ export default class SearchBar {
   public static CheckDomain(path: String) {
     if (
       path.split(".")[1] === "did" ||
-      path.split(".")[1] === "ssi" ||
+      path.split(".")[1] === "defi" ||
       path.split(".")[1] === "vc" ||
       path.split(".")[1] === "treasury"
     ) {
@@ -38,9 +38,10 @@ export default class SearchBar {
       path.split("/")[1] === "xwallet" ||
       path.split("/")[1] === "recovery" ||
       path.split("/")[1] === "funds" ||
+      path.split("/")[1] === "p2p" ||
       path.split("/")[1] === "buy" ||
       path.split(".")[1] === "did" ||
-      path.split(".")[1] === "ssi" ||
+      path.split(".")[1] === "defi" ||
       path.split(".")[1] === "vc" ||
       path.split(".")[1] === "treasury"
     ) {
@@ -51,8 +52,8 @@ export default class SearchBar {
   }
   
   public static SetDomain(path: String) {
-    if (path.includes(".ssi")) {
-      return "did";
+    if (path.includes(".defi")) {
+      return "defi";
     } else if (this.CheckPath(path)) {
       return "did";
     } else if (this.CheckDomain(path)) {
@@ -60,6 +61,7 @@ export default class SearchBar {
     } else if (
       path.split("/")[1] === "did" ||
       path.split("/")[1] === "funds" ||
+      path.split("/")[1] === "p2p" ||
       path.split("/")[1] === "recovery" ||
       path.split("/")[1] === "buy"
     ) {
@@ -70,7 +72,6 @@ export default class SearchBar {
   }
 
   public static SetUsername(path: String) {
-
     if (this.CheckPath(path)) {
       return path;
     } else if (this.CheckDomain(path)) {
@@ -80,9 +81,13 @@ export default class SearchBar {
     } else if (
       path.split("/")[1] === "did" ||
       path.split("/")[1] === "funds" ||
+      path.split("/")[1] === "p2p" ||
       path.split("/")[1] === "recovery" ||
       path.split("/")[1] === "buy"
     ) {
+      if (path.includes(".defi") && path.includes("/")) {
+        return path.split("/")[0].split(".defi")[0];
+      }
       return path.split("/")[0];
     } else {
       return "";
