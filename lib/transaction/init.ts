@@ -23,17 +23,17 @@ export default class Init {
     const generateChecksumAddress = () => toChecksumAddress(randomBytes(20));
     let endpoint = "https://api.zilliqa.com/";
     if (net === "testnet") {
-    endpoint = "https://dev-api.zilliqa.com/";
+      endpoint = "https://dev-api.zilliqa.com/";
     }
     let tx = new Transaction(
-    {
+      {
         version: 0,
         toAddr: generateChecksumAddress(),
         amount: new BN(0),
         gasPrice: new BN(1000),
         gasLimit: Long.fromNumber(1000),
-    },
-    new HTTPProvider(endpoint)
+      },
+      new HTTPProvider(endpoint)
     );
     return tx;
   }

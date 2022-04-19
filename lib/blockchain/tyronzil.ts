@@ -248,6 +248,21 @@ export default class TyronZIL extends ZilliqaInit {
       case "Service":
         let endpoint;
         switch (element.service!.endpoint) {
+          case "Address":
+            endpoint = {
+              argtypes: [],
+              arguments: [
+                {
+                  argtypes: [],
+                  arguments: [`${element.service!.val}`],
+                  constructor: `${addr.toLowerCase()}.${
+                    element.service!.blockchainType
+                  }`,
+                },
+              ],
+              constructor: `${addr.toLowerCase()}.Address`,
+            };
+            break;
           case "Uri":
             endpoint = {
               argtypes: [],
@@ -260,16 +275,9 @@ export default class TyronZIL extends ZilliqaInit {
                     element.service!.transferProtocol
                   }`,
                 },
-                `${element.service!.uri}`,
+                `${element.service!.val}`,
               ],
               constructor: `${addr.toLowerCase()}.Uri`,
-            };
-            break;
-          case "Address":
-            endpoint = {
-              argtypes: [],
-              arguments: [`${element.service!.address}`],
-              constructor: `${addr.toLowerCase()}.Address`,
             };
             break;
         }

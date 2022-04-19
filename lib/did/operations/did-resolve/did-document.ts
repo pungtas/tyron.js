@@ -163,7 +163,7 @@ export default class DidDoc {
           for (let id of services_map.keys()) {
             const SERVICE: ServiceModel = {
               id: ID + "#" + id,
-              address: services_map.get(id),
+              val: services_map.get(id),
             };
             SERVICES.push(SERVICE);
           }
@@ -177,7 +177,7 @@ export default class DidDoc {
           const SERVICE: ServiceModel = {
             id: ID + "#" + id,
             type: TYPE,
-            uri: URI,
+            val: URI,
           };
           SERVICES.push(SERVICE);
         }

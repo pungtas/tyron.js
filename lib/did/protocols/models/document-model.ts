@@ -20,16 +20,9 @@ export enum DocumentConstructor {
   Service = "Service",
 }
 
-export interface DocumentElement {
-  constructor: DocumentConstructor;
-  action: Action;
-  key?: PublicKeyModel;
-  service?: ServiceModel;
-}
-
-export enum ServiceEndpoint {
-  Web2Endpoint = "Uri",
-  Web3Endpoint = "Address",
+export enum Action {
+  Add = "Add",
+  Remove = "Remove",
 }
 
 export enum TransferProtocol {
@@ -37,19 +30,29 @@ export enum TransferProtocol {
   Git = "Git",
 }
 
+export enum BlockchainType {
+  Zilliqa = "Zilliqa",
+  Other = "Other",
+}
+
+export enum ServiceEndpoint {
+  Web3Endpoint = "Address",
+  Web2Endpoint = "Uri",
+}
+export interface DocumentElement {
+  constructor: DocumentConstructor;
+  action: Action;
+  key?: PublicKeyModel;
+  service?: ServiceModel;
+}
+
 export interface ServiceModel {
   id: string;
   endpoint?: ServiceEndpoint;
   type?: string;
   transferProtocol?: TransferProtocol;
-  uri?: string;
-  //network?: string,
-  address?: string;
-}
-
-export enum Action {
-  Add = "Add",
-  Remove = "Remove",
+  val?: string; // URI or address
+  blockchainType?: BlockchainType;
 }
 
 export interface PatchModel {
