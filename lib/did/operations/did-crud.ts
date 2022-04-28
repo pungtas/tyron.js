@@ -22,6 +22,7 @@ import {
 } from "../protocols/models/document-model";
 import hash from "hash.js";
 import * as zutil from "@zilliqa-js/util";
+import { PublicKeyModel } from "../protocols/models/verification-method-models";
 
 /** Generates a `DID CRUD` operation
  *  which produces the `DID Document` & metadata */
@@ -169,10 +170,13 @@ export default class DidCrud {
   public static async Deactivate(
     input: DeactivateInputModel
   ): Promise<DidCrud> {
+    const key_: PublicKeyModel = {
+      id: "authentication",
+    };
     const deactivate_element: DocumentElement = {
-      constructor: DocumentConstructor.Service,
+      constructor: DocumentConstructor.VerificationMethod,
       action: Action.Remove,
-      service: { id: "authentication" },
+      key: key_,
     };
     const document = await tyronzil.default.documentParameter(
       input.addr,
