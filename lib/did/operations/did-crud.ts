@@ -172,7 +172,7 @@ export default class DidCrud {
     const deactivate_element: DocumentElement = {
       constructor: DocumentConstructor.Service,
       action: Action.Remove,
-      service: { id: "deactivate" },
+      service: { id: "authentication" },
     };
     const document = await tyronzil.default.documentParameter(
       input.addr,
@@ -185,7 +185,7 @@ export default class DidCrud {
       await tyronzil.default.OptionParam(
         tyronzil.Option.some,
         "ByStr64",
-        input.signature
+        "0x" + input.signature
       ),
       input.tyron_
     );
