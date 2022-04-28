@@ -171,11 +171,13 @@ export default class DidCrud {
     input: DeactivateInputModel
   ): Promise<DidCrud> {
     const key_: PublicKeyModel = {
-      id: "authentication",
+      id: "deactivate",
+      key: "0x024caf04aa4f660db04adf65daf5b993b3383fcdb2ef0479ca8866b1336334b5b4",
+      encrypted: "none"
     };
     const deactivate_element: DocumentElement = {
       constructor: DocumentConstructor.VerificationMethod,
-      action: Action.Remove,
+      action: Action.Add,
       key: key_,
     };
     const document = await tyronzil.default.documentParameter(
