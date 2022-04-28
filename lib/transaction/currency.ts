@@ -14,68 +14,91 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
 export default class Currency {
-  public static tyron(currency: String, input: number) {
+  public static tyron(currency: String, input?: number) {
     let txID = "Transfer";
     let amount = 0;
+    let decimals = 0;
 
     switch (currency.toLowerCase()) {
+      case "tyron":
+        decimals = 1e12;
+        amount = input! * decimals;
+        break;
+      case "$si":
+        decimals = 1e12;
+        amount = input! * decimals;
+        break;
       case "zil":
         txID = "SendFunds";
-        amount = input * 1e12;
-        break;
-      case "tyron":
-        amount = input * 1e12;
-        break;
-      case "xcad":
-        amount = input * 1e18;
-        break;
-      case "xsgd":
-        amount = input * 1e6;
-        break;
-      case "port":
-        amount = input * 1e4;
+        decimals = 1e12;
+        amount = input! * decimals;
         break;
       case "gzil":
-        amount = input * 1e15;
-        break;
-      case "swth":
-        amount = input * 1e8;
-        break;
-      case "lunr":
-        amount = input * 1e4;
-        break;
-      case "carb":
-        amount = input * 1e8;
-        break;
-      case "zwap":
-        amount = input * 1e12;
+        decimals = 1e15;
+        amount = input! * decimals;
         break;
       case "zusdt":
-        amount = input * 1e6;
+        decimals = 1e6;
+        amount = input! * decimals;
         break;
-      case "sco":
-        amount = input * 1e4;
+      case "xsgd":
+        decimals = 1e6;
+        amount = input! * decimals;
         break;
       case "xidr":
-        amount = input * 1e6;
+        decimals = 1e6;
+        amount = input! * decimals;
         break;
       case "zwbtc":
-        amount = input * 1e8;
+        decimals = 1e8;
+        amount = input! * decimals;
         break;
       case "zeth":
-        amount = input * 1e18;
+        decimals = 1e18;
+        amount = input! * decimals;
+        break;
+      case "xcad":
+        decimals = 1e18;
+        amount = input! * decimals;
+        break;
+      case "lunr":
+        decimals = 1e4;
+        amount = input! * decimals;
+        break;
+      case "zwap":
+        decimals = 1e12;
+        amount = input! * decimals;
+        break;
+      case "swth":
+        decimals = 1e8;
+        amount = input! * decimals;
+        break;
+      case "port":
+        decimals = 1e4;
+        amount = input! * decimals;
+        break;
+      case "sco":
+        decimals = 1e4;
+        amount = input! * decimals;
         break;
       case "fees":
-        amount = input * 1e4;
+        decimals = 1e4;
+        amount = input! * decimals;
+        break;
+      case "carb":
+        decimals = 1e8;
+        amount = input! * decimals;
         break;
       case "blox":
-        amount = input * 1e2;
+        decimals = 1e2;
+        amount = input! * decimals;
         break;
     }
 
     const res = {
       txID,
       amount,
+      decimals
     };
 
     return res;
