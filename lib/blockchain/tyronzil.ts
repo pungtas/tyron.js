@@ -374,7 +374,7 @@ export default class TyronZIL extends ZilliqaInit {
     return params;
   }
 
-  public static async BuyNFTUsername(
+  public static async BuyNftUsername(
     username: string,
     guardianship: TransitionValue,
     id: string,
@@ -408,7 +408,7 @@ export default class TyronZIL extends ZilliqaInit {
     return params;
   }
 
-  public static async TransferNFTUsername(
+  public static async TransferNftUsername(
     username: string,
     newAddr: string,
     guardianship: TransitionValue,
@@ -468,9 +468,9 @@ export default class TyronZIL extends ZilliqaInit {
     };
 
     switch (beneficiary.constructor) {
-      case "NFTUsername":
+      case "NftUsername":
         Object.assign(beneficiary_, {
-          arguments: [beneficiary.username],
+          arguments: [beneficiary.username, beneficiary.domain],
         });
         break;
       case "Recipient":
@@ -561,7 +561,7 @@ export default class TyronZIL extends ZilliqaInit {
     return params;
   }
 
-  public static async NFTTransfer(
+  public static async NftTransfer(
     addr: string,
     beneficiary: Beneficiary
   ): Promise<TransitionParams[]> {
@@ -847,12 +847,12 @@ export enum TransitionTag {
   SendFunds = "SendFunds",
   EnableSocialRecovery = "EnableSocialRecovery",
   UpdateSocialRecoverer = "UpdateSocialRecoverer",
-  BuyNFTUsername = "BuyNFTUsername",
-  TransferNFTUsername = "TransferNFTUsername",
+  BuyNftUsername = "BuyNftUsername",
+  TransferNftUsername = "TransferNftUsername",
   UpdateInit = "UpdateInit",
   UpdateController = "UpdateController",
   AddMember = "AddMember",
-  NFTTransfer = "NFTTransfer",
+  NftTransfer = "NftTransfer",
   UpdateHourlyWage = "UpdateHourlyWage",
   AddWork = "AddWork",
   AssessPerformance = "AssessPerformance",
@@ -896,12 +896,13 @@ export enum Recoverer {
 }
 
 export enum BeneficiaryConstructor {
-  NFTUsername = "NFTUsername",
+  NftUsername = "NftUsername",
   Recipient = "Recipient",
 }
 
 export interface Beneficiary {
   constructor: BeneficiaryConstructor;
   username?: string;
+  domain?: string;
   addr?: string;
 }
