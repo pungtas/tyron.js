@@ -31,3 +31,4 @@ export * as DidKeys from "./did/util/did-keys";
 export * as Donation from "./transaction/donation";
 export * as Currency from "./transaction/currency";
 export * as Init from "./transaction/init";
+export * as Address from "./did/util/address";
