@@ -17,15 +17,28 @@ import * as zcrypto from "@zilliqa-js/crypto";
 
 export default class Address {
     public static verification(address: string) {
+      let address_: string
       try {
-        zcrypto.fromBech32Address(address);
-        return true;
+        address_ = zcrypto.fromBech32Address(address);
+        const res = {
+          status: true,
+          address: address_,
+        }
+        return res;
       } catch (error) {
         try {
-          zcrypto.toChecksumAddress(address);
-          return true;
+          address_ = zcrypto.fromBech32Address(address);
+          const res = {
+            status: true,
+            address: address_,
+          }
+          return res;
         } catch {
-          return false;
+          const res = {
+            status: false,
+            address: null,
+          }
+          return res;
         }
       }
     }
