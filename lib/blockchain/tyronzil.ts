@@ -376,7 +376,7 @@ export default class TyronZIL extends ZilliqaInit {
 
   public static async BuyNftUsername(
     username: string,
-    guardianship: TransitionValue,
+    addr: TransitionValue,
     id: string,
     tyron: TransitionValue
   ): Promise<TransitionParams[]> {
@@ -387,12 +387,12 @@ export default class TyronZIL extends ZilliqaInit {
       value: username,
     };
     params.push(username_);
-    const guardianship_: TransitionParams = {
-      vname: "guardianship",
+    const addr_: TransitionParams = {
+      vname: "addr",
       type: "Option ByStr20",
-      value: guardianship,
+      value: addr,
     };
-    params.push(guardianship_);
+    params.push(addr_);
     const id_: TransitionParams = {
       vname: "id",
       type: "String",
@@ -578,6 +578,7 @@ export default class TyronZIL extends ZilliqaInit {
 
   public static async ConfigureSocialRecovery(
     guardians: string[],
+    sig: string,
     tyron: TransitionValue
   ): Promise<TransitionParams[]> {
     const params = [];
@@ -588,6 +589,13 @@ export default class TyronZIL extends ZilliqaInit {
       value: guardians,
     };
     params.push(guardians_);
+
+    const sig_: TransitionParams = {
+      vname: "sig",
+      type: "ByStr64",
+      value: sig,
+    };
+    params.push(sig_);
 
     const tyron_: TransitionParams = {
       vname: "tyron",
@@ -821,6 +829,174 @@ export default class TyronZIL extends ZilliqaInit {
     params.push(tyron_);
     return params;
   }
+
+  public static async AddFunds(
+    to: string,
+    amount: string,
+  ): Promise<TransitionParams[]> {
+    const params = [];
+    const to_: TransitionParams = {
+      vname: "to",
+      type: "ByStr20",
+      value: to,
+    };
+    params.push(to_);
+    const amount_: TransitionParams = {
+      vname: "amount",
+      type: "Uint128",
+      value: amount,
+    };
+    params.push(amount_);
+    return params;
+  }
+
+  public static async DidSocialRecovery(
+    addr: string,
+    signatures: any,
+    tyron: TransitionValue
+  ): Promise<TransitionParams[]> {
+    const params = [];
+    const addr_: TransitionParams = {
+      vname: "addr",
+      type: "ByStr20",
+      value: addr,
+    };
+    params.push(addr_);
+    const signatures_: TransitionParams = {
+      vname: "signatures",
+      type: "List( Pair String ByStr64 )",
+      value: signatures,
+    };
+    params.push(signatures_);
+    const tyron_: TransitionParams = {
+      vname: "tyron",
+      type: "Option Uint128",
+      value: tyron,
+    };
+    params.push(tyron_);
+    return params;
+  }
+
+  public static async Allowances(
+    addrName: string,
+    spender: string,
+    amount: string,
+    tyron: TransitionValue
+  ): Promise<TransitionParams[]> {
+    const params = [];
+    const addrName_: TransitionParams = {
+      vname: "addrName",
+      type: "String",
+      value: addrName,
+    };
+    params.push(addrName_);
+    const spender_: TransitionParams = {
+      vname: "spender",
+      type: "ByStr20",
+      value: spender,
+    };
+    params.push(spender_);
+    const amount_: TransitionParams = {
+      vname: "amount",
+      type: "Uint128",
+      value: amount,
+    };
+    params.push(amount_);
+    const tyron_: TransitionParams = {
+      vname: "tyron",
+      type: "Option Uint128",
+      value: tyron,
+    };
+    params.push(tyron_);
+    return params;
+  }
+
+  public static async Lock(
+    signature: string,
+    tyron: TransitionValue
+  ): Promise<TransitionParams[]> {
+    const params = [];
+    const signature_: TransitionParams = {
+      vname: "signature",
+      type: "ByStr64",
+      value: signature,
+    };
+    params.push(signature_);
+    const tyron_: TransitionParams = {
+      vname: "tyron",
+      type: "Option Uint128",
+      value: tyron,
+    };
+    params.push(tyron_);
+    return params;
+  }
+
+  public static async Treasury(
+    username: string,
+    signature: string,
+  ): Promise<TransitionParams[]> {
+    const params = [];
+    const username_: TransitionParams = {
+      vname: "username",
+      type: "String",
+      value: username,
+    };
+    params.push(username_);
+    const signature_: TransitionParams = {
+      vname: "signature",
+      type: "ByStr64",
+      value: signature,
+    };
+    params.push(signature_);
+    return params;
+  }
+
+  public static async Ivms101(
+    username: string,
+    message: string,
+    signature: string,
+  ): Promise<TransitionParams[]> {
+    const params = [];
+    const username_: TransitionParams = {
+      vname: "username",
+      type: "String",
+      value: username,
+    };
+    params.push(username_);
+    const message_: TransitionParams = {
+      vname: "message",
+      type: "String",
+      value: message,
+    };
+    params.push(message_);
+    const signature_: TransitionParams = {
+      vname: "signature",
+      type: "ByStr64",
+      value: signature,
+    };
+    params.push(signature_);
+    return params;
+  }
+
+  public static async VerifiableCredential(
+    username: string,
+    signature: string,
+  ): Promise<TransitionParams[]> {
+    const params = [];
+    const username_: TransitionParams = {
+      vname: "username",
+      type: "String",
+      value: username,
+    };
+    params.push(username_);
+    const signature_: TransitionParams = {
+      vname: "signature",
+      type: "ByStr64",
+      value: signature,
+    };
+    params.push(signature_);
+    return params;
+  }
 }
 
 /** The result of a contract deployment */
@@ -858,6 +1034,12 @@ export enum TransitionTag {
   AssessPerformance = "AssessPerformance",
   RemoveService = "RemoveService",
   WithdrawEarnings = "WithdrawEarnings",
+  DidSocialRecovery = "DidSocialRecovery",
+  Allowances = "Allowances",
+  Lock = "Lock",
+  Treasury = "Treasury",
+  Ivms101 = "Ivms101",
+  VerifiableCredential = "VerifiableCredential",
 }
 
 export interface TransitionParams {
