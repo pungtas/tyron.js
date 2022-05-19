@@ -15,59 +15,59 @@
 */
 
 export interface PublicKeyModel {
-  id: string;
-  key?: string;
-  encrypted?: string;
+    id: string
+    key?: string
+    encrypted?: string
 }
 
 export interface PrivateKeyModel {
-  id: string;
-  key: string;
+    id: string
+    key: string
 }
 
 export interface VerificationMethodModel extends PublicKeyModel {
-  type: string;
-  publicKeyBase58: string;
+    type: string
+    publicKeyBase58: string
 }
 
 export enum PublicKeyPurpose {
-  Update = "update",
-  Recovery = "recovery",
-  SocialRecovery = "socialrecovery",
-  General = "general",
-  Auth = "authentication",
-  Assertion = "assertion",
-  Agreement = "agreement",
-  Invocation = "invocation",
-  Delegation = "delegation",
+    Update = 'update',
+    Recovery = 'recovery',
+    SocialRecovery = 'socialrecovery',
+    General = 'general',
+    Auth = 'authentication',
+    Assertion = 'assertion',
+    Agreement = 'agreement',
+    Invocation = 'invocation',
+    Delegation = 'delegation',
 }
 
 export interface TyronVerificationMethods {
-  publicKey?: VerificationMethodModel;
-  authentication?: VerificationMethodModel;
-  assertionMethod?: VerificationMethodModel;
-  keyAgreement?: VerificationMethodModel;
-  capabilityInvocation?: VerificationMethodModel;
-  capabilityDelegation?: VerificationMethodModel;
-  didUpdate?: VerificationMethodModel;
-  didRecovery?: VerificationMethodModel;
-  socialRecovery?: VerificationMethodModel;
+    publicKey?: VerificationMethodModel
+    authentication?: VerificationMethodModel
+    assertionMethod?: VerificationMethodModel
+    keyAgreement?: VerificationMethodModel
+    capabilityInvocation?: VerificationMethodModel
+    capabilityDelegation?: VerificationMethodModel
+    didUpdate?: VerificationMethodModel
+    didRecovery?: VerificationMethodModel
+    socialRecovery?: VerificationMethodModel
 }
 
 export interface DKMS {
-  publicKey?: PrivateKeyModel;
-  authentication?: PrivateKeyModel;
-  assertionMethod?: PrivateKeyModel;
-  keyAgreement?: PrivateKeyModel;
-  capabilityInvocation?: PrivateKeyModel;
-  capabilityDelegation?: PrivateKeyModel;
-  didUpdate?: PrivateKeyModel;
-  didRecovery?: PrivateKeyModel;
-  socialRecovery?: PrivateKeyModel;
+    publicKey?: PrivateKeyModel
+    authentication?: PrivateKeyModel
+    assertionMethod?: PrivateKeyModel
+    keyAgreement?: PrivateKeyModel
+    capabilityInvocation?: PrivateKeyModel
+    capabilityDelegation?: PrivateKeyModel
+    didUpdate?: PrivateKeyModel
+    didRecovery?: PrivateKeyModel
+    socialRecovery?: PrivateKeyModel
 }
 
 export interface PublicKeyInput {
-  id: PublicKeyPurpose;
+    id: PublicKeyPurpose
 }
 
 //@TODO generate verification methods for all public key main purposes

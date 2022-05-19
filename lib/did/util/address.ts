@@ -13,22 +13,21 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
-import * as zcrypto from "@zilliqa-js/crypto";
+import * as zcrypto from '@zilliqa-js/crypto'
 
 export default class Address {
     public static verification(address: string) {
-      let address_ = address
-      try {
-        address_ = zcrypto.fromBech32Address(address_);
-        return address_;
-      } catch (error) {
+        let address_ = address
         try {
-          address_ = zcrypto.toChecksumAddress(address_);
-          return address_;
-        } catch {
-          return "";
+            address_ = zcrypto.fromBech32Address(address_)
+            return address_
+        } catch (error) {
+            try {
+                address_ = zcrypto.toChecksumAddress(address_)
+                return address_
+            } catch {
+                return ''
+            }
         }
-      }
     }
-  }
-  
+}

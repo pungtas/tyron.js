@@ -1,53 +1,59 @@
 {
-  "name": "tyron",
-  "version": "3.33.0",
-  "description": "tyron.js: SSI Protocol's JavaScript/TypeScript library",
-  "main": "dist/index.js",
-  "scripts": {
-    "lint": "eslint . --ext .ts",
-    "typedoc": "typedoc --out typedocs",
-    "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"LICENSE\" dist",
-    "tyron": "npm run build && npm publish"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pungtas/tyron.js.git"
-  },
-  "keywords": [
-    "ssi-protocol",
-    "tyron",
-    "tyron-ssi",
-    "self-sovereign-identity",
-    "ssi",
-    "decentralized-identity",
-    "decentralized-identifiers",
-    "did",
-    "decentralized-application",
-    "dapp",
-    "zilliqa",
-    "scilla",
-    "tyronzil",
-    "tyron.js"
-  ],
-  "author": "https://github.com/pungtas",
-  "license": "GPL-3.0-only",
-  "bugs": {
-    "url": "https://github.com/pungtas/tyron.js/issues"
-  },
-  "homepage": "https://github.com/pungtas/tyron.js#readme",
-  "dependencies": {
-    "@zilliqa-js/zilliqa": "3.3.4"
-  },
-  "devDependencies": {
-    "@types/node": "^14.6.3",
-    "@types/websocket": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^3.8.0",
-    "@typescript-eslint/parser": "^3.8.0",
-    "copyfiles": "^2.3.0",
-    "eslint": "^7.6.0",
-    "prettier": "2.6.2",
-    "ts-loader": "^8.0.4",
-    "typedoc": "^0.22.13",
-    "typescript": "^4.6.0"
-  }
+    "name": "tyron",
+    "version": "3.33.0",
+    "description": "tyron.js: SSI Protocol's JavaScript/TypeScript library",
+    "main": "dist/index.js",
+    "scripts": {
+        "lint": "eslint . --ext .ts",
+        "typedoc": "typedoc --out typedocs",
+        "build": "tsc && copyfiles \"package.json\" dist && copyfiles \"LICENSE\" dist",
+        "tyron": "npm run build && npm publish"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pungtas/tyron.js.git"
+    },
+    "keywords": [
+        "ssi-protocol",
+        "tyron",
+        "tyron-ssi",
+        "self-sovereign-identity",
+        "ssi",
+        "decentralized-identity",
+        "decentralized-identifiers",
+        "did",
+        "decentralized-application",
+        "dapp",
+        "zilliqa",
+        "scilla",
+        "tyronzil",
+        "tyron.js"
+    ],
+    "author": "https://github.com/pungtas",
+    "license": "GPL-3.0-only",
+    "bugs": {
+        "url": "https://github.com/pungtas/tyron.js/issues"
+    },
+    "homepage": "https://github.com/pungtas/tyron.js#readme",
+    "dependencies": {
+        "@zilliqa-js/zilliqa": "3.3.4"
+    },
+    "devDependencies": {
+        "@types/node": "^14.6.3",
+        "@types/websocket": "^1.0.1",
+        "@typescript-eslint/eslint-plugin": "^3.8.0",
+        "@typescript-eslint/parser": "^3.8.0",
+        "copyfiles": "^2.3.0",
+        "eslint": "^7.6.0",
+        "prettier": "2.6.2",
+        "ts-loader": "^8.0.4",
+        "typedoc": "^0.22.13",
+        "typescript": "^4.6.0"
+    },
+    "prettier": {
+        "trailingComma": "es5",
+        "tabWidth": 4,
+        "semi": false,
+        "singleQuote": true
+    }
 }

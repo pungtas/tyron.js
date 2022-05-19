@@ -13,60 +13,60 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
-import { PublicKeyInput, PublicKeyModel } from "./verification-method-models";
+import { PublicKeyInput, PublicKeyModel } from './verification-method-models'
 
 export enum DocumentConstructor {
-  VerificationMethod = "VerificationMethod",
-  Service = "Service",
+    VerificationMethod = 'VerificationMethod',
+    Service = 'Service',
 }
 
 export enum Action {
-  Add = "Add",
-  Remove = "Remove",
+    Add = 'Add',
+    Remove = 'Remove',
 }
 
 export enum TransferProtocol {
-  Https = "Https",
-  Git = "Git",
+    Https = 'Https',
+    Git = 'Git',
 }
 
 export enum BlockchainType {
-  Zilliqa = "Zilliqa",
-  Other = "Other",
+    Zilliqa = 'Zilliqa',
+    Other = 'Other',
 }
 
 export enum ServiceEndpoint {
-  Web3Endpoint = "Address",
-  Web2Endpoint = "Uri",
+    Web3Endpoint = 'Address',
+    Web2Endpoint = 'Uri',
 }
 export interface DocumentElement {
-  constructor: DocumentConstructor;
-  action: Action;
-  key?: PublicKeyModel;
-  service?: ServiceModel;
+    constructor: DocumentConstructor
+    action: Action
+    key?: PublicKeyModel
+    service?: ServiceModel
 }
 
 export interface ServiceModel {
-  id: string;
-  endpoint?: ServiceEndpoint;
-  type?: string;
-  transferProtocol?: TransferProtocol;
-  val?: string; // URI or address
-  blockchainType?: BlockchainType;
+    id: string
+    endpoint?: ServiceEndpoint
+    type?: string
+    transferProtocol?: TransferProtocol
+    val?: string // URI or address
+    blockchainType?: BlockchainType
 }
 
 export interface PatchModel {
-  action: PatchAction;
-  ids?: string[]; //the IDs of the DID Document elements to remove
-  keyInput?: PublicKeyInput[];
-  services?: ServiceModel[];
+    action: PatchAction
+    ids?: string[] //the IDs of the DID Document elements to remove
+    keyInput?: PublicKeyInput[]
+    services?: ServiceModel[]
 }
 
 export enum PatchAction {
-  //AddKeys = 'add-public-keys',
-  RemoveKeys = "remove-public-keys",
-  AddServices = "add-service-endpoints",
-  RemoveServices = "remove-service-endpoints",
-  // Format of an additional custom action
-  CustomAction = "-custom-action",
+    //AddKeys = 'add-public-keys',
+    RemoveKeys = 'remove-public-keys',
+    AddServices = 'add-service-endpoints',
+    RemoveServices = 'remove-service-endpoints',
+    // Format of an additional custom action
+    CustomAction = '-custom-action',
 }
