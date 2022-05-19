@@ -131,7 +131,7 @@ export default class TyronZIL extends ZilliqaInit {
 
   /** Submits a tyronzil transaction */
   public static async submit(
-    tag: TransitionTag,
+    tag: string,
     tyronzil: TyronZIL,
     addr: string,
     amount: string,
@@ -1011,35 +1011,6 @@ interface Transition {
   _amount: string; // number of QA to be transferred
   _sender: string; // address of the invoker
   params?: TransitionParams[]; // an array of parameter objects
-}
-
-export enum TransitionTag {
-  Create = "DidCreate",
-  Recover = "DidRecover",
-  Update = "DidUpdate",
-  Deactivate = "DidDeactivate",
-  Transfer = "Transfer",
-  AddFunds = "AddFunds",
-  SendFunds = "SendFunds",
-  EnableSocialRecovery = "EnableSocialRecovery",
-  UpdateSocialRecoverer = "UpdateSocialRecoverer",
-  BuyNftUsername = "BuyNftUsername",
-  TransferNftUsername = "TransferNftUsername",
-  UpdateInit = "UpdateInit",
-  UpdateController = "UpdateController",
-  AddMember = "AddMember",
-  NftTransfer = "NftTransfer",
-  UpdateHourlyWage = "UpdateHourlyWage",
-  AddWork = "AddWork",
-  AssessPerformance = "AssessPerformance",
-  RemoveService = "RemoveService",
-  WithdrawEarnings = "WithdrawEarnings",
-  DidSocialRecovery = "DidSocialRecovery",
-  Allowances = "Allowances",
-  Lock = "Lock",
-  Treasury = "Treasury",
-  Ivms101 = "Ivms101",
-  VerifiableCredential = "VerifiableCredential",
 }
 
 export interface TransitionParams {
