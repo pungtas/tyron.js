@@ -429,9 +429,13 @@ export default class TyronZIL extends ZilliqaInit {
         guardianship: TransitionValue,
         id: string,
         amount: string,
-        tyron: TransitionValue
+        addr: string,
+        dID: string,
+        tyron: TransitionValue,
+        doc: any
     ): Promise<TransitionParams[]> {
         const params = []
+
         const username_: TransitionParams = {
             vname: 'username',
             type: 'String',
@@ -439,36 +443,70 @@ export default class TyronZIL extends ZilliqaInit {
         }
         params.push(username_)
 
-        const addr_: TransitionParams = {
-            vname: 'newAddr',
-            type: 'ByStr20',
-            value: newAddr,
+        if (Number(doc?.version.slice(8, 9)) < 5) {
+            const addr_: TransitionParams = {
+                vname: 'newAddr',
+                type: 'ByStr20',
+                value: newAddr,
+            }
+            params.push(addr_)
+
+            const guardianship_: TransitionParams = {
+                vname: 'guardianship',
+                type: 'Option ByStr20',
+                value: guardianship,
+            }
+            params.push(guardianship_)
+
+            if (
+                (Number(doc?.version.slice(8, 9)) >= 4 &&
+                    Number(doc?.version.slice(10, 11)) <= 6) ||
+                doc?.version.slice(0, 3) === 'dao'
+            ) {
+                const id_: TransitionParams = {
+                    vname: 'id',
+                    type: 'String',
+                    value: id,
+                }
+                params.push(id_)
+
+                const amount_: TransitionParams = {
+                    vname: 'amount',
+                    type: 'Uint128',
+                    value: amount,
+                }
+                params.push(amount_)
+            }
+        } else {
+            const id_: TransitionParams = {
+                vname: 'id',
+                type: 'String',
+                value: id,
+            }
+            params.push(id_)
+
+            const addr_: TransitionParams = {
+                vname: 'addr',
+                type: 'ByStr20',
+                value: addr,
+            }
+            params.push(addr_)
+
+            const dID_: TransitionParams = {
+                vname: 'dID',
+                type: 'ByStr20',
+                value: dID,
+            }
+            params.push(dID_)
         }
-        params.push(addr_)
-        const guardianship_: TransitionParams = {
-            vname: 'guardianship',
-            type: 'Option ByStr20',
-            value: guardianship,
-        }
-        params.push(guardianship_)
-        const id_: TransitionParams = {
-            vname: 'id',
-            type: 'String',
-            value: id,
-        }
-        params.push(id_)
-        const amount_: TransitionParams = {
-            vname: 'amount',
-            type: 'Uint128',
-            value: amount,
-        }
-        params.push(amount_)
+
         const tyron_: TransitionParams = {
             vname: 'tyron',
             type: 'Option Uint128',
             value: tyron,
         }
         params.push(tyron_)
+
         return params
     }
 
