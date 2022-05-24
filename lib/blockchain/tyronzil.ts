@@ -432,7 +432,7 @@ export default class TyronZIL extends ZilliqaInit {
         addr: string,
         dID: string,
         tyron: TransitionValue,
-        doc: any
+        docVersion: any
     ): Promise<TransitionParams[]> {
         const params = []
 
@@ -443,7 +443,7 @@ export default class TyronZIL extends ZilliqaInit {
         }
         params.push(username_)
 
-        if (Number(doc?.version.slice(8, 9)) < 5) {
+        if (Number(docVersion.slice(8, 9)) < 5) {
             const addr_: TransitionParams = {
                 vname: 'newAddr',
                 type: 'ByStr20',
@@ -459,9 +459,9 @@ export default class TyronZIL extends ZilliqaInit {
             params.push(guardianship_)
 
             if (
-                (Number(doc?.version.slice(8, 9)) >= 4 &&
-                    Number(doc?.version.slice(10, 11)) <= 6) ||
-                doc?.version.slice(0, 3) === 'dao'
+                (Number(docVersion.slice(8, 9)) >= 4 &&
+                    Number(docVersion.slice(10, 11)) <= 6) ||
+                docVersion.slice(0, 3) === 'dao'
             ) {
                 const id_: TransitionParams = {
                     vname: 'id',
