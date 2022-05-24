@@ -425,10 +425,8 @@ export default class TyronZIL extends ZilliqaInit {
 
     public static async TransferNftUsername(
         username: string,
-        newAddr: string,
         guardianship: TransitionValue,
         id: string,
-        amount: string,
         addr: string,
         dID: string,
         tyron: TransitionValue,
@@ -447,7 +445,7 @@ export default class TyronZIL extends ZilliqaInit {
             const addr_: TransitionParams = {
                 vname: 'newAddr',
                 type: 'ByStr20',
-                value: newAddr,
+                value: addr,
             }
             params.push(addr_)
 
@@ -466,14 +464,14 @@ export default class TyronZIL extends ZilliqaInit {
                 const id_: TransitionParams = {
                     vname: 'id',
                     type: 'String',
-                    value: id,
+                    value: 'tyron',
                 }
                 params.push(id_)
 
                 const amount_: TransitionParams = {
                     vname: 'amount',
                     type: 'Uint128',
-                    value: amount,
+                    value: '0',
                 }
                 params.push(amount_)
             }
