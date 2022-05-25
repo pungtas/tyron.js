@@ -441,6 +441,13 @@ export default class TyronZIL extends ZilliqaInit {
         }
         params.push(username_)
 
+        const id_: TransitionParams = {
+            vname: 'id',
+            type: 'String',
+            value: id,
+        }
+        params.push(id_)
+
         if (Number(docVersion.slice(8, 9)) < 5) {
             const addr_: TransitionParams = {
                 vname: 'newAddr',
@@ -461,13 +468,6 @@ export default class TyronZIL extends ZilliqaInit {
                     Number(docVersion.slice(10, 11)) <= 6) ||
                 docVersion.slice(0, 3) === 'dao'
             ) {
-                const id_: TransitionParams = {
-                    vname: 'id',
-                    type: 'String',
-                    value: 'tyron',
-                }
-                params.push(id_)
-
                 const amount_: TransitionParams = {
                     vname: 'amount',
                     type: 'Uint128',
@@ -476,13 +476,6 @@ export default class TyronZIL extends ZilliqaInit {
                 params.push(amount_)
             }
         } else {
-            const id_: TransitionParams = {
-                vname: 'id',
-                type: 'String',
-                value: id,
-            }
-            params.push(id_)
-
             const addr_: TransitionParams = {
                 vname: 'addr',
                 type: 'ByStr20',
