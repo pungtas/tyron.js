@@ -13,6 +13,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
+export * as SearchBar from './blockchain/searchbar-util'
 export * as SmartUtil from './blockchain/smart-util'
 export * as State from './blockchain/state'
 export * as TyronZil from './blockchain/tyronzil'
