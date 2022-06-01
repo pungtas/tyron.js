@@ -37,11 +37,11 @@ export default class Currency {
                 decimals = 1e15
                 amount = input! * decimals
                 break
-            case 'zusdt':
+            case 'xsgd':
                 decimals = 1e6
                 amount = input! * decimals
                 break
-            case 'xsgd':
+            case 'zusdt':
                 decimals = 1e6
                 amount = input! * decimals
                 break
@@ -61,7 +61,23 @@ export default class Currency {
                 decimals = 1e18
                 amount = input! * decimals
                 break
+            case 'zopul':
+                decimals = 1e18
+                amount = input! * decimals
+                break
             case 'lunr':
+                decimals = 1e4
+                amount = input! * decimals
+                break
+            case 'swth':
+                decimals = 1e8
+                amount = input! * decimals
+                break
+            case 'fees':
+                decimals = 1e4
+                amount = input! * decimals
+                break
+            case 'port':
                 decimals = 1e4
                 amount = input! * decimals
                 break
@@ -69,19 +85,15 @@ export default class Currency {
                 decimals = 1e12
                 amount = input! * decimals
                 break
-            case 'swth':
-                decimals = 1e8
+            case 'dxcad':
+                decimals = 1e18
                 amount = input! * decimals
                 break
-            case 'port':
-                decimals = 1e4
+            case 'zbrkl':
+                decimals = 1e18
                 amount = input! * decimals
                 break
             case 'sco':
-                decimals = 1e4
-                amount = input! * decimals
-                break
-            case 'fees':
                 decimals = 1e4
                 amount = input! * decimals
                 break
@@ -89,8 +101,56 @@ export default class Currency {
                 decimals = 1e8
                 amount = input! * decimals
                 break
+            case 'dmz':
+                decimals = 1e18
+                amount = input! * decimals
+                break
+            case 'huny':
+                decimals = 1e12
+                amount = input! * decimals
+                break
             case 'blox':
                 decimals = 1e2
+                amount = input! * decimals
+                break
+            case 'stream':
+                decimals = 1e8
+                amount = input! * decimals
+                break
+            case 'redc':
+                decimals = 1e9
+                amount = input! * decimals
+                break
+            case 'hol':
+                decimals = 1e5
+                amount = input! * decimals
+                break
+            case 'evz':
+                decimals = 1e8
+                amount = input! * decimals
+                break
+            case 'zlp':
+                decimals = 1e18
+                amount = input! * decimals
+                break
+            case 'grph':
+                decimals = 1e8
+                amount = input! * decimals
+                break
+            case 'shards':
+                decimals = 1e12
+                amount = input! * decimals
+                break
+            case 'duck':
+                decimals = 1e2
+                amount = input! * decimals
+                break
+            case 'zpaint':
+                decimals = 1e4
+                amount = input! * decimals
+                break
+            case 'gp':
+                decimals = 1e5
                 amount = input! * decimals
                 break
         }
