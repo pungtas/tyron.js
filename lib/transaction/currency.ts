@@ -153,6 +153,95 @@ export default class Currency {
                 decimals = 1e5
                 amount = input! * decimals
                 break
+                //@todo-xt
+                case 'gemz':
+                decimals = 1
+                amount = input! * decimals
+                break
+                case 'oki':
+                decimals = 1e5
+                amount = input! * decimals
+                break
+                case 'franc':
+                decimals = 1e6
+                amount = input! * decimals
+                break
+                case 'zwall':
+                decimals = 1e12
+                amount = input! * decimals
+                break
+                case 'pele':
+                decimals = 1e5
+                amount = input! * decimals
+                break
+                case 'gary':
+                decimals = 1e4
+                amount = input! * decimals
+                break
+                case 'consult':
+                decimals = 1e6
+                amount = input! * decimals
+                break
+                case 'zame':
+                decimals = 1e6
+                amount = input! * decimals
+                break
+                case 'wallex':
+                decimals = 1e4
+                amount = input! * decimals
+                break
+                case 'hodl':
+                decimals = 1
+                amount = input! * decimals
+                break
+                case 'athlete':
+                decimals = 1e4
+                amount = input! * decimals
+                break
+                case 'milky':
+                decimals = 1e6
+                amount = input! * decimals
+                break
+                case 'bolt':
+                decimals = 1e18
+                amount = input! * decimals
+                break
+                case 'mambo':
+                decimals = 1e12
+                amount = input! * decimals
+                break
+                case 'recap':
+                decimals = 1e12
+                amount = input! * decimals
+                break
+                case 'zch':
+                decimals = 1e6
+                amount = input! * decimals
+                break
+                case 'srv':
+                decimals = 1e2
+                amount = input! * decimals
+                break
+                case 'nftdex':
+                decimals = 1
+                amount = input! * decimals
+                break
+                case 'unidex-v2':
+                decimals = 1e2
+                amount = input! * decimals
+                break
+                case 'zillex':
+                decimals = 1e12
+                amount = input! * decimals
+                break
+                case 'zlf':
+                decimals = 1e5
+                amount = input! * decimals
+                break
+                case 'button':
+                decimals = 1e12
+                amount = input! * decimals
+                break
         }
 
         const res = {
