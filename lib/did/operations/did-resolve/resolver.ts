@@ -29,20 +29,23 @@ export default class Resolver {
         const addr = await zil_init.API.blockchain
             .getSmartContractState(initTyron)
             .then(async (state) => {
-                const dns = state.result.dns
-                return await SmartUtil.getValuefromMap(dns, username)
-            })
-            .then(async (addr) => {
-                if (domain === 'did') {
-                    return addr
+                if (domain === '') {
+                    const dns = state.result.dns
+                    return await SmartUtil.getValuefromMap(dns, username)
+                } else if (domain === 'did') {
+                    const did_dns = state.result.did_dns
+                    return await SmartUtil.getValuefromMap(did_dns, username)
                 } else {
+                    const did_dns = state.result.did_dns
+                    const did_addr = await SmartUtil.getValuefromMap(did_dns, username)
                     const nft_dns = (
                         await zil_init.API.blockchain.getSmartContractState(
-                            addr
+                            did_addr
                         )
                     ).result.dns
                     return await SmartUtil.getValuefromMap(nft_dns, domain)
                 }
+                
             })
             .catch((err: any) => {
                 throw err
