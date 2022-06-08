@@ -37,7 +37,10 @@ export default class Resolver {
                     return await SmartUtil.getValuefromMap(did_dns, username)
                 } else {
                     const did_dns = state.result.did_dns
-                    const did_addr = await SmartUtil.getValuefromMap(did_dns, username)
+                    const did_addr = await SmartUtil.getValuefromMap(
+                        did_dns,
+                        username
+                    )
                     const nft_dns = (
                         await zil_init.API.blockchain.getSmartContractState(
                             did_addr
@@ -45,7 +48,6 @@ export default class Resolver {
                     ).result.dns
                     return await SmartUtil.getValuefromMap(nft_dns, domain)
                 }
-                
             })
             .catch((err: any) => {
                 throw err

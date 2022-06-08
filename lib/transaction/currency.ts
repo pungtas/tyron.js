@@ -153,92 +153,92 @@ export default class Currency {
                 decimals = 1e5
                 amount = input! * decimals
                 break
-                //@todo-xt
-                case 'gemz':
+            //@todo-xt
+            case 'gemz':
                 decimals = 1
                 amount = input! * decimals
                 break
-                case 'oki':
+            case 'oki':
                 decimals = 1e5
                 amount = input! * decimals
                 break
-                case 'franc':
+            case 'franc':
                 decimals = 1e6
                 amount = input! * decimals
                 break
-                case 'zwall':
+            case 'zwall':
                 decimals = 1e12
                 amount = input! * decimals
                 break
-                case 'pele':
+            case 'pele':
                 decimals = 1e5
                 amount = input! * decimals
                 break
-                case 'gary':
+            case 'gary':
                 decimals = 1e4
                 amount = input! * decimals
                 break
-                case 'consult':
+            case 'consult':
                 decimals = 1e6
                 amount = input! * decimals
                 break
-                case 'zame':
+            case 'zame':
                 decimals = 1e6
                 amount = input! * decimals
                 break
-                case 'wallex':
+            case 'wallex':
                 decimals = 1e4
                 amount = input! * decimals
                 break
-                case 'hodl':
+            case 'hodl':
                 decimals = 1
                 amount = input! * decimals
                 break
-                case 'athlete':
+            case 'athlete':
                 decimals = 1e4
                 amount = input! * decimals
                 break
-                case 'milky':
+            case 'milky':
                 decimals = 1e6
                 amount = input! * decimals
                 break
-                case 'bolt':
+            case 'bolt':
                 decimals = 1e18
                 amount = input! * decimals
                 break
-                case 'mambo':
+            case 'mambo':
                 decimals = 1e12
                 amount = input! * decimals
                 break
-                case 'recap':
+            case 'recap':
                 decimals = 1e12
                 amount = input! * decimals
                 break
-                case 'zch':
+            case 'zch':
                 decimals = 1e6
                 amount = input! * decimals
                 break
-                case 'srv':
+            case 'srv':
                 decimals = 1e2
                 amount = input! * decimals
                 break
-                case 'nftdex':
+            case 'nftdex':
                 decimals = 1
                 amount = input! * decimals
                 break
-                case 'unidex-v2':
+            case 'unidex-v2':
                 decimals = 1e2
                 amount = input! * decimals
                 break
-                case 'zillex':
+            case 'zillex':
                 decimals = 1e12
                 amount = input! * decimals
                 break
-                case 'zlf':
+            case 'zlf':
                 decimals = 1e5
                 amount = input! * decimals
                 break
-                case 'button':
+            case 'button':
                 decimals = 1e12
                 amount = input! * decimals
                 break
