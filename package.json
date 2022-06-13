@@ -36,7 +36,8 @@
     },
     "homepage": "https://github.com/pungtas/tyron.js#readme",
     "dependencies": {
-        "@zilliqa-js/zilliqa": "3.3.4"
+        "@zilliqa-js/zilliqa": "3.3.4",
+        "arweave": "^1.11.4"
     },
     "devDependencies": {
         "@types/node": "^14.6.3",
