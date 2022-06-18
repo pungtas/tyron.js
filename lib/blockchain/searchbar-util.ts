@@ -65,7 +65,7 @@ export default class SearchBarUtil {
             for (const id of state.services_.keys()) {
                 const result: any = state.services_.get(id)
                 if (result && result[1] !== undefined) {
-                    services.push([id, result[1]])
+                    services.push([id, result])
                 } else if (result && result[1] === undefined) {
                     let val: {
                         argtypes: any
