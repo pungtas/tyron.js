@@ -13,10 +13,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
+export * as CryptoUtil from './blockchain/crypto-util'
+export * as DKMS from './blockchain/dkms'
 export * as SearchBarUtil from './blockchain/searchbar-util'
 export * as SmartUtil from './blockchain/smart-util'
 export * as State from './blockchain/state'
 export * as TyronZil from './blockchain/tyronzil'
+export * as Util from './blockchain/util'
 export * as Wallet from './blockchain/wallet'
 export * as ZilliqaInit from './blockchain/zilliqa-init'
 export * as DidCrud from './did/operations/did-crud'

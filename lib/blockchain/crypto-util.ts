@@ -13,22 +13,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
-import Arweave from 'arweave'
-import * as zcrypto from '@zilliqa-js/zilliqa'
+const crypto = require('crypto').webcrypto
 
-export default class Wallet {
-    public static async generateArweave() {
-        const arweave = Arweave.init({
-            host: 'arweave.net',
-            port: 443,
-            protocol: 'https',
-        })
-        arweave.wallets.generate().then((key: any) => {
-            return key
-        })
-    }
-    public static async generateZilliqa() {
-        const private_key = zcrypto.schnorr.generatePrivateKey()
-        return private_key
+export default class CryptoUtil {
+    public static async generateRandomBytes(length: number) {
+        const array = new Uint8Array(length)
+        crypto.getRandomValues(array)
+        return array
     }
 }
