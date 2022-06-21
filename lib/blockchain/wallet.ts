@@ -14,7 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
 import Arweave from 'arweave'
-import * as zcrypto from '@zilliqa-js/zilliqa'
+import * as zcrypto from "@zilliqa-js/crypto"
 
 export default class Wallet {
     public static async generateArweave() {

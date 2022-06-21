@@ -14,6 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
 export * as CryptoUtil from './blockchain/crypto-util'
+export * as Defi from './blockchain/defi-didDomain'
 export * as DKMS from './blockchain/dkms'
 export * as SearchBarUtil from './blockchain/searchbar-util'
 export * as SmartUtil from './blockchain/smart-util'
