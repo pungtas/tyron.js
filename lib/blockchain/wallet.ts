@@ -14,15 +14,19 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
 import Arweave from 'arweave'
-import * as zcrypto from "@zilliqa-js/crypto"
+import * as zcrypto from '@zilliqa-js/crypto'
 
 export default class Wallet {
-    public static async generateArweave() {
+    public static async arweaveInit() {
         const arweave = Arweave.init({
             host: 'arweave.net',
             port: 443,
             protocol: 'https',
         })
+        return arweave
+    }
+    public static async generateArweave() {
+        const arweave = await Wallet.arweaveInit()
         arweave.wallets.generate().then((key: any) => {
             return key
         })
