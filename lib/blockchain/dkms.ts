@@ -15,7 +15,10 @@ GNU General Public License for more details.*/
 
 import Arweave from 'arweave'
 import * as zcrypto from '@zilliqa-js/crypto'
-import { Action, DocumentConstructor } from '../did/protocols/models/document-model'
+import {
+    Action,
+    DocumentConstructor,
+} from '../did/protocols/models/document-model'
 import tyronzil from './tyronzil'
 import CryptoUtil from './crypto-util'
 
