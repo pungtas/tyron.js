@@ -15,7 +15,9 @@ GNU General Public License for more details.*/
 
 import Arweave from 'arweave'
 import * as zcrypto from '@zilliqa-js/crypto'
-import { DocumentModel, TyronZil, CryptoUtil } from '..'
+import { Action, DocumentConstructor } from '../did/protocols/models/document-model'
+import tyronzil from './tyronzil'
+import CryptoUtil from './crypto-util'
 
 export default class DKMS {
     public static async operationKeyPair(
@@ -32,11 +34,11 @@ export default class DKMS {
             encrypted: encrypted_key,
         }
         const doc_element = {
-            constructor: DocumentModel.DocumentConstructor.VerificationMethod,
-            action: DocumentModel.Action.Add,
+            constructor: DocumentConstructor.VerificationMethod,
+            action: Action.Add,
             key: verification_method,
         }
-        const doc_parameter = await TyronZil.default.documentParameter(
+        const doc_parameter = await tyronzil.documentParameter(
             addr,
             doc_element
         )
@@ -64,7 +66,7 @@ export default class DKMS {
             false,
             ['encrypt']
         )
-        const keyBuf = await CryptoUtil.default.generateRandomBytes(256)
+        const keyBuf = await CryptoUtil.generateRandomBytes(256)
         const encryptedPublicKey = await window.crypto.subtle.encrypt(
             { name: 'RSA-OAEP' },
             publicKey,
@@ -95,7 +97,7 @@ export default class DKMS {
             false,
             ['encrypt']
         )
-        const keyBuf = await CryptoUtil.default.generateRandomBytes(256)
+        const keyBuf = await CryptoUtil.generateRandomBytes(256)
         const encryptedPublicKey = await window.crypto.subtle.encrypt(
             { name: 'RSA-OAEP' },
             publicKey,
