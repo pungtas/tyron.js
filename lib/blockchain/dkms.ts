@@ -18,6 +18,7 @@ import * as zcrypto from '@zilliqa-js/crypto'
 import { Action, DocumentConstructor } from '../did/protocols/models/document-model'
 import tyronzil from './tyronzil'
 import CryptoUtil from './crypto-util'
+const { subtle } = require('crypto').webcrypto
 
 export default class DKMS {
     public static async operationKeyPair(
@@ -59,7 +60,7 @@ export default class DKMS {
             alg: 'RSA-OAEP-256',
             ext: true,
         }
-        const publicKey = await crypto.subtle.importKey(
+        const publicKey = await subtle.importKey(
             'jwk',
             keyData,
             algo,
@@ -67,7 +68,7 @@ export default class DKMS {
             ['encrypt']
         )
         const keyBuf = await CryptoUtil.generateRandomBytes(256)
-        const encryptedPublicKey = await window.crypto.subtle.encrypt(
+        const encryptedPublicKey = await subtle.encrypt(
             { name: 'RSA-OAEP' },
             publicKey,
             keyBuf
@@ -90,7 +91,7 @@ export default class DKMS {
             ext: true,
         }
         const algo = { name: 'RSA-OAEP', hash: { name: 'SHA-256' } }
-        const publicKey = await crypto.subtle.importKey(
+        const publicKey = await subtle.importKey(
             'jwk',
             keyData,
             algo,
@@ -98,7 +99,7 @@ export default class DKMS {
             ['encrypt']
         )
         const keyBuf = await CryptoUtil.generateRandomBytes(256)
-        const encryptedPublicKey = await window.crypto.subtle.encrypt(
+        const encryptedPublicKey = await subtle.encrypt(
             { name: 'RSA-OAEP' },
             publicKey,
             keyBuf
@@ -163,10 +164,10 @@ export default class DKMS {
         key.alg = 'RSA-OAEP-256'
         key.ext = true
         const algo = { name: 'RSA-OAEP', hash: { name: 'SHA-256' } }
-        key = await crypto.subtle.importKey('jwk', key, algo, false, [
+        key = await subtle.importKey('jwk', key, algo, false, [
             'decrypt',
         ])
-        const symmetricKey = await window.crypto.subtle.decrypt(
+        const symmetricKey = await subtle.decrypt(
             { name: 'RSA-OAEP' },
             key,
             encKey
