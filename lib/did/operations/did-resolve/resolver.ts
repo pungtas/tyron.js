@@ -45,7 +45,7 @@ export default class Resolver {
                         await zil_init.API.blockchain.getSmartContractState(
                             did_addr
                         )
-                    ).result.dns
+                    ).result.did_domain_dns
                     return await SmartUtil.getValuefromMap(nft_dns, domain)
                 }
             })
