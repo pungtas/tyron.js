@@ -15,6 +15,7 @@ GNU General Public License for more details.*/
 
 import hash from 'hash.js'
 import * as zutil from '@zilliqa-js/util'
+import * as zcrypto from '@zilliqa-js/crypto'
 
 export default class Util {
     public static async HashDexOrder(elements: any[]) {
@@ -53,5 +54,13 @@ export default class Util {
             .update(zutil.bytes.hexToByteArray(addr.substring(2)))
             .digest('hex')
         return h
+    }
+
+    public static Zutil() {
+        return zutil
+    }
+
+    public static Zcrypto() {
+        return zcrypto
     }
 }
