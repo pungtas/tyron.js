@@ -996,49 +996,56 @@ export default class TyronZIL extends ZilliqaInit {
     }
 
     public static async Ivms101(
-        username: string,
+        issuerName: string,
         message: string,
-        signature: string
+        userSignature: string
     ): Promise<TransitionParams[]> {
         const params = []
-        const username_: TransitionParams = {
-            vname: 'username',
+        const issuerName_: TransitionParams = {
+            vname: 'issuerName',
             type: 'String',
-            value: username,
+            value: issuerName,
         }
-        params.push(username_)
+        params.push(issuerName_)
         const message_: TransitionParams = {
             vname: 'message',
             type: 'String',
             value: message,
         }
         params.push(message_)
-        const signature_: TransitionParams = {
-            vname: 'signature',
+        const userSignature_: TransitionParams = {
+            vname: 'userSignature',
             type: 'ByStr64',
-            value: signature,
+            value: userSignature,
         }
-        params.push(signature_)
+        params.push(userSignature_)
         return params
     }
 
     public static async VerifiableCredential(
-        username: string,
-        signature: string
+        issuerName: string,
+        issuerDomain: string,
+        issuerSignature: string
     ): Promise<TransitionParams[]> {
         const params = []
-        const username_: TransitionParams = {
-            vname: 'username',
+        const issuerName_: TransitionParams = {
+            vname: 'issuerName',
             type: 'String',
-            value: username,
+            value: issuerName,
         }
-        params.push(username_)
-        const signature_: TransitionParams = {
-            vname: 'signature',
+        params.push(issuerName_)
+        const issuerDomain_: TransitionParams = {
+            vname: 'issuerDomain',
+            type: 'String',
+            value: issuerDomain,
+        }
+        params.push(issuerDomain_)
+        const issuerSignature_: TransitionParams = {
+            vname: 'issuerSignature',
             type: 'ByStr64',
-            value: signature,
+            value: issuerSignature,
         }
-        params.push(signature_)
+        params.push(issuerSignature_)
         return params
     }
 }
