@@ -177,6 +177,7 @@ export default class SearchBarUtil {
                 if (substate.result !== null) {
                     version = substate.result.version as string
                     if (
+                        version.slice(0, 10) === 'DIDxWALLET' ||
                         Number(version.slice(8, 9)) >= 4 ||
                         version.slice(0, 4) === 'init' ||
                         version.slice(0, 3) === 'dao'
