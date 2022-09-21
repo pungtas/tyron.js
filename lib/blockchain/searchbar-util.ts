@@ -80,76 +80,12 @@ export default class SearchBarUtil {
         }
 
         if (state.verification_methods) {
-            if (state.verification_methods.get('socialrecovery')) {
+            const arrKey = Array.from(state.verification_methods.keys())
+            const arrVal = Array.from(state.verification_methods.values())
+            for (let i = 0; i < arrKey.length; i += 1) {
                 did_doc.push([
-                    'social-recovery key',
-                    [state.verification_methods.get('socialrecovery')],
-                ])
-            }
-            if (state.verification_methods.get('update')) {
-                did_doc.push([
-                    'update key',
-                    [state.verification_methods.get('update')],
-                ])
-            }
-            if (state.verification_methods.get('dex')) {
-                did_doc.push([
-                    'decentralized-exchange key',
-                    [state.verification_methods.get('dex')],
-                ])
-            }
-            if (state.verification_methods.get('stake')) {
-                did_doc.push([
-                    'staking key',
-                    [state.verification_methods.get('stake')],
-                ])
-            }
-            if (state.verification_methods.get('general')) {
-                did_doc.push([
-                    'general-purpose key',
-                    [state.verification_methods.get('general')],
-                ])
-            }
-            if (state.verification_methods.get('authentication')) {
-                did_doc.push([
-                    'authentication key',
-                    [state.verification_methods.get('authentication')],
-                ])
-            }
-            if (state.verification_methods.get('assertion')) {
-                did_doc.push([
-                    'assertion key',
-                    [state.verification_methods.get('assertion')],
-                ])
-            }
-            if (state.verification_methods.get('agreement')) {
-                did_doc.push([
-                    'agreement key',
-                    [state.verification_methods.get('agreement')],
-                ])
-            }
-            if (state.verification_methods.get('invocation')) {
-                did_doc.push([
-                    'invocation key',
-                    [state.verification_methods.get('invocation')],
-                ])
-            }
-            if (state.verification_methods.get('delegation')) {
-                did_doc.push([
-                    'delegation key',
-                    [state.verification_methods.get('delegation')],
-                ])
-            }
-            if (state.verification_methods.get('vc')) {
-                did_doc.push([
-                    'verifiable-credential key',
-                    [state.verification_methods.get('vc')],
-                ])
-            }
-            if (state.verification_methods.get('defi')) {
-                did_doc.push([
-                    'decentralized-finance key',
-                    [state.verification_methods.get('defi')],
+                    arrKey[i],
+                    [arrVal[i]],
                 ])
             }
         }
