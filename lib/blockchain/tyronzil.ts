@@ -998,7 +998,8 @@ export default class TyronZIL extends ZilliqaInit {
     public static async Ivms101(
         issuerName: string,
         message: string,
-        userSignature: string
+        userSignature: TransitionValue,
+        tyron: TransitionValue
     ): Promise<TransitionParams[]> {
         const params = []
         const issuerName_: TransitionParams = {
@@ -1015,10 +1016,16 @@ export default class TyronZIL extends ZilliqaInit {
         params.push(message_)
         const userSignature_: TransitionParams = {
             vname: 'userSignature',
-            type: 'ByStr64',
+            type: 'Option ByStr64',
             value: userSignature,
         }
         params.push(userSignature_)
+        const tyron_: TransitionParams = {
+            vname: 'tyron',
+            type: 'Option Uint128',
+            value: tyron,
+        }
+        params.push(tyron_)
         return params
     }
 

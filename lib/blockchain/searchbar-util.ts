@@ -113,13 +113,12 @@ export default class SearchBarUtil {
                 if (substate.result !== null) {
                     version = substate.result.version as string
                     if (
+                        version.slice(0, 10) === 'DIDxWALLET' ||
                         Number(version.slice(8, 9)) >= 4 ||
                         version.slice(0, 4) === 'init' ||
                         version.slice(0, 3) === 'dao'
                     ) {
-                        console.log(
-                            `DID Document version: ${version.slice(8, 11)}`
-                        )
+                        console.log(`DID Document version: ${version}`)
                         console.log(`Address: ${addr}`)
                     } else {
                         throw new Error('Upgrade required: deploy a new SSI.')
