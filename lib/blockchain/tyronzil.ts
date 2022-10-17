@@ -651,25 +651,25 @@ export default class TyronZIL extends ZilliqaInit {
         return params
     }
 
-    public static async EnableSocialRecovery(
-        addr1: string,
-        addr2: string
+    public static async Guardians(
+        guardians: string[],
+        tyron: TransitionValue
     ): Promise<TransitionParams[]> {
         const params = []
 
-        const addr1_: TransitionParams = {
-            vname: 'addr1',
-            type: 'ByStr20',
-            value: addr1,
+        const guardians_: TransitionParams = {
+            vname: 'guardians',
+            type: 'List ByStr32',
+            value: guardians,
         }
-        params.push(addr1_)
+        params.push(guardians_)
 
-        const addr2_: TransitionParams = {
-            vname: 'addr2',
-            type: 'ByStr20',
-            value: addr2,
+        const tyron_: TransitionParams = {
+            vname: 'tyron',
+            type: 'Option Uint128',
+            value: tyron,
         }
-        params.push(addr2_)
+        params.push(tyron_)
 
         return params
     }
@@ -894,6 +894,7 @@ export default class TyronZIL extends ZilliqaInit {
         return params
     }
 
+    // @todo-i add versioning into DidSocialRecovery to merge with DidSocialRecover
     public static async DidSocialRecovery(
         addr: string,
         signatures: any,
@@ -909,6 +910,33 @@ export default class TyronZIL extends ZilliqaInit {
         const signatures_: TransitionParams = {
             vname: 'signatures',
             type: 'List( Pair String ByStr64 )',
+            value: signatures,
+        }
+        params.push(signatures_)
+        const tyron_: TransitionParams = {
+            vname: 'tyron',
+            type: 'Option Uint128',
+            value: tyron,
+        }
+        params.push(tyron_)
+        return params
+    }
+
+    public static async DidSocialRecover(
+        addr: string,
+        signatures: any,
+        tyron: TransitionValue
+    ): Promise<TransitionParams[]> {
+        const params = []
+        const addr_: TransitionParams = {
+            vname: 'addr',
+            type: 'ByStr20',
+            value: addr,
+        }
+        params.push(addr_)
+        const signatures_: TransitionParams = {
+            vname: 'signatures',
+            type: 'List( Pair ByStr32 ByStr64 )',
             value: signatures,
         }
         params.push(signatures_)
