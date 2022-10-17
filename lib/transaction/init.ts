@@ -16,6 +16,7 @@ GNU General Public License for more details.*/
 import { HTTPProvider } from '@zilliqa-js/core'
 import { Transaction } from '@zilliqa-js/account'
 import { BN, Long } from '@zilliqa-js/util'
+import { Zilliqa } from '@zilliqa-js/zilliqa'
 import { randomBytes, toChecksumAddress } from '@zilliqa-js/crypto'
 
 export default class Init {
@@ -36,5 +37,15 @@ export default class Init {
             new HTTPProvider(endpoint)
         )
         return tx
+    }
+    public static async contract(id: string, net: string) {
+        let endpoint = 'https://api.zilliqa.com/'
+        if (net === 'testnet') {
+            endpoint = 'https://dev-api.zilliqa.com/'
+        }
+        const zilliqa = new Zilliqa(endpoint)
+        const txn =
+            await zilliqa.blockchain.getContractAddressFromTransactionID(id)
+        return txn.result
     }
 }
