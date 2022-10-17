@@ -83,10 +83,7 @@ export default class SearchBarUtil {
             const arrKey = Array.from(state.verification_methods.keys())
             const arrVal = Array.from(state.verification_methods.values())
             for (let i = 0; i < arrKey.length; i += 1) {
-                did_doc.push([
-                    arrKey[i],
-                    [arrVal[i]],
-                ])
+                did_doc.push([arrKey[i], [arrVal[i]]])
             }
         }
 
