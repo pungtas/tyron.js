@@ -153,7 +153,7 @@ export default class Currency {
                 decimals = 1e5
                 amount = input! * decimals
                 break
-            //@todo-xt
+            //@xalkan
             case 'gemz':
                 decimals = 1
                 amount = input! * decimals
