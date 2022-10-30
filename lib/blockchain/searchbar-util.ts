@@ -26,7 +26,7 @@ export default class SearchBarUtil {
         _domain: string
     ): Promise<string> {
         let network = NetworkNamespace.Mainnet
-        let init_tyron = '0xdfc81a41a7a1ce6ed99e27f9aa1ede4f6d97c7d0' //@xalkan
+        let init_tyron = '0xdfe5e46db3c01fd9a4a012c999d581f69fcacc61' //@xalkan
         if (net === 'testnet') {
             network = NetworkNamespace.Testnet
             init_tyron = '0xb36fbf7ec4f2ede66343f7e64914846024560595'
