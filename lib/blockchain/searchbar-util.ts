@@ -149,7 +149,8 @@ export default class SearchBarUtil {
     }
 
     public static isValidUsername = (username: string) =>
-    (/^[\u3000\u3400-\u4DBF\u4E00-\u9FFF\w\d_]+$/.test(username) && username.length > 5) ||
+        (/^[\u3000\u3400-\u4DBF\u4E00-\u9FFF\w\d_]+$/.test(username) &&
+            username.length > 5) ||
         username === 'init' ||
         username === 'tyron' ||
         username === 'wfp'
