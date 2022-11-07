@@ -1,6 +1,6 @@
 /*
 tyron.js: SSI Protocol's JavaScript/TypeScript library
-Tyron Self-Sovereign Identity Protocol
+Self-Sovereign Identity Protocol
 Copyright (C) Tyron Pungtas and its affiliates.
 
 This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ import {
     DocumentElement,
     TransferProtocol,
 } from '../did/protocols/models/document-model'
+import Util from './util'
 
 /** tyronzil transaction class */
 export default class TyronZIL extends ZilliqaInit {
@@ -396,10 +397,12 @@ export default class TyronZIL extends ZilliqaInit {
         tyron: TransitionValue
     ): Promise<TransitionParams[]> {
         const params = []
+
+        const domainId = '0x' + await Util.HashString(username)
         const username_: TransitionParams = {
             vname: 'username',
             type: 'String',
-            value: username,
+            value: domainId,
         }
         params.push(username_)
         const addr_: TransitionParams = {
@@ -434,10 +437,11 @@ export default class TyronZIL extends ZilliqaInit {
     ): Promise<TransitionParams[]> {
         const params = []
 
+        const domainId = '0x' + await Util.HashString(username)
         const username_: TransitionParams = {
             vname: 'username',
             type: 'String',
-            value: username,
+            value: domainId,
         }
         params.push(username_)
 
