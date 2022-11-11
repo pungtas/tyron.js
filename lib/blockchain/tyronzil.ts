@@ -398,7 +398,7 @@ export default class TyronZIL extends ZilliqaInit {
     ): Promise<TransitionParams[]> {
         const params = []
 
-        const domainId = '0x' + await Util.HashString(username)
+        const domainId = '0x' + (await Util.HashString(username))
         const username_: TransitionParams = {
             vname: 'username',
             type: 'String',
@@ -437,7 +437,7 @@ export default class TyronZIL extends ZilliqaInit {
     ): Promise<TransitionParams[]> {
         const params = []
 
-        const domainId = '0x' + await Util.HashString(username)
+        const domainId = '0x' + (await Util.HashString(username))
         const username_: TransitionParams = {
             vname: 'username',
             type: 'String',
