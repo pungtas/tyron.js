@@ -15,14 +15,15 @@ GNU General Public License for more details.*/
 
 export default class Options {
     public static listCoin() {
+        //@xalkan
         const option = [
             {
                 value: 'TYRON',
                 label: 'TYRON',
             },
             {
-                value: '$SI',
-                label: '$SI',
+                value: 'S$I',
+                label: 'S$I',
             },
             {
                 value: 'ZIL',
@@ -37,12 +38,12 @@ export default class Options {
                 label: 'XSGD',
             },
             {
-                value: 'zUSDT',
-                label: 'zUSDT',
-            },
-            {
                 value: 'XIDR',
                 label: 'XIDR',
+            },
+            {
+                value: 'zUSDT',
+                label: 'zUSDT',
             },
             {
                 value: 'zWBTC',
@@ -55,6 +56,14 @@ export default class Options {
             {
                 value: 'XCAD',
                 label: 'XCAD',
+            },
+            {
+                value: 'VRZ',
+                label: 'VRZ',
+            },
+            {
+                value: 'LULU',
+                label: 'LULU',
             },
             {
                 value: 'zOPUL',
