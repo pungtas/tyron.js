@@ -21,36 +21,46 @@ import { NetworkNamespace } from '../../tyronzil-schemes/did-scheme'
 export default class Resolver {
     public static async resolveDns(
         network: NetworkNamespace,
-        initTyron: string,
-        username: string,
-        domain: string
+        tld: string, // top-level domain, the domain extension
+        DNS_address: string,
+        domain_hash: string,
+        subdomain?: string
     ): Promise<string> {
         const zil_init = new ZilliqaInit(network)
+        let dns
         const addr = await zil_init.API.blockchain
-            .getSmartContractState(initTyron)
+            .getSmartContractState(DNS_address)
             .then(async (state) => {
-                if (domain === '') {
-                    const dns = state.result.dns
-                    return await SmartUtil.getValuefromMap(dns, username)
-                } else if (domain === 'did') {
-                    const did_dns = state.result.did_dns
-                    return await SmartUtil.getValuefromMap(did_dns, username)
-                } else {
-                    const did_dns = state.result.did_dns
-                    const did_addr = await SmartUtil.getValuefromMap(
-                        did_dns,
-                        username
-                    )
-                    const nft_dns = (
-                        await zil_init.API.blockchain.getSmartContractState(
-                            did_addr
+                switch (tld) {
+                    case 'zlp':
+                        dns = state.result.nft_dns
+                        return await SmartUtil.getValuefromMap(dns, domain_hash)
+                    case '' || 'ssi':
+                        dns = state.result.dns
+                        return await SmartUtil.getValuefromMap(dns, domain_hash)
+                    default: // .did and subdomains
+                        dns = state.result.did_dns
+                        const did_addr = await SmartUtil.getValuefromMap(
+                            dns,
+                            domain_hash
                         )
-                    ).result.did_domain_dns
-                    return await SmartUtil.getValuefromMap(nft_dns, domain)
+                        if (subdomain) {
+                            const subdomains_dns = (
+                                await zil_init.API.blockchain.getSmartContractState(
+                                    did_addr
+                                )
+                            ).result.did_domain_dns
+                            return await SmartUtil.getValuefromMap(
+                                subdomains_dns,
+                                subdomain
+                            )
+                        } else {
+                            return did_addr
+                        }
                 }
             })
             .catch((err: any) => {
-                throw err
+                throw new Error(`Resolve DNS: ${err}`)
             })
         return zcrypto.toChecksumAddress(addr)
     }

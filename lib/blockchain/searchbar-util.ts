@@ -17,27 +17,55 @@ GNU General Public License for more details.*/
 import Resolver from '../did/operations/did-resolve/resolver'
 import { NetworkNamespace } from '../did/tyronzil-schemes/did-scheme'
 import State from './state'
+import Util from './util'
 import ZilliqaInit from './zilliqa-init'
 
 export default class SearchBarUtil {
     public static async fetchAddr(
         net: string,
-        _username: string,
-        _domain: string
+        tld: string,
+        domain: string,
+        subdomain?: string
     ): Promise<string> {
-        let network = NetworkNamespace.Mainnet
-        let init_tyron = '0xdfe5e46db3c01fd9a4a012c999d581f69fcacc61' //@xalkan
-        if (net === 'testnet') {
-            network = NetworkNamespace.Testnet
-            init_tyron = '0xb36fbf7ec4f2ede66343f7e64914846024560595'
+        let domain_hash = '0x' + (await Util.HashString(domain))
+        let network
+        let DNS_address
+        switch (net) {
+            case 'testnet':
+                network = NetworkNamespace.Testnet
+                switch (tld) {
+                    case 'zlp':
+                        DNS_address =
+                            '0xbf6792015d6b2f8ba9dfbd59b4fe690b61663e28'
+                        break
+                    default:
+                        DNS_address =
+                            '0xb36fbf7ec4f2ede66343f7e64914846024560595'
+                        break
+                }
+                break
+            default:
+                network = NetworkNamespace.Mainnet
+                switch (tld) {
+                    case 'zlp':
+                        DNS_address =
+                            '0xb36fbf7ec4f2ede66343f7e64914846024560595' //@todo update
+                        break
+                    default:
+                        DNS_address =
+                            '0xdfe5e46db3c01fd9a4a012c999d581f69fcacc61'
+                        break
+                }
+                break
         }
         const addr = await Resolver.resolveDns(
             network,
-            init_tyron.toLowerCase(),
-            _username,
-            _domain
+            tld,
+            DNS_address.toLowerCase(),
+            domain_hash,
+            subdomain
         ).catch((err: any) => {
-            throw err
+            throw new Error(`Fetch DNS address: ${err}`)
         })
         return addr
     }
