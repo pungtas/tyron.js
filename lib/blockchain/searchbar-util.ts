@@ -65,7 +65,7 @@ export default class SearchBarUtil {
             domain_hash,
             subdomain
         ).catch((err: any) => {
-            throw new Error(`Fetch DNS address: ${err}`)
+            throw new Error(`tyron.js <Fetch DNS address>: ${err}`)
         })
         return addr
     }

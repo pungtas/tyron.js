@@ -47,7 +47,7 @@ export default class Resolver {
                             dns,
                             domain_hash
                         )
-                        if (subdomain) {
+                        if (subdomain !== undefined) {
                             const subdomains_dns = (
                                 await zil_init.API.blockchain.getSmartContractState(
                                     did_addr
