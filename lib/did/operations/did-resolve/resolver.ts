@@ -35,7 +35,10 @@ export default class Resolver {
                     case 'zlp':
                         dns = state.result.nft_dns
                         return await SmartUtil.getValuefromMap(dns, domain_hash)
-                    case '' || 'ssi':
+                    case '':
+                        dns = state.result.dns
+                        return await SmartUtil.getValuefromMap(dns, domain_hash)
+                    case 'ssi':
                         dns = state.result.dns
                         return await SmartUtil.getValuefromMap(dns, domain_hash)
                     default: // .did and subdomains

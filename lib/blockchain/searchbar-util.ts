@@ -143,8 +143,8 @@ export default class SearchBarUtil {
                         version.slice(0, 4) === 'init' ||
                         version.slice(0, 3) === 'dao'
                     ) {
-                        console.log(`DID Document version: ${version}`)
-                        console.log(`Address: ${addr}`)
+                        console.log(`tyron.js <DIDx version>: ${version}`)
+                        console.log(`tyron.js <.did address>: ${addr}`)
                     } else {
                         throw new Error('Upgrade required: deploy a new SSI.')
                     }
