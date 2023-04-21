@@ -35,19 +35,20 @@ export default class Resolver {
                     case 'zlp':
                         dns = state.result.nft_dns
                         return await SmartUtil.getValuefromMap(dns, domain_hash)
-                    case '':
-                        dns = state.result.dns
-                        return await SmartUtil.getValuefromMap(dns, domain_hash)
-                    case 'ssi':
-                        dns = state.result.dns
-                        return await SmartUtil.getValuefromMap(dns, domain_hash)
-                    default: // .did and subdomains
+                    case 'did':
                         dns = state.result.did_dns
                         const did_addr = await SmartUtil.getValuefromMap(
                             dns,
                             domain_hash
                         )
+                        return did_addr
+                    default:
                         if (subdomain !== undefined) {
+                            dns = state.result.did_dns
+                            const did_addr = await SmartUtil.getValuefromMap(
+                                dns,
+                                domain_hash
+                            )
                             const subdomains_dns = (
                                 await zil_init.API.blockchain.getSmartContractState(
                                     did_addr
@@ -58,7 +59,11 @@ export default class Resolver {
                                 subdomain
                             )
                         } else {
-                            return did_addr
+                            dns = state.result.dns
+                            return await SmartUtil.getValuefromMap(
+                                dns,
+                                domain_hash
+                            )
                         }
                 }
             })
