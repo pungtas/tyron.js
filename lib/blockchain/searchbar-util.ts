@@ -49,7 +49,7 @@ export default class SearchBarUtil {
                 switch (tld) {
                     case 'zlp':
                         DNS_address =
-                            '0xb36fbf7ec4f2ede66343f7e64914846024560595' //@todo update
+                            '0x5cd47819eD3293A4dEA434fFB8b75Ad931907f62'
                         break
                     default:
                         DNS_address =
