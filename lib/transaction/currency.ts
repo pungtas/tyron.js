@@ -19,7 +19,7 @@ export default class Currency {
         let amount = 0
         let decimals = 0
 
-        //@xalkan
+        //@tokens
         switch (currency.toLowerCase()) {
             case 'tyron':
                 decimals = 1e12
@@ -31,6 +31,10 @@ export default class Currency {
                 break
             case 'zil':
                 txID = 'SendFunds'
+                decimals = 1e12
+                amount = input! * decimals
+                break
+            case 'stzil':
                 decimals = 1e12
                 amount = input! * decimals
                 break
@@ -55,6 +59,14 @@ export default class Currency {
                 amount = input! * decimals
                 break
             case 'zeth':
+                decimals = 1e18
+                amount = input! * decimals
+                break
+            case 'zbnb':
+                decimals = 1e18
+                amount = input! * decimals
+                break
+            case 'zmatic':
                 decimals = 1e18
                 amount = input! * decimals
                 break
@@ -162,7 +174,6 @@ export default class Currency {
                 decimals = 1e5
                 amount = input! * decimals
                 break
-            //@xalkan
             case 'gemz':
                 decimals = 1
                 amount = input! * decimals

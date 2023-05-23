@@ -15,7 +15,7 @@ GNU General Public License for more details.*/
 
 export default class Options {
     public static listCoin() {
-        //@xalkan
+        //@tokens
         const option = [
             {
                 value: 'TYRON',
@@ -28,6 +28,10 @@ export default class Options {
             {
                 value: 'ZIL',
                 label: 'ZIL',
+            },
+            {
+                value: 'stZIL',
+                label: 'stZIL',
             },
             {
                 value: 'gZIL',
@@ -52,6 +56,14 @@ export default class Options {
             {
                 value: 'zETH',
                 label: 'zETH',
+            },
+            {
+                value: 'zBNB',
+                label: 'zBNB',
+            },
+            {
+                value: 'zMATIC',
+                label: 'zMATIC',
             },
             {
                 value: 'XCAD',
