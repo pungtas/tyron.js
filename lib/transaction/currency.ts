@@ -26,7 +26,7 @@ export default class Currency {
                 amount = input! * decimals
                 break
             case 's$i':
-                decimals = 1e12
+                decimals = 1e18
                 amount = input! * decimals
                 break
             case 'zil':
