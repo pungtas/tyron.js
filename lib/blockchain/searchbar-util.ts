@@ -69,6 +69,53 @@ export default class SearchBarUtil {
         })
         return addr
     }
+    public static async fetchDomainAddr(
+        net: string,
+        tld: string,
+        domain: string,
+        subdomain?: string
+    ): Promise<string> {
+        let network
+        let DNS_address
+        switch (net) {
+            case 'testnet':
+                network = NetworkNamespace.Testnet
+                switch (tld) {
+                    case 'zlp':
+                        DNS_address =
+                            '0xbf6792015d6b2f8ba9dfbd59b4fe690b61663e28'
+                        break
+                    default:
+                        DNS_address =
+                            '0xb36fbf7ec4f2ede66343f7e64914846024560595'
+                        break
+                }
+                break
+            default:
+                network = NetworkNamespace.Mainnet
+                switch (tld) {
+                    case 'zlp':
+                        DNS_address =
+                            '0x5cd47819eD3293A4dEA434fFB8b75Ad931907f62'
+                        break
+                    default:
+                        DNS_address =
+                            '0xdfe5e46db3c01fd9a4a012c999d581f69fcacc61'
+                        break
+                }
+                break
+        }
+        const addr = await Resolver.resolveDns(
+            network,
+            tld,
+            DNS_address.toLowerCase(),
+            domain,
+            subdomain
+        ).catch((err: any) => {
+            throw new Error(`tyron.js <Fetch DNS address>: ${err}`)
+        })
+        return addr
+    }
 
     public static async Resolve(net: string, addr: string): Promise<object> {
         let network = NetworkNamespace.Mainnet
