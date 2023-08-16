@@ -18,6 +18,10 @@ export default class Options {
         //@tokens
         const option = [
             {
+                value: 'tyronS$I',
+                label: 'tyronS$I',
+            },
+            {
                 value: 'TYRON',
                 label: 'TYRON',
             },

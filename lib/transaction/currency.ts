@@ -21,6 +21,10 @@ export default class Currency {
 
         //@tokens
         switch (currency.toLowerCase()) {
+            case 'tyrons$i':
+                decimals = 1e18
+                amount = input! * decimals
+                break
             case 'tyron':
                 decimals = 1e12
                 amount = input! * decimals
