@@ -29,10 +29,14 @@ export default class Beneficiary {
                 addr: addr,
             }
         } else {
+            let domain_ = domain
+            if (domain === 'ssi') {
+                domain_ = ''
+            }
             res = {
                 constructor: TyronZil.BeneficiaryConstructor.NftUsername,
                 username: username,
-                domain: domain,
+                domain: domain_,
             }
         }
         return res
