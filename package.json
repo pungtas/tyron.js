@@ -1,7 +1,7 @@
 {
     "name": "tyron",
     "version": "4.26.0",
-    "description": "tyron.js: SSI Protocol's JavaScript/TypeScript library",
+    "description": "tyron.js: Tyron's JavaScript/TypeScript library",
     "main": "dist/index.js",
     "scripts": {
         "lint": "eslint . --ext .ts",
@@ -36,7 +36,7 @@
     },
     "homepage": "https://github.com/pungtas/tyron.js#readme",
     "dependencies": {
-        "@zilliqa-js/zilliqa": "3.4.3",
+        "@zilliqa-js/zilliqa": "3.5.0",
         "hash.js": "^1.1.7"
     },
     "devDependencies": {
