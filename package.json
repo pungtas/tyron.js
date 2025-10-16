@@ -1,6 +1,6 @@
 {
     "name": "tyron",
-    "version": "4.27.0",
+    "version": "4.28.0",
     "description": "tyron.js: Tyron's JavaScript/TypeScript library",
     "main": "dist/index.js",
     "scripts": {
