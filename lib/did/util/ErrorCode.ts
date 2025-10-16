@@ -15,7 +15,10 @@ GNU General Public License for more details.*/
 
 // Cloned from SidetreeError:
 export default class CodeError extends Error {
-    constructor(public code: string, message?: string) {
+    constructor(
+        public code: string,
+        message?: string
+    ) {
         super(message ? `${code}: ${message}` : code)
         // NOTE: Extending 'Error' breaks prototype chain since TypeScript 2.1.
         // The following line restores prototype chain.

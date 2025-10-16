@@ -82,7 +82,7 @@ export class Cryptography {
         input: PublicKeyModel[] | PrivateKeyModel[]
     ): Promise<DIDVerificationMethods> {
         const key_id_set: Set<string> = new Set()
-        let keys = {}
+        const keys = {}
         let new_key
         for (const key of input) {
             // IDs must be unique

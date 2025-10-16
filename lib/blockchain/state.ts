@@ -67,13 +67,13 @@ export default class State {
                             did: String(state_.result.did),
                             controller: String(state_.result.controller),
                             did_status: STATUS,
-                            verification_methods: await SmartUtil.intoMap(
+                            verification_methods: (await SmartUtil.intoMap(
                                 state_.result.verification_methods
-                            ),
-                            dkms: dkms,
-                            services: await SmartUtil.intoMap(
+                            )) as Map<string, string>,
+                            dkms: dkms as Map<string, string> | undefined,
+                            services: (await SmartUtil.intoMap(
                                 state_.result.services
-                            ),
+                            )) as Map<string, string>,
                             services_: await SmartUtil.fromServices(
                                 state_.result.services_
                             ),

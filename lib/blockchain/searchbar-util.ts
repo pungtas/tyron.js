@@ -27,7 +27,7 @@ export default class SearchBarUtil {
         domain: string,
         subdomain?: string
     ): Promise<string> {
-        let domain_hash = '0x' + (await Util.HashString(domain))
+        const domain_hash = '0x' + (await Util.HashString(domain))
         let network
         let DNS_address
         switch (net) {
@@ -136,18 +136,17 @@ export default class SearchBarUtil {
         const controller = state.controller
 
         if (state.services_ && state.services_?.size !== 0) {
-            const services = Array()
+            const services = []
             for (const id of state.services_.keys()) {
                 const result: any = state.services_.get(id)
                 if (result && result[1] !== undefined) {
                     services.push([id, result])
                 } else if (result && result[1] === undefined) {
-                    let val: {
+                    const val: {
                         argtypes: any
                         arguments: any[]
                         constructor: any
-                    }
-                    val = result[0]
+                    } = result[0]
                     services.push([id, val.arguments[0]])
                 }
             }

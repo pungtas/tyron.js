@@ -37,8 +37,8 @@ export default class DidCrud {
         addr: string,
         services: ServiceModel[]
     ): Promise<[DocumentElement[], tyronzil.TransitionValue[]]> {
-        let doc_elements: DocumentElement[] = []
-        let doc_parameters: tyronzil.TransitionValue[] = []
+        const doc_elements: DocumentElement[] = []
+        const doc_parameters: tyronzil.TransitionValue[] = []
 
         for (const service of services) {
             const doc_element: DocumentElement = {
@@ -63,7 +63,7 @@ export default class DidCrud {
 
         const tx_params = await tyronzil.default.CrudParams(
             input.addr,
-            document!,
+            document,
             await tyronzil.default.OptionParam(tyronzil.Option.none, 'ByStr64'),
             input.tyron_
         )
@@ -76,7 +76,7 @@ export default class DidCrud {
 
     public static async HashDocument(
         document: DocumentElement[]
-    ): Promise<String> {
+    ): Promise<string> {
         let hash_ = '0000000000000000000000000000000000000000'
         for (const element of document) {
             let action_
@@ -159,7 +159,7 @@ export default class DidCrud {
 
         const tx_params = await tyronzil.default.CrudParams(
             input.addr,
-            document!,
+            document,
             await tyronzil.default.OptionParam(
                 tyronzil.Option.some,
                 'ByStr64',

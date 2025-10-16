@@ -4,10 +4,37 @@
     "plugins": ["@typescript-eslint"],
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
     ],
+    "parserOptions": {
+        "project": "./tsconfig.json",
+        "tsconfigRootDir": ".",
+    },
+    "env": {
+        "node": true,
+        "es2020": true,
+    },
     "rules": {
-        "@typescript-eslint/no-non-null-assertion": "off"
-    }
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            { "argsIgnorePattern": "^_" },
+        ],
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/no-unsafe-member-access": "warn",
+        "@typescript-eslint/no-unsafe-assignment": "warn",
+        "@typescript-eslint/no-unsafe-argument": "warn",
+        "@typescript-eslint/no-unsafe-return": "warn",
+        "@typescript-eslint/no-unsafe-call": "warn",
+        "@typescript-eslint/no-unsafe-enum-comparison": "warn",
+        "@typescript-eslint/require-await": "warn",
+        "prefer-const": "error",
+        "no-console": "warn",
+        "no-case-declarations": "warn",
+        "no-useless-catch": "warn",
+    },
+    "ignorePatterns": ["dist/", "node_modules/", "*.js"],
 }

@@ -33,7 +33,7 @@ export default class DidState {
     private constructor(state: DidStateModel) {
         this.did = state.did
         this.controller = state.controller
-        this.did_status = state.did_status as DIDStatus
+        this.did_status = state.did_status
         this.verification_methods = state.verification_methods
         this.dkms = state.dkms
         this.services = state.services

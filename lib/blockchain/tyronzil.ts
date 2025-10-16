@@ -58,14 +58,14 @@ export default class TyronZIL extends ZilliqaInit {
         gasLimit: number,
         tyron: string
     ): Promise<TyronZIL> {
-        let controller = zcrypto.getAddressFromPrivateKey(controllerSecretKey)
+        const controller = zcrypto.getAddressFromPrivateKey(controllerSecretKey)
         const gas_limit: zutil.Long.Long = new zutil.Long(gasLimit)
         const zil_init = new ZilliqaInit(network)
 
         const transaction_init = await zil_init.API.blockchain
             .getMinimumGasPrice()
             .then((min_gas_price: { result: any }) => {
-                const gas_price = new zutil.BN(min_gas_price.result!)
+                const gas_price = new zutil.BN(min_gas_price.result)
                 return new TyronZIL(
                     network,
                     controller,
@@ -211,17 +211,17 @@ export default class TyronZIL extends ZilliqaInit {
         addr: string,
         element: DocumentElement
     ): Promise<TransitionValue> {
-        let add: TransitionValue = {
+        const add: TransitionValue = {
             argtypes: [],
             arguments: [],
             constructor: `${addr.toLowerCase()}.${Action.Add}`,
         }
-        let remove: TransitionValue = {
+        const remove: TransitionValue = {
             argtypes: [],
             arguments: [],
             constructor: `${addr.toLowerCase()}.${Action.Remove}`,
         }
-        let value: TransitionValue = {
+        const value: TransitionValue = {
             argtypes: [],
             arguments: [],
             constructor: `${addr.toLowerCase()}.${element.constructor}`,
@@ -509,7 +509,7 @@ export default class TyronZIL extends ZilliqaInit {
         addr: string,
         beneficiary: Beneficiary
     ): Promise<TransitionValue> {
-        let beneficiary_ = {
+        const beneficiary_ = {
             argtypes: [],
             arguments: [],
             constructor: `${addr.toLowerCase()}.${beneficiary.constructor}`,

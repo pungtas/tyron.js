@@ -44,8 +44,8 @@ export class Sidetree {
         documentElements: DocumentElement[]
         updateDocument: TransitionValue[]
     }> {
-        let doc_elements: DocumentElement[] = []
-        let update_document = []
+        const doc_elements: DocumentElement[] = []
+        const update_document = []
 
         for (const patch of patches) {
             switch (patch.action) {

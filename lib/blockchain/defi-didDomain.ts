@@ -22,7 +22,7 @@ export default class Defi {
         amount: string,
         tyron: TransitionValue
     ) {
-        const params = Array()
+        const params = []
 
         const sig: TransitionParams = {
             vname: 'signature',
@@ -62,7 +62,7 @@ export default class Defi {
         minToken: string,
         tyron: TransitionValue
     ) {
-        const params = Array()
+        const params = []
 
         const sig: TransitionParams = {
             vname: 'signature',

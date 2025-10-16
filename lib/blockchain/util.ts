@@ -34,7 +34,7 @@ export default class Util {
 
     public static async HashGuardians(elements: any[]) {
         let h_ = '0000000000000000000000000000000000000000'
-        const hash_ = Array()
+        const hash_ = []
         for (const element of elements) {
             const h = hash.sha256().update(element).digest('hex')
             hash_.push('0x' + h)

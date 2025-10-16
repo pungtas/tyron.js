@@ -105,7 +105,7 @@ export default class DidDoc {
                 if (typeof VERIFICATION_METHODS == typeof Map) {
                     const METHODS = VERIFICATION_METHODS as Map<string, string>
                     // Every key MUST have a Public Key Purpose as its ID
-                    for (let purpose of METHODS.keys()) {
+                    for (const purpose of METHODS.keys()) {
                         const DID_URL: string = ID + '#' + purpose
                         const KEY = METHODS.get(purpose)
 
@@ -113,9 +113,7 @@ export default class DidDoc {
                         if (state.dkms === undefined) {
                             encrypted = 'undefined'
                         } else {
-                            encrypted = (state.dkms as Map<string, string>).get(
-                                purpose
-                            )
+                            encrypted = state.dkms.get(purpose)
                         }
                         const VERIFICATION_METHOD: VerificationMethodModel = {
                             id: DID_URL,
@@ -178,17 +176,20 @@ export default class DidDoc {
                 const services = state.services
                 if (typeof services == typeof Map) {
                     const services_map = services as Map<string, string>
-                    for (let id of services_map.keys()) {
-                        const SERVICE: ServiceModel = {
-                            id: ID + '#' + id,
-                            val: services_map.get(id),
+                    for (const id of services_map.keys()) {
+                        const val = services_map.get(id)
+                        if (val !== undefined) {
+                            const SERVICE: ServiceModel = {
+                                id: ID + '#' + id,
+                                val: val,
+                            }
+                            SERVICES.push(SERVICE)
                         }
-                        SERVICES.push(SERVICE)
                     }
                 }
 
                 const services_ = state.services_
-                for (let id of services_!.keys()) {
+                for (const id of services_!.keys()) {
                     const TYPE_URI = services_!.get(id)
                     const TYPE = TYPE_URI![0]
                     const URI = TYPE_URI![1]
@@ -208,39 +209,39 @@ export default class DidDoc {
                     dkms: {},
                     services: [],
                 }
-                if (PUBLIC_KEY !== []) {
+                if (PUBLIC_KEY.length > 0) {
                     SCHEME.verificationMethods.publicKey = PUBLIC_KEY[0]
-                    SCHEME.dkms!.publicKey = PUBLIC_KEY[1]
+                    SCHEME.dkms.publicKey = PUBLIC_KEY[1]
                 }
-                if (AUTHENTICATION !== []) {
+                if (AUTHENTICATION.length > 0) {
                     SCHEME.verificationMethods.authentication =
                         AUTHENTICATION[0]
                     SCHEME.dkms.authentication = AUTHENTICATION[1]
                 }
-                if (ASSERTION_METHOD !== []) {
+                if (ASSERTION_METHOD.length > 0) {
                     SCHEME.verificationMethods.assertionMethod =
                         ASSERTION_METHOD[0]
                     SCHEME.dkms.assertionMethod = ASSERTION_METHOD[1]
                 }
-                if (KEY_AGREEMENT !== []) {
+                if (KEY_AGREEMENT.length > 0) {
                     SCHEME.verificationMethods.keyAgreement = KEY_AGREEMENT[0]
                     SCHEME.dkms.keyAgreement = KEY_AGREEMENT[1]
                 }
-                if (CAPABILITY_INVOCATION !== []) {
+                if (CAPABILITY_INVOCATION.length > 0) {
                     SCHEME.verificationMethods.capabilityInvocation =
                         CAPABILITY_INVOCATION[0]
                     SCHEME.dkms.capabilityInvocation = CAPABILITY_INVOCATION[1]
                 }
-                if (CAPABILITY_DELEGATION !== []) {
+                if (CAPABILITY_DELEGATION.length > 0) {
                     SCHEME.verificationMethods.capabilityDelegation =
                         CAPABILITY_DELEGATION[0]
                     SCHEME.dkms.capabilityDelegation = CAPABILITY_DELEGATION[1]
                 }
-                if (DID_UPDATE !== []) {
+                if (DID_UPDATE.length > 0) {
                     SCHEME.verificationMethods.didUpdate = DID_UPDATE[0]
                     SCHEME.dkms.didUpdate = DID_UPDATE[1]
                 }
-                if (DID_RECOVERY !== []) {
+                if (DID_RECOVERY.length > 0) {
                     SCHEME.verificationMethods.didRecovery = DID_RECOVERY[0]
                     SCHEME.dkms.didRecovery = DID_RECOVERY[1]
                 }

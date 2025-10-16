@@ -20,13 +20,13 @@ import { Zilliqa } from '@zilliqa-js/zilliqa'
 import { randomBytes, toChecksumAddress } from '@zilliqa-js/crypto'
 
 export default class Init {
-    public static async transaction(net: String) {
+    public static async transaction(net: string) {
         const generateChecksumAddress = () => toChecksumAddress(randomBytes(20))
         let endpoint = 'https://api.zilliqa.com/'
         if (net === 'testnet') {
             endpoint = 'https://dev-api.zilliqa.com/'
         }
-        let tx = new Transaction(
+        const tx = new Transaction(
             {
                 version: 0,
                 toAddr: generateChecksumAddress(),

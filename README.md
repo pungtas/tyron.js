@@ -6,6 +6,6 @@ The tyronzil DID Method is conformant with the World Wide Web Consortium (W3C) [
 
 ## Files
 
--   [Code of conduct](./files/CODE_OF_CONDUCT.md)
+- [Code of conduct](./files/CODE_OF_CONDUCT.md)
 
--   [Contributing guideline](./files/CONTRIBUTING.md)
+- [Contributing guideline](./files/CONTRIBUTING.md)

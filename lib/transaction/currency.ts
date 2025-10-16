@@ -14,7 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.*/
 
 export default class Currency {
-    public static tyron(currency: String, input?: number) {
+    public static tyron(currency: string, input?: number) {
         let txID = 'Transfer'
         let amount = 0
         let decimals = 0
